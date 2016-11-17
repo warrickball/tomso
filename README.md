@@ -8,4 +8,4 @@ TOMSO is a set of Python modules for loading and saving input and output files f
 * [GYRE] (https://bitbucket.org/rhdtownsend/gyre/wiki/Home)
 
 ## Contributors
-* [Warrick Ball] (www.astro.physik.uni-goettingen.de/~wball/)
+* [Warrick Ball] (http://www.astro.physik.uni-goettingen.de/~wball/)
