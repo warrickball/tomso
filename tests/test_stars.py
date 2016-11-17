@@ -1,13 +1,24 @@
 from tomso import stars
+import numpy as np
 import unittest
 
 class TestStarsFunctions(unittest.TestCase):
 
-    def test_load_model(self):
-        header, data, ddata = stars.load_model('data/stars.modout')
-        self.assertEqual(header[0]['K'], 199)
-        self.assertAlmostEqual(header[0]['dt'], 3.86009e6)
-        self.assertAlmostEqual(header[0]['t'], 1.077518993e10)
+    def test_load_out(self):
+        summaries, profiles = stars.load_out('data/stars.out')
+        
+        self.assertTrue(np.all(np.abs(profiles[0]['H1']-0.7)<1e-9))
+        self.assertTrue(np.all(np.abs(profiles[0]['He4']-0.28)<1e-9))
+
+        for profile in profiles:
+            self.assertTrue(np.all(profile['k']), np.arange(1,200)[::-1])
+
+        self.assertAlmostEqual(summaries[0]['dt'], 2173.234)
+
+        for i, summary in enumerate(summaries[:10]):
+            self.assertEqual(summary['n'], i)
+            self.assertAlmostEqual(summary['H1_cntr'], 0.7)
+            self.assertAlmostEqual(summary['He4_cntr'], 0.28)
 
 
     def test_load_plot(self):
