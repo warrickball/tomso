@@ -1,0 +1,19 @@
+* tests
+- useful unittest functions: assertEqual, assertAlmostEqual
+- minimalist test data
+* utils
+- read_namelist: GYRE and MESA would use it
+* io
+- save_fgong
+- save_mesa
+* stars
+- load_plot
+- load_out
+- load/save_modin/out: turn out this is hard, defer
+* adipls
+* mesa
+- load_inlist
+- save_inlist
+- change_inlist: just updates a few values
+- when module loads, try to read defaults into defaults.star_job, controls, 
+* gyre
