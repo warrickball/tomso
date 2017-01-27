@@ -1,5 +1,8 @@
 from tomso import adipls
+import numpy as np
 import unittest
+
+tmpfile = 'data/tmpfile'
 
 class TestADIPLSFunctions(unittest.TestCase):
     def test_load_mesa_amdl(self):
@@ -37,7 +40,37 @@ class TestADIPLSFunctions(unittest.TestCase):
         for cs in css:
             self.assertAlmostEqual(cs['M'], 1.989e33)
             self.assertAlmostEqual(cs['R'], 69599062580.0)
-        
+
+
+    def test_save_mesa_amdl(self):
+        nmod1, nn1, D1, A1 = adipls.load_amdl('data/mesa.amdl')
+        adipls.save_amdl(tmpfile, nmod1, nn1, D1, A1)
+        nmod2, nn2, D2, A2 = adipls.load_amdl(tmpfile)
+        self.assertTrue(np.all(nmod1 == nmod2))
+        self.assertTrue(np.all(nn1 == nn2))
+        self.assertTrue(np.all(D1 == D2))
+        self.assertTrue(np.all(A1 == A2))
+
+
+    def test_save_modelS_amdl(self):
+        nmod1, nn1, D1, A1 = adipls.load_amdl('data/modelS.amdl')
+        adipls.save_amdl(tmpfile, nmod1, nn1, D1, A1)
+        nmod2, nn2, D2, A2 = adipls.load_amdl(tmpfile)
+        self.assertTrue(np.all(nmod1 == nmod2))
+        self.assertTrue(np.all(nn1 == nn2))
+        self.assertTrue(np.all(D1 == D2))
+        self.assertTrue(np.all(A1 == A2))
+
+
+    def cross_check_css(self):
+        css_agsm = adipls.load_agsm('data/mesa.agsm')
+        css_amdl = adipls.load_agsm('data/mesa.amdl')[0]
+        css_amde = adipls.load_agsm('data/mesa.amde')[0]
+        css_rkr = adipls.load_agsm('data/mesa.rkr')[0]
+        self.assertTrue(np.all(css_agsm == css_amdl))
+        self.assertTrue(np.all(css_agsm == css_amde))
+        self.assertTrue(np.all(css_agsm == css_rkr))
+
 
 if __name__ == '__main__':
     unittest.main()
