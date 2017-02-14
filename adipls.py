@@ -1,8 +1,7 @@
 """
-Functions for reading ADIPLS binary output.
+Functions for reading and writing ADIPLS binary output.
 """
 
-import struct
 import numpy as np
 
 
@@ -75,7 +74,7 @@ def load_amdl(filename):
 
     Parameters
     ----------
-    amdl: str
+    filename: str
         Name of the model file, usually starting or ending with amdl
 
 
@@ -96,7 +95,7 @@ def load_amdl(filename):
         f.read(4)
         # check that this is the end of the file
 
-    return nmod, nn, D, A
+    return int(nmod), int(nn), D, A
 
 
 def load_rkr(filename):
@@ -132,11 +131,24 @@ def load_rkr(filename):
 
 
 def save_amdl(filename, nmod, nn, D, A):
-    length = np.array(8*(nmod+nn+8+6*nn), dtype=np.int32)
+    """Writes an ADIPLS model file.  Data is given in the same form as
+    returned by load_amdl.
+
+    Parameters
+    ----------
+    filename: str
+        Name of the model file, usually starting or ending with amdl
+    nmod: int
+    nn: int
+    D: 1D array, length 8
+    A: 2D array, size nn by 6
+
+    """
+    length = np.array(8*(1+8+6*nn), dtype=np.int32)
     with open(filename, 'wb') as f:
         length.tofile(f)
-        nmod.tofile(f)
-        nn.tofile(f)
+        np.array((nmod,), dtype=np.int32).tofile(f)
+        np.array((nn,), dtype=np.int32).tofile(f)
         D.tofile(f)
         A.tofile(f)
         length.tofile(f)
