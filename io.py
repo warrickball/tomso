@@ -122,26 +122,23 @@ def load_mesa(filename):
 
 def save_mesa(filename, header, data):
     with open(filename, 'w') as f:
-        fmt = ''.join(['%6i','%20.12E'*3,'%6i\n'])
+        fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
         f.writelines([fmt % tuple(header[()])])
 
-        N = int(header['n_col'])-1  # must cast as int not ndarray
+        N = len(data[0])-1  # int(header['n_col'])-1  # must cast as int not ndarray
         fmt = ''.join(['%6i',' %26.16E'*N,'\n'])
         for row in data:
             f.writelines([fmt % tuple(row)])
 
 
-mesa_header_dtypes = [('n','int'), ('M','float'),
-                      ('R','float'), ('L','float'),
-                      ('n_col','int')]
-mesa_data_dtypes = [('k','int'), ('r','float'),
-                    ('w','float'), ('L_r','float'),
-                    ('p','float'), ('T','float'), ('rho','float'),
-                    ('nabla','float'), ('N2','float'),
-                    # ('c_V','float'), ('c_p','float'),
-                    # ('chi_T','float'), ('chi_rho','float'),
-                    ('Gamma_1','float'), ('nabla_ad','float'),
-                    ('delta','float'), ('kappa','float'),
-                    ('kappa_T','float'), ('kappa_rho','float'),
-                    ('eps','float'), ('eps_T','float'), ('eps_rho','float'),
+mesa_header_dtypes = [('n','int'), ('M','float'), ('R','float'),
+                      ('L','float'), ('version','int')]
+mesa_data_dtypes = [('k','int'), ('r','float'), ('m','float'),
+                    ('L_r','float'), ('p','float'), ('T','float'),
+                    ('rho','float'), ('nabla','float'),
+                    ('N2','float'), ('Gamma_1','float'),
+                    ('nabla_ad','float'), ('delta','float'),
+                    ('kappa','float'), ('kappa_T','float'),
+                    ('kappa_rho','float'), ('eps','float'),
+                    ('eps_T','float'), ('eps_rho','float'),
                     ('omega','float')]

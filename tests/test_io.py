@@ -38,11 +38,11 @@ class TestIOFunctions(unittest.TestCase):
 
     def test_load_mesa(self):
         header, data = io.load_mesa('data/mesa.gyre')
-        self.assertEqual(header['n'], 600)
-        self.assertAlmostEqual(header['M'], 1.9892e33)
-        self.assertAlmostEqual(header['R'], 6.19021624544E+10)
-        self.assertAlmostEqual(header['L'], 3.29445756181E+33)
-        self.assertEqual(header['n_col'], 19)
+        self.assertEqual(header['n'], 599)
+        self.assertAlmostEqual(header['M'], 1.9882054e33)
+        self.assertAlmostEqual(header['R'], 6.2018426552280243E+10)
+        self.assertAlmostEqual(header['L'], 3.4269442963677029E+33)
+        self.assertEqual(header['version'], 100)
 
     
     def test_save_mesa(self):
