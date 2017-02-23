@@ -1,0 +1,42 @@
+&star_job  ! inlist_astero   
+
+      show_log_description_at_start = .false.
+      
+      save_model_when_terminate = .false. ! .true.
+      save_model_filename = 'final.mod'
+      
+      write_profile_when_terminate = .false. ! .true.
+      filename_for_profile_when_terminate = 'final_profile.data'
+
+      pgstar_flag = .false.
+      
+
+/ ! end of star_job namelist
+
+
+&controls
+      ! write_pulse_data_with_profile = .true.
+      add_atmosphere_to_pulse_data = .true.
+
+      which_atm_option = 'Eddington_grey'
+
+      max_age = 1d9 ! 4d8
+
+      max_years_for_timestep = 1d7  ! in seconds.  max_timestep <= 0 means no upper limit.            
+      varcontrol_target = 1d-3
+
+      ! mesh adjustment
+      mesh_delta_coeff = 1.5
+
+      ! controls for output
+      photo_interval = 100000
+      profile_interval = 100
+      history_interval = 10
+      terminal_interval = 10
+      write_header_frequency = 10
+
+/ ! end of controls namelist
+
+
+&pgstar
+/ ! end of pgstar namelist
