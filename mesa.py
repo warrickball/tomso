@@ -120,3 +120,39 @@ def load_sample(filename):
             d[key] = value
 
     return d
+
+
+# update_inlist, string_where and replace_value all ported from
+# mesaface.  still need testing!
+def update_inlist(inlist, d):
+    with open(inlist, 'r') as f: lines = f.readlines()
+
+    # don't search comments
+    search_lines = [line.split('!',1)[0] for line in lines]
+
+    for key, value in d.iteritems():
+        i = string_where(search_lines, key)[0]
+        lines[i] = replace_value(lines[i], value)
+
+    with open(inlist, 'w') as f: f.writelines(lines)
+
+
+def string_where(lines, expr):
+    return [i for i in range(len(lines)) if expr in lines[i].split()]
+    
+
+def replace_value(line, value):
+    equals = line.index('=')+1
+    if type(value) == float:
+        return '%s %.20e\n' % (line[:equals], value)
+    elif type(value) == str:
+        return '%s %s\n' % (line[:equals], value)
+    elif type(value) == int:
+        return '%s %i\n' % (line[:equals], value)
+    elif type(value) == bool:
+        if value:
+            return '%s .true.\n' % line[:equals]
+        else:
+            return '%s .false.\n' % line[:equals]
+    else:
+        raise ValueError('Value in mesa.replace_value() is not a valid type!')
