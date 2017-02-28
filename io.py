@@ -110,17 +110,17 @@ def save_fgong(filename, fgong, fmt='%16.9E'):
                 f.writelines([line + '\n'])
 
 
-def load_mesa(filename):
+def load_gyre(filename):
     with open(filename, 'r') as f:
         lines = [line.replace('D','E') for line in f.readlines()]
 
-    header = np.genfromtxt(lines[:1], dtype=mesa_header_dtypes)
-    data = np.genfromtxt(lines[1:], dtype=mesa_data_dtypes)
+    header = np.genfromtxt(lines[:1], dtype=gyre_header_dtypes)
+    data = np.genfromtxt(lines[1:], dtype=gyre_data_dtypes)
 
     return header, data
 
 
-def save_mesa(filename, header, data):
+def save_gyre(filename, header, data):
     with open(filename, 'w') as f:
         fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
         f.writelines([fmt % tuple(header[()])])
@@ -131,9 +131,9 @@ def save_mesa(filename, header, data):
             f.writelines([fmt % tuple(row)])
 
 
-mesa_header_dtypes = [('n','int'), ('M','float'), ('R','float'),
+gyre_header_dtypes = [('n','int'), ('M','float'), ('R','float'),
                       ('L','float'), ('version','int')]
-mesa_data_dtypes = [('k','int'), ('r','float'), ('m','float'),
+gyre_data_dtypes = [('k','int'), ('r','float'), ('m','float'),
                     ('L_r','float'), ('p','float'), ('T','float'),
                     ('rho','float'), ('nabla','float'),
                     ('N2','float'), ('Gamma_1','float'),

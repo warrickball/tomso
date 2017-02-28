@@ -36,8 +36,8 @@ class TestIOFunctions(unittest.TestCase):
         self.assertTrue(np.allclose(fgong1['var'][I], fgong2['var'][I]))
 
 
-    def test_load_mesa(self):
-        header, data = io.load_mesa('data/mesa.gyre')
+    def test_load_gyre(self):
+        header, data = io.load_gyre('data/mesa.gyre')
         self.assertEqual(header['n'], 599)
         self.assertAlmostEqual(header['M'], 1.9882054e33)
         self.assertAlmostEqual(header['R'], 6.2018426552280243E+10)
@@ -45,10 +45,10 @@ class TestIOFunctions(unittest.TestCase):
         self.assertEqual(header['version'], 100)
 
     
-    def test_save_mesa(self):
-        header1, data1 = io.load_mesa('data/mesa.gyre')
-        io.save_mesa(tmpfile, header1, data1)
-        header2, data2 = io.load_mesa(tmpfile)
+    def test_save_gyre(self):
+        header1, data1 = io.load_gyre('data/mesa.gyre')
+        io.save_gyre(tmpfile, header1, data1)
+        header2, data2 = io.load_gyre(tmpfile)
         self.assertEqual(header1, header2)
         for row1, row2 in zip(data1, data2):
             self.assertEqual(row1, row2)
