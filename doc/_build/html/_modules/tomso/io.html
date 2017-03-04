@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tomso.io &mdash; TOMSO  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="TOMSO  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> TOMSO
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tomso.html">tomso package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TOMSO</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>tomso.io</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tomso.io</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for general I/O, not specific to a particular code.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="load_fgong"><a class="viewcode-back" href="../../tomso.html#tomso.io.load_fgong">[docs]</a><span class="k">def</span> <span class="nf">load_fgong</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">N</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given an FGONG file, returns a Python dictionary containing</span>
+<span class="sd">    NumPy arrays that correspond to the structures in the</span>
+<span class="sd">    specification of the FGONG format:</span>
+
+<span class="sd">    https://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf</span>
+
+<span class="sd">    That is, the dictionary has arrays indexed by &#39;nn&#39;, &#39;iconst&#39;,</span>
+<span class="sd">    &#39;ivar&#39;, &#39;ivers&#39;, &#39;glob&#39; and &#39;var&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        Name of the FGONG file to read.</span>
+<span class="sd">    N: integer, optional</span>
+<span class="sd">        Number of characters in each float.  If negative, the function</span>
+<span class="sd">        tries to guess the size of each float. (default: -1)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fgong: dict</span>
+<span class="sd">        Dictionary with scalars and arrays for FGONG data.  The keys are</span>
+
+<span class="sd">        * &#39;nn&#39;: integer, number of points in model</span>
+<span class="sd">        * &#39;iconst&#39;: integer, number of scalar values in global parameters (&#39;glob&#39;)</span>
+<span class="sd">        * &#39;ivar&#39;: integer, number of variables in model profile (&#39;var&#39;)</span>
+<span class="sd">        * &#39;ivers&#39;: integer, version number (not used in calculation)</span>
+<span class="sd">        * &#39;glob&#39;: float array, shape=(iconst,); scalar parameters for stellar model (e.g. mass, radius)</span>
+<span class="sd">        * &#39;var&#39;: float array, shape=(nn, ivar); stellar model profile</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+    <span class="n">fgong</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;header&#39;</span><span class="p">:[]}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;header&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;nn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;iconst&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;ivar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;ivers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># try to guess the length of each float in the data</span>
+    <span class="k">if</span> <span class="n">N</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span> <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">5</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">/</span><span class="n">N</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">N</span><span class="p">:</span><span class="n">i</span><span class="o">*</span><span class="n">N</span><span class="o">+</span><span class="n">N</span><span class="p">]</span>
+            <span class="c1"># print(s)</span>
+            <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">9</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;-Infinity&#39;</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;-Inf&#39;</span>
+            <span class="k">elif</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">9</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39; Infinity&#39;</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;Inf&#39;</span>
+            <span class="k">elif</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">):</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;nan&#39;</span>
+            <span class="k">elif</span> <span class="s1">&#39;d&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">)</span>
+
+            <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+
+    <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;glob&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp</span><span class="p">[:</span><span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;iconst&#39;</span><span class="p">]])</span>
+    <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;var&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;iconst&#39;</span><span class="p">]:])</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;ivar&#39;</span><span class="p">]))</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fgong</span></div>
+
+
+<div class="viewcode-block" id="save_fgong"><a class="viewcode-back" href="../../tomso.html#tomso.io.save_fgong">[docs]</a><span class="k">def</span> <span class="nf">save_fgong</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fgong</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%16.9E</span><span class="s1">&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given data for an FGONG file in the format returned by</span>
+<span class="sd">    `load_fgong`, writes the data to a file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        Filename to which FGONG data is written.</span>
+<span class="sd">    fgong: dict</span>
+<span class="sd">        FGONG data, formatted as in `load_fgong`.</span>
+<span class="sd">    fmt: str</span>
+<span class="sd">        Format of the floating-point data (scalars and model profile).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;header&#39;</span><span class="p">])</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%10i</span><span class="s1">&#39;</span><span class="o">*</span><span class="mi">4</span> <span class="o">%</span> <span class="p">(</span><span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;nn&#39;</span><span class="p">],</span> <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;iconst&#39;</span><span class="p">],</span>
+                           <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;ivar&#39;</span><span class="p">],</span> <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;ivers&#39;</span><span class="p">])</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">([</span><span class="n">line</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;iconst&#39;</span><span class="p">],</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>  <span class="c1"># number of floats in this row</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">*</span><span class="n">N</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;glob&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">5</span><span class="p">])</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">([</span><span class="n">line</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;var&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">fgong</span><span class="p">[</span><span class="s1">&#39;ivar&#39;</span><span class="p">],</span> <span class="mi">5</span><span class="p">):</span>
+                <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>  <span class="c1"># number of floats in this row</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">*</span><span class="n">N</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">5</span><span class="p">])</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">([</span><span class="n">line</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="load_gyre"><a class="viewcode-back" href="../../tomso.html#tomso.io.load_gyre">[docs]</a><span class="k">def</span> <span class="nf">load_gyre</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span><span class="s1">&#39;E&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">lines</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">gyre_header_dtypes</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">gyre_data_dtypes</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">header</span><span class="p">,</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="save_gyre"><a class="viewcode-back" href="../../tomso.html#tomso.io.save_gyre">[docs]</a><span class="k">def</span> <span class="nf">save_gyre</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%6i</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">%26.16E</span><span class="s1">&#39;</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">%6i</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">])</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">([</span><span class="n">fmt</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">header</span><span class="p">[()])])</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span>  <span class="c1"># int(header[&#39;n_col&#39;])-1  # must cast as int not ndarray</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%6i</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39; </span><span class="si">%26.16E</span><span class="s1">&#39;</span><span class="o">*</span><span class="n">N</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">([</span><span class="n">fmt</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)])</span></div>
+
+
+<span class="n">gyre_header_dtypes</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;n&#39;</span><span class="p">,</span><span class="s1">&#39;int&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                      <span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span><span class="s1">&#39;int&#39;</span><span class="p">)]</span>
+<span class="n">gyre_data_dtypes</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;int&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;L_r&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;rho&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nabla&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;N2&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Gamma_1&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;nabla_ad&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;delta&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;kappa&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;kappa_T&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;kappa_rho&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;eps&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;eps_T&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;eps_rho&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;omega&#39;</span><span class="p">,</span><span class="s1">&#39;float&#39;</span><span class="p">)]</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Warrick Ball.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
