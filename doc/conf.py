@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# tomso documentation build configuration file, created by
-# sphinx-quickstart on Sat Mar  4 21:55:34 2017.
+# TOMSO documentation build configuration file, created by
+# sphinx-quickstart on Sat Mar  4 23:20:23 2017.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -18,7 +18,7 @@
 #
 # import os
 # import sys
-# sys.path.insert(0, u'/home/wball/python/tomso')
+# sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- General configuration ------------------------------------------------
@@ -31,8 +31,7 @@
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.todo',
-              'sphinx.ext.viewcode',
+              'sphinx.ext.doctest',
               'sphinx.ext.napoleon']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -66,7 +65,7 @@ release = u''
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'en'
+language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -77,7 +76,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+todo_include_todos = False
 
 
 # -- Options for HTML output ----------------------------------------------
@@ -85,7 +84,7 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'  # 'alabaster'
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -102,7 +101,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'tomsodoc'
+htmlhelp_basename = 'TOMSOdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -129,7 +128,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'tomso.tex', u'tomso Documentation',
+    (master_doc, 'TOMSO.tex', u'TOMSO Documentation',
      u'Warrick Ball', 'manual'),
 ]
 
@@ -139,7 +138,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'tomso', u'tomso Documentation',
+    (master_doc, 'tomso', u'TOMSO Documentation',
      [author], 1)
 ]
 
@@ -150,8 +149,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'tomso', u'tomso Documentation',
-     author, 'tomso', 'One line description of project.',
+    (master_doc, 'TOMSO', u'TOMSO Documentation',
+     author, 'TOMSO', 'One line description of project.',
      'Miscellaneous'),
 ]
 
