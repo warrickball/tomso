@@ -27,14 +27,12 @@ def load_fgong(filename, N=-1):
     fgong: dict
         Dictionary with scalars and arrays for FGONG data.  The keys are
 
-        'nn': integer, number of points in model
-        'iconst': integer, number of scalar values in global
-                  parameters ('glob')
-        'ivar': integer, number of variables in model profile ('var')
-        'ivers': integer, version number (not used in calculation)
-        'glob': float array, shape=(iconst,); scalar parameters for
-                stellar model (e.g. mass, radius)
-        'var': float array, shape=(nn, ivar); stellar model profile
+        * 'nn': integer, number of points in model
+        * 'iconst': integer, number of scalar values in global parameters ('glob')
+        * 'ivar': integer, number of variables in model profile ('var')
+        * 'ivers': integer, version number (not used in calculation)
+        * 'glob': float array, shape=(iconst,); scalar parameters for stellar model (e.g. mass, radius)
+        * 'var': float array, shape=(nn, ivar); stellar model profile
 
     """
     f = open(filename, 'r')
