@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # TOMSO documentation build configuration file, created by
-# sphinx-quickstart on Sat Mar  4 23:20:23 2017.
+# sphinx-quickstart on Sat Mar  4 23:24:15 2017.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -18,7 +18,7 @@
 #
 # import os
 # import sys
-# sys.path.insert(0, os.path.abspath('.'))
+# sys.path.insert(0, u'/home/wball/python/tomso')
 
 
 # -- General configuration ------------------------------------------------
@@ -31,7 +31,7 @@
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.doctest',
+              'sphinx.ext.viewcode',
               'sphinx.ext.napoleon']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -65,7 +65,7 @@ release = u''
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -76,7 +76,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
+todo_include_todos = True
 
 
 # -- Options for HTML output ----------------------------------------------
