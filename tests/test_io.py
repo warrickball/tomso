@@ -4,6 +4,7 @@ import unittest
 
 tmpfile = 'data/tmpfile'
 
+
 class TestIOFunctions(unittest.TestCase):
 
     def test_load_fgong(self):
@@ -19,7 +20,6 @@ class TestIOFunctions(unittest.TestCase):
         self.assertAlmostEqual(fgong['glob'][1], 6.959906258e10)
         self.assertAlmostEqual(fgong['glob'][2], 3.845999350e33)
 
-    
     def test_save_fgong(self):
         fgong1 = io.load_fgong('data/mesa.fgong')
         io.save_fgong(tmpfile, fgong1)
@@ -35,7 +35,6 @@ class TestIOFunctions(unittest.TestCase):
         I = np.where(np.isfinite(fgong2['var']))
         self.assertTrue(np.allclose(fgong1['var'][I], fgong2['var'][I]))
 
-
     def test_load_gyre(self):
         header, data = io.load_gyre('data/mesa.gyre')
         self.assertEqual(header['n'], 599)
@@ -44,7 +43,6 @@ class TestIOFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['L'], 3.4269442963677029E+33)
         self.assertEqual(header['version'], 100)
 
-    
     def test_save_gyre(self):
         header1, data1 = io.load_gyre('data/mesa.gyre')
         io.save_gyre(tmpfile, header1, data1)
@@ -56,4 +54,3 @@ class TestIOFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

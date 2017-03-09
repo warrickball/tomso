@@ -4,6 +4,7 @@ import unittest
 
 tmpfile = 'data/tmpfile'
 
+
 class TestGYREFunctions(unittest.TestCase):
 
     def test_load_summary(self):
@@ -24,4 +25,3 @@ class TestGYREFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

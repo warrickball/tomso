@@ -32,7 +32,7 @@ def load_agsm(filename):
         while True:
             if not f.read(4): break
             css.append(read_one_cs(f))
-            f.read(4) 
+            f.read(4)
 
     return np.squeeze(css)
 

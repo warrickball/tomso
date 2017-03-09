@@ -1,6 +1,7 @@
 from tomso import mesa
 import unittest
 
+
 class TestMESAFunctions(unittest.TestCase):
 
     def test_load_history(self):
@@ -10,9 +11,10 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['initial_z'], 0.02)
 
         for i, row in enumerate(history[:-1]):
-            self.assertLessEqual(history['model_number'][i], history['model_number'][i+1])
-            self.assertLessEqual(history['star_age'][i], history['star_age'][i+1])
-
+            self.assertLessEqual(history['model_number'][i],
+                                 history['model_number'][i+1])
+            self.assertLessEqual(history['star_age'][i],
+                                 history['star_age'][i+1])
 
     def test_load_profile(self):
         header, profile = mesa.load_profile('data/mesa.profile')
@@ -23,8 +25,7 @@ class TestMESAFunctions(unittest.TestCase):
 
         for i in range(header['num_zones']):
             self.assertEqual(profile['zone'][i], i+1)
-            
-    
+
     def test_load_sample(self):
         sample = mesa.load_sample('data/mesa.sample')
         self.assertAlmostEqual(sample['mass/Msun'], 0.9995)
@@ -37,7 +38,6 @@ class TestMESAFunctions(unittest.TestCase):
             for sigma in sample['l%i' % ell]['err']:
                 self.assertAlmostEqual(sigma, 0.3)
 
-                
     def test_load_results_data(self):
         results = mesa.load_results_data('data/simplex_results.data')
         self.assertEqual(len(results), 2)
@@ -47,4 +47,3 @@ class TestMESAFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

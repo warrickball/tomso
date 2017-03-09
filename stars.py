@@ -39,9 +39,11 @@ def load_out(filename):
                 continue
             elif line.split()[0] == 'K':
                 # found a profile
-                dtypes = [('k','int')] + [(name, 'float') for name in line.split()[1:]]
+                dtypes = [('k','int')] + \
+                         [(name, 'float') for name in line.split()[1:]]
                 data = [f.readline() for i in range(K+(K-1)/10)]
-                data = [tuple(map(float, row.split())) for row in data if row != '\n']
+                data = [tuple(map(float, row.split()))
+                        for row in data if row != '\n']
                 profiles.append(np.array(data, dtype=dtypes))
             elif line.split()[1] == 'dt/age/MH/MHe':
                 # found a summary
@@ -51,7 +53,8 @@ def load_out(filename):
                     line = f.readline()
                     summary.extend(line.replace('-',' -').replace('E -','E-').split()[1:-1])
 
-                summaries.append(np.array(tuple(summary), dtype=summary_dtypes[:len(summary)]))
+                summaries.append(np.array(tuple(summary),
+                                          dtype=summary_dtypes[:len(summary)]))
 
     return np.squeeze(np.vstack(summaries)), np.vstack((profiles))
 
@@ -90,10 +93,9 @@ plot_dtypes = [('n','int'), ('age', 'float'), ('logR', 'float'),
                ('M_H','float'), ('M_He', 'float'), ('L_H', 'float'),
                ('L_He', 'float'), ('L_C', 'float'), ('mconv1', 'float'),
                ('m_conv2','float'), ('m_conv3','float'), ('m_conv4','float'),
-               ('m_conv5','float'), ('m_conv6','float'),
-               ('m_conv7','float'), ('m_conv8','float'),
-               ('m_conv9','float'), ('m_conv10','float'), ('m_conv11','float'),
-               ('m_conv12','float'),
+               ('m_conv5','float'), ('m_conv6','float'), ('m_conv7','float'),
+               ('m_conv8','float'), ('m_conv9','float'), ('m_conv10','float'),
+               ('m_conv11','float'), ('m_conv12','float'),
                ('m_eps_H_max', 'float'), ('m_eps_He_max', 'float'),
                ('logkappa', 'float'), ('dt', 'float'),
                ('X_Hs', 'float'), ('X_Hes', 'float'), ('H_Cs', 'float'),
@@ -103,12 +105,14 @@ plot_dtypes = [('n','int'), ('age', 'float'), ('logR', 'float'),
                ('J_1+J_2', 'float'), ('J_tot','float'), ('omega_orb', 'float'),
                ('omega_1', 'float'), ('I_1','float'), ('I_orb', 'float'),
                ('Mdot', 'float'), ('m_shell1','float'), ('m_shell2','float'),
-               ('m_shell3','float'), ('m_shell4','float'), ('m_shell5','float'),
-               ('m_shell6','float'), ('m_shell7','float'), ('m_shell8','float'),
-               ('m_shell9','float'), ('m_shell10','float'), ('m_shell11','float'),
-               ('m_shell12','float'),('m_th1','float'), ('m_th2','float'),
-               ('m_th3','float'), ('m_th4','float'), ('m_th5','float'),
-               ('m_th6','float'), ('m_th7','float'), ('m_th8','float'),
-               ('m_th9','float'), ('m_th10','float'), ('m_th11','float'),
-               ('m_th12','float'), ('M_ce', 'float'), ('R_ce', 'float'),
+               ('m_shell3','float'), ('m_shell4','float'),
+               ('m_shell5','float'), ('m_shell6','float'),
+               ('m_shell7','float'), ('m_shell8','float'),
+               ('m_shell9','float'), ('m_shell10','float'),
+               ('m_shell11','float'), ('m_shell12','float'),
+               ('m_th1','float'), ('m_th2','float'), ('m_th3','float'),
+               ('m_th4','float'), ('m_th5','float'), ('m_th6','float'),
+               ('m_th7','float'), ('m_th8','float'), ('m_th9','float'),
+               ('m_th10','float'), ('m_th11','float'), ('m_th12','float'),
+               ('M_ce', 'float'), ('R_ce', 'float'),
                ('logRho_c', 'float'), ('logT_c', 'float')]

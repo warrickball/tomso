@@ -139,7 +139,7 @@ def update_inlist(inlist, d):
 
 def string_where(lines, expr):
     return [i for i in range(len(lines)) if expr in lines[i].split()]
-    
+
 
 def replace_value(line, value):
     equals = line.index('=')+1

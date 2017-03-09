@@ -51,7 +51,7 @@ def load_fgong(filename, N=-1):
     tmp = []
 
     # try to guess the length of each float in the data
-    if N<0: N = len(lines[0])/5
+    if N < 0: N = len(lines[0])/5
 
     for line in lines:
         for i in range(len(line)/N):
@@ -123,7 +123,7 @@ def save_gyre(filename, header, data):
         fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
         f.writelines([fmt % tuple(header[()])])
 
-        N = len(data[0])-1  # int(header['n_col'])-1  # must cast as int not ndarray
+        N = len(data[0])-1
         fmt = ''.join(['%6i',' %26.16E'*N,'\n'])
         for row in data:
             f.writelines([fmt % tuple(row)])
