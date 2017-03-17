@@ -4,8 +4,8 @@ Functions for manipulating MESA input and output files.
 
 import numpy as np
 
-
 def load_history(filename):
+
     """Reads a MESA history file and returns the global data and history
     data in two structured arrays.
 
@@ -27,7 +27,8 @@ def load_history(filename):
         history.columns.
     """
 
-    with open(filename, 'r') as f: lines = f.readlines()
+    with open(filename, 'r') as f:
+        lines = [line.encode('utf-8') for line in f.readlines()]
 
     header = np.genfromtxt(lines[1:3], names=True)
     data = np.genfromtxt(lines[5:], names=True)
@@ -57,7 +58,8 @@ def load_profile(filename):
         profile.columns.
     """
 
-    with open(filename, 'r') as f: lines = f.readlines()
+    with open(filename, 'r') as f:
+        lines = [line.encode('utf-8') for line in f.readlines()]
 
     header = np.genfromtxt(lines[1:3], names=True)
     data = np.genfromtxt(lines[5:], names=True)
@@ -86,8 +88,8 @@ def load_results_data(filename):
     dtypes[0] = ('sample', 'int')
     for i in range(4): dtypes[31+i] = ('nl%i' % i, 'int')
 
-    data = np.genfromtxt(lines[2:-4], dtype=dtypes,
-                         usecols=range(len(dtypes)))
+    data = np.loadtxt(lines[2:-4], dtype=dtypes,
+                      usecols=range(len(dtypes)))
 
     return data
 

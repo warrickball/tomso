@@ -23,7 +23,7 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['initial_mass'], 0.9995)
         self.assertAlmostEqual(header['initial_z'], 0.02)
 
-        for i in range(header['num_zones']):
+        for i in range(len(profile)):
             self.assertEqual(profile['zone'][i], i+1)
 
     def test_load_sample(self):

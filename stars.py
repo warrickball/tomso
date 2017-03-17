@@ -41,7 +41,7 @@ def load_out(filename):
                 # found a profile
                 dtypes = [('k','int')] + \
                          [(name, 'float') for name in line.split()[1:]]
-                data = [f.readline() for i in range(K+(K-1)/10)]
+                data = [f.readline() for i in range(K+(K-1)//10)]
                 data = [tuple(map(float, row.split()))
                         for row in data if row != '\n']
                 profiles.append(np.array(data, dtype=dtypes))

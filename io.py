@@ -3,7 +3,6 @@ Functions for general I/O, not specific to a particular code.
 """
 import numpy as np
 
-
 def load_fgong(filename, N=-1):
     """Given an FGONG file, returns a Python dictionary containing
     NumPy arrays that correspond to the structures in the
@@ -51,10 +50,10 @@ def load_fgong(filename, N=-1):
     tmp = []
 
     # try to guess the length of each float in the data
-    if N < 0: N = len(lines[0])/5
+    if N < 0: N = len(lines[0])//5
 
     for line in lines:
-        for i in range(len(line)/N):
+        for i in range(len(line)//N):
             s = line[i*N:i*N+N]
             # print(s)
             if s[-9:] == '-Infinity':
@@ -112,8 +111,8 @@ def load_gyre(filename):
     with open(filename, 'r') as f:
         lines = [line.replace('D','E') for line in f.readlines()]
 
-    header = np.genfromtxt(lines[:1], dtype=gyre_header_dtypes)
-    data = np.genfromtxt(lines[1:], dtype=gyre_data_dtypes)
+    header = np.loadtxt(lines[:1], dtype=gyre_header_dtypes)
+    data = np.loadtxt(lines[1:], dtype=gyre_data_dtypes)
 
     return header, data
 

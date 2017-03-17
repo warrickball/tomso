@@ -4,7 +4,6 @@ Functions for manipulating GYRE input and output files.
 
 import numpy as np
 
-
 def load_summary(filename):
     """Reads a GYRE summary file and returns the global data and mode data
     in two structured arrays.
@@ -28,14 +27,14 @@ def load_summary(filename):
 
     """
 
-    with open(filename, 'r') as f: lines = f.readlines()
+    with open(filename, 'r') as f:
+        lines = [line.encode('utf-8') for line in f.readlines()]
 
     # catch case of no global data
     if lines[1] == '\n':
         header = []
     else:
         header = np.genfromtxt(lines[2:4], names=True)
-
     data = np.genfromtxt(lines[5:], names=True)
 
     return header, data
@@ -63,7 +62,8 @@ def load_mode(filename):
         the &output namelist in the GYRE input file.
 
     """
-    with open(filename, 'r') as f: lines = f.readlines()
+    with open(filename, 'r') as f:
+        lines = [line.encode('utf-8') for line in f.readlines()]
 
     # catch case of no global data
     if lines[1] == '\n':
