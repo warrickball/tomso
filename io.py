@@ -4,14 +4,16 @@ Functions for general I/O, not specific to a particular code.
 import numpy as np
 
 def load_fgong(filename, N=-1, return_comment=False):
-    """Given an FGONG file, returns a Python dictionary containing
-    NumPy arrays that correspond to the structures in the
-    specification of the FGONG format:
+    """Given an FGONG file, returns NumPy arrays `glob` and `var` that
+     correspond to the scalar and point-wise variables, as specified
+     in the FGONG format:
 
     https://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf
 
-    That is, the dictionary has arrays indexed by 'nn', 'iconst',
-    'ivar', 'ivers', 'glob' and 'var'.
+    Also returns the first four lines of the file as a `comment`, if
+    desired.
+
+    The version number `ivers` is not implemented.
 
     Parameters
     ----------
@@ -23,15 +25,14 @@ def load_fgong(filename, N=-1, return_comment=False):
 
     Returns
     -------
-    fgong: dict
-        Dictionary with scalars and arrays for FGONG data.  The keys are
-
-        * 'nn': integer, number of points in model
-        * 'iconst': integer, number of scalar values in global parameters ('glob')
-        * 'ivar': integer, number of variables in model profile ('var')
-        * 'ivers': integer, version number (not used in calculation)
-        * 'glob': float array, shape=(iconst,); scalar parameters for stellar model (e.g. mass, radius)
-        * 'var': float array, shape=(nn, ivar); stellar model profile
+    glob: NumPy array
+        The scalar (or global) variables for the stellar model
+    var: NumPy array
+        The point-wise variables for the stellar model. i.e. things
+        that vary through the star like temperature, density, etc.
+    comment: list of strs (optional)
+        The first four lines of the FGONG file, which usually contain
+        notes about the stellar model.
 
     """
     f = open(filename, 'r')
@@ -73,17 +74,23 @@ def load_fgong(filename, N=-1, return_comment=False):
 
 
 def save_fgong(filename, glob, var, fmt='%16.9E', comment=['\n','\n','\n','\n']):
-    """Given data for an FGONG file in the format returned by
-    `load_fgong`, writes the data to a file.
+    """Given data for an FGONG file in the format returned by `load_fgong`
+    (i.e. two NumPy arrays and a possible header), writes the data to
+    a file.
 
     Parameters
     ----------
     filename: str
         Filename to which FGONG data is written.
-    fgong: dict
-        FGONG data, formatted as in `load_fgong`.
-    fmt: str
-        Format of the floating-point data (scalars and model profile).
+    glob: NumPy array
+        The global variables for the stellar model.
+    var: NumPy array
+        The point-wise variables for the stellar model. i.e. things
+        that vary through the star like temperature, density, etc.
+    comment: list of strs (optional)
+        The first four lines of the FGONG file, which usually contain
+        notes about the stellar model.
+
     """
     
     nn, ivar = var.shape
@@ -109,6 +116,24 @@ def save_fgong(filename, glob, var, fmt='%16.9E', comment=['\n','\n','\n','\n'])
 
 
 def load_gyre(filename):
+    """Reads a GYRE stellar model file and returns the global data and
+    point-wise data in a pair of NumPy record arrays.
+
+    Parameters
+    ----------
+    filename: str
+        Filename of the GYRE file.
+
+    Returns
+    -------
+    header: structured array
+        Global data for the stellar model. e.g. total mass, luminosity.
+
+    data: structured array
+        Profile data for the stellar model. e.g. radius, pressure.
+
+    """
+    
     with open(filename, 'r') as f:
         lines = [line.replace('D','E') for line in f.readlines()]
 
@@ -119,6 +144,22 @@ def load_gyre(filename):
 
 
 def save_gyre(filename, header, data):
+    """Given the global data and point-wise data for a stellar model (as
+    returned by `load_gyre`), saves the data to a target file in the
+    GYRE format.
+
+    Parameters
+    ----------
+    filename: str
+        Filename of the GYRE file.
+
+    header: structured array
+        Global data for the stellar model. e.g. total mass, luminosity.
+
+    data: structured array
+        Profile data for the stellar model. e.g. radius, pressure.
+
+    """
     with open(filename, 'w') as f:
         fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
         f.writelines([fmt % tuple(header[()])])

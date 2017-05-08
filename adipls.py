@@ -1,11 +1,11 @@
 """
 Functions for reading and writing ADIPLS binary output.
 """
-
 import numpy as np
 
 
 def read_one_cs(f):
+    """Utility function to parse one `cs` array from a binary file."""
     cs = np.fromfile(f, dtype=cs_floats, count=1)
     cs = cs.astype(cs_dtypes, copy=False)
     return cs
@@ -70,20 +70,31 @@ def load_amde(filename):
 
 
 def load_amdl(filename):
-    """Reads an ADIPLS model file.
+    """Reads an ADIPLS model file.  See Section 5 of the ADIPLS
+    documentation for details.
 
     Parameters
     ----------
     filename: str
-        Name of the model file, usually starting or ending with amdl
-
+        Name of the model file, usually starting or ending with amdl.
 
     Returns
     -------
-        nmod: int
-        nn: int
-        D: 1D array
-        A: 2D array
+    nmod: int
+        The model number.  I'm not sure what it's used for but it
+        doesn't seem to matter.
+
+    nn: int
+        The number of points in the model.
+
+    D: 1-d array
+        Global data, as defined by eq. (5.2) of the ADIPLS
+        documentation.
+
+    A: 2-d array
+        Point-wise data, as defined by eq. (5.1) of the ADIPLS
+        documentation.
+
     """
 
     with open(filename, 'rb') as f:
@@ -131,17 +142,29 @@ def load_rkr(filename):
 
 
 def save_amdl(filename, nmod, nn, D, A):
-    """Writes an ADIPLS model file.  Data is given in the same form as
-    returned by load_amdl.
+    """Writes an ADIPLS model file, given data in the same form as
+    returned by load_amdl.  See Section 5 of the ADIPLS documentation
+    for details.
 
     Parameters
     ----------
     filename: str
-        Name of the model file, usually starting or ending with amdl
+        Name of the model file, usually starting or ending with amdl.
+
     nmod: int
+        The model number.  I'm not sure what it's used for but it
+        doesn't seem to matter.
+
     nn: int
-    D: 1D array, length 8
-    A: 2D array, size nn by 6
+        The number of points in the model.
+
+    D: 1-d array
+        Global data, as defined by eq. (5.2) of the ADIPLS
+        documentation.
+
+    A: 2-d array
+        Point-wise data, as defined by eq. (5.1) of the ADIPLS
+        documentation.
 
     """
     length = np.array(8*(1+8+6*nn), dtype=np.int32)

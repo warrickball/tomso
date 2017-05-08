@@ -16,11 +16,11 @@ def load_out(filename):
 
     Returns
     -------
-    summaries: 2D structured array
+    summaries: 2-d structured array
         Summaries of each model in the run, similar to MESA's
         `history` files.
 
-    profiles: 3D structured array
+    profiles: 3-d structured array
         Model profiles produced at regular intervals during the run.
         The first index of the array is the profile number.
     """

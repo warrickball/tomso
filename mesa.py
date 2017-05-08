@@ -123,9 +123,8 @@ def load_sample(filename):
 
     return d
 
-
 # update_inlist, string_where and replace_value all ported from
-# mesaface.  still need testing!
+# mesaface.  still needs testing and documenting!
 def update_inlist(inlist, d):
     with open(inlist, 'r') as f: lines = f.readlines()
 
