@@ -3,7 +3,7 @@ Functions for general I/O, not specific to a particular code.
 """
 import numpy as np
 
-def load_fgong(filename, N=-1):
+def load_fgong(filename, N=-1, return_comment=False):
     """Given an FGONG file, returns a Python dictionary containing
     NumPy arrays that correspond to the structures in the
     specification of the FGONG format:
@@ -36,15 +36,9 @@ def load_fgong(filename, N=-1):
     """
     f = open(filename, 'r')
 
-    fgong = {'header':[]}
-    for i in range(4):
-        fgong['header'].append(f.readline())
+    comment = [f.readline() for i in range(4)]
 
-    tmp = [int(i) for i in f.readline().split()]
-    fgong['nn'] = tmp[0]
-    fgong['iconst'] = tmp[1]
-    fgong['ivar'] = tmp[2]
-    fgong['ivers'] = tmp[3]
+    nn, iconst, ivar, ivers = [int(i) for i in f.readline().split()]
 
     lines = f.readlines()
     tmp = []
@@ -67,15 +61,18 @@ def load_fgong(filename, N=-1):
 
             tmp.append(float(s))
 
-    fgong['glob'] = np.array(tmp[:fgong['iconst']])
-    fgong['var'] = np.array(tmp[fgong['iconst']:]).reshape((-1,fgong['ivar']))
+    glob = np.array(tmp[:iconst])
+    var = np.array(tmp[iconst:]).reshape((-1, ivar))
 
     f.close()
 
-    return fgong
+    if return_comment:
+        return glob, var, comment
+    else:
+        return glob, var
 
 
-def save_fgong(filename, fgong, fmt='%16.9E'):
+def save_fgong(filename, glob, var, fmt='%16.9E', comment=['\n','\n','\n','\n']):
     """Given data for an FGONG file in the format returned by
     `load_fgong`, writes the data to a file.
 
@@ -88,20 +85,24 @@ def save_fgong(filename, fgong, fmt='%16.9E'):
     fmt: str
         Format of the floating-point data (scalars and model profile).
     """
+    
+    nn, ivar = var.shape
+    iconst = len(glob)
+    ivers = 0
+    
     with open(filename, 'w') as f:
-        f.writelines(fgong['header'])
+        f.writelines(comment)
 
-        line = '%10i'*4 % (fgong['nn'], fgong['iconst'],
-                           fgong['ivar'], fgong['ivers'])
+        line = '%10i'*4 % (nn, iconst, ivar, ivers)
         f.writelines([line + '\n'])
 
-        for i in range(0, fgong['iconst'], 5):
+        for i in range(0, iconst, 5):
             N = np.mod(i+4, 5)+1  # number of floats in this row
-            line = fmt*N % tuple(fgong['glob'][i:i+5])
+            line = fmt*N % tuple(glob[i:i+5])
             f.writelines([line + '\n'])
 
-        for row in fgong['var']:
-            for i in range(0, fgong['ivar'], 5):
+        for row in var:
+            for i in range(0, ivar, 5):
                 N = np.mod(i+4, 5)+1  # number of floats in this row
                 line = fmt*N % tuple(row[i:i+5])
                 f.writelines([line + '\n'])

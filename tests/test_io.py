@@ -8,32 +8,29 @@ tmpfile = 'data/tmpfile'
 class TestIOFunctions(unittest.TestCase):
 
     def test_load_fgong(self):
-        fgong = io.load_fgong('data/modelS.fgong')
-        self.assertEqual(fgong['header'][0][:6], 'L5BI.D')
-        self.assertEqual(len(fgong['var']), 2482)
-        self.assertEqual(fgong['nn'], 2482)
-        self.assertEqual(fgong['iconst'], 15)
-        self.assertEqual(fgong['ivar'], 30)
-        self.assertEqual(fgong['ivers'], 250)
+        glob, var, comment = io.load_fgong('data/modelS.fgong', return_comment=True)
+        self.assertEqual(comment[0][:6], 'L5BI.D')
+        self.assertEqual(len(glob), 15)
+        self.assertEqual(len(var), 2482)
+        self.assertEqual(len(var[0]), 30)
         # test M, R, L
-        self.assertAlmostEqual(fgong['glob'][0], 1.989e33)
-        self.assertAlmostEqual(fgong['glob'][1], 6.959906258e10)
-        self.assertAlmostEqual(fgong['glob'][2], 3.845999350e33)
+        self.assertAlmostEqual(glob[0], 1.989e33)
+        self.assertAlmostEqual(glob[1], 6.959906258e10)
+        self.assertAlmostEqual(glob[2], 3.845999350e33)
 
     def test_save_fgong(self):
-        fgong1 = io.load_fgong('data/mesa.fgong')
-        io.save_fgong(tmpfile, fgong1)
-        fgong2 = io.load_fgong(tmpfile)
-        for k in ['nn','iconst','ivar','ivers']:
-            self.assertEqual(fgong1[k], fgong2[k])
-
-        for line1, line2 in zip(fgong1['header'], fgong2['header']):
+        glob1, var1, comment1 = io.load_fgong('data/modelS.fgong', return_comment=True)
+        io.save_fgong(tmpfile, glob1, var1, comment=comment1, fmt='%16.9E')
+        glob2, var2, comment2 = io.load_fgong(tmpfile, return_comment=True)
+        for i in range(len(glob1)):
+            self.assertAlmostEqual(glob1[i], glob2[i])
+            
+        for line1, line2 in zip(comment1, comment2):
             self.assertEqual(line1, line2)
 
-        I = np.where(np.isfinite(fgong1['var']))
-        self.assertTrue(np.allclose(fgong1['var'][I], fgong2['var'][I]))
-        I = np.where(np.isfinite(fgong2['var']))
-        self.assertTrue(np.allclose(fgong1['var'][I], fgong2['var'][I]))
+        for i in range(len(var1)):
+            for j in range(len(var1[i])):
+                self.assertAlmostEqual(var1[i,j], var2[i,j])
 
     def test_load_gyre(self):
         header, data = io.load_gyre('data/mesa.gyre')
