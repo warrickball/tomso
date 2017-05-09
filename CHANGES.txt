@@ -1,1 +1,2 @@
 v0.0.1, 2016-11-17 -- Initial commit.
+v0.0.2, 2017-05-09 -- Code finally stable, first "release candidate".
