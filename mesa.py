@@ -4,8 +4,8 @@ Functions for manipulating MESA input and output files.
 
 import numpy as np
 
-def load_history(filename):
 
+def load_history(filename):
     """Reads a MESA history file and returns the global data and history
     data in two structured arrays.
 
@@ -86,7 +86,8 @@ def load_results_data(filename):
 
     dtypes = [(word, 'float') for word in lines[1].split()]
     dtypes[0] = ('sample', 'int')
-    for i in range(4): dtypes[31+i] = ('nl%i' % i, 'int')
+    for i in range(4):
+        dtypes[31+i] = ('nl%i' % i, 'int')
 
     data = np.loadtxt(lines[2:-4], dtype=dtypes,
                       usecols=range(len(dtypes)))
@@ -95,7 +96,7 @@ def load_results_data(filename):
 
 
 def load_sample(filename):
-    with open(filename,'r') as f:
+    with open(filename, 'r') as f:
         lines = [line.split() for line in f.readlines() if line.strip()]
 
     d = {}
@@ -103,8 +104,8 @@ def load_sample(filename):
     for line in lines:
         if line[0][:2] == 'l=':
             ell = int(line[0][-1])
-            d['l%i' % ell] = {'n':[], 'chi2':[], 'mdl':[], 'cor':[],
-                              'obs':[], 'err':[], 'logE':[]}
+            d['l%i' % ell] = {'n': [], 'chi2': [], 'mdl': [], 'cor': [],
+                              'obs': [], 'err': [], 'logE': []}
         elif len(line) == 7:
             d['l%i' % ell]['n'].append(int(line[0]))
             d['l%i' % ell]['chi2'].append(float(line[1]))
@@ -123,13 +124,14 @@ def load_sample(filename):
 
     return d
 
+
 # update_inlist, string_where and replace_value all ported from
 # mesaface.  still needs testing and documenting!
 def update_inlist(inlist, d):
     with open(inlist, 'r') as f: lines = f.readlines()
 
     # don't search comments
-    search_lines = [line.split('!',1)[0] for line in lines]
+    search_lines = [line.split('!', 1)[0] for line in lines]
 
     for key, value in d.iteritems():
         i = string_where(search_lines, key)[0]

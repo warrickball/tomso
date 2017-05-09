@@ -4,6 +4,7 @@ Functions for manipulating GYRE input and output files.
 
 import numpy as np
 
+
 def load_summary(filename):
     """Reads a GYRE summary file and returns the global data and mode data
     in two structured arrays.

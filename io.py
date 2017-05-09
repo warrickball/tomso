@@ -3,6 +3,7 @@ Functions for general I/O, not specific to a particular code.
 """
 import numpy as np
 
+
 def load_fgong(filename, N=-1, return_comment=False):
     """Given an FGONG file, returns NumPy arrays `glob` and `var` that
      correspond to the scalar and point-wise variables, as specified
@@ -73,7 +74,8 @@ def load_fgong(filename, N=-1, return_comment=False):
         return glob, var
 
 
-def save_fgong(filename, glob, var, fmt='%16.9E', comment=['\n','\n','\n','\n']):
+def save_fgong(filename, glob, var, fmt='%16.9E',
+               comment=['\n','\n','\n','\n']):
     """Given data for an FGONG file in the format returned by `load_fgong`
     (i.e. two NumPy arrays and a possible header), writes the data to
     a file.
@@ -92,11 +94,10 @@ def save_fgong(filename, glob, var, fmt='%16.9E', comment=['\n','\n','\n','\n'])
         notes about the stellar model.
 
     """
-    
     nn, ivar = var.shape
     iconst = len(glob)
     ivers = 0
-    
+
     with open(filename, 'w') as f:
         f.writelines(comment)
 
@@ -133,7 +134,6 @@ def load_gyre(filename):
         Profile data for the stellar model. e.g. radius, pressure.
 
     """
-    
     with open(filename, 'r') as f:
         lines = [line.replace('D','E') for line in f.readlines()]
 
