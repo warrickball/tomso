@@ -11,6 +11,26 @@ def read_one_cs(f):
     return cs
 
 
+def load_pointwise_data(filename, ncols):
+    """Utility function for common structure of ADIPLS data that has a
+    value at each point in a stellar model. e.g. eigenfunction and
+    kernel files.
+    """
+    css = []
+    eigs = []
+
+    with open(filename, 'rb') as f:
+        while True:
+            if not f.read(4): break
+            css.append(read_one_cs(f))
+            nnw = np.fromfile(f, dtype='i', count=1)[0]
+            eig = np.fromfile(f, dtype='d', count=ncols*nnw).reshape((-1, ncols))
+            eigs.append(eig)
+            f.read(4)
+
+    return np.squeeze(css), np.squeeze(eigs)
+
+
 def load_agsm(filename):
     """Reads an ADIPLS grand summary file."
 
@@ -54,19 +74,7 @@ def load_amde(filename):
         The eigenfunction arrays for each mode.
     """
 
-    css = []
-    eigs = []
-
-    with open(filename, 'rb') as f:
-        while True:
-            if not f.read(4): break
-            css.append(read_one_cs(f))
-            nnw = np.fromfile(f, dtype='i', count=1)[0]
-            eig = np.fromfile(f, dtype='d', count=7*nnw).reshape((-1,7))
-            eigs.append(eig)
-            f.read(4)
-
-    return np.squeeze(css), np.squeeze(eigs)
+    return load_pointwise_data(filename, 7)
 
 
 def load_amdl(filename):
@@ -126,20 +134,7 @@ def load_rkr(filename):
         The kernel arrays for each mode.
     """
 
-    css = []
-    rkrs = []
-
-    with open(filename, 'rb') as f:
-        while True:
-            if not np.fromfile(f, dtype='i', count=1): break
-            css.append(read_one_cs(f))
-            nnw = np.fromfile(f, dtype='i', count=1)[0]
-            rkr = np.fromfile(f, dtype='d', count=2*nnw).reshape((-1,2))
-            rkrs.append(rkr)
-            f.read(4)
-
-    return np.squeeze(css), np.squeeze(rkrs)
-
+    return load_pointwise_data(filename, 2)
 
 def save_amdl(filename, nmod, nn, D, A):
     """Writes an ADIPLS model file, given data in the same form as
