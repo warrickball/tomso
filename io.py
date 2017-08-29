@@ -74,7 +74,7 @@ def load_fgong(filename, N=-1, return_comment=False):
         return glob, var
 
 
-def save_fgong(filename, glob, var, fmt='%16.9E',
+def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
                comment=['\n','\n','\n','\n']):
     """Given data for an FGONG file in the format returned by `load_fgong`
     (i.e. two NumPy arrays and a possible header), writes the data to
@@ -89,6 +89,9 @@ def save_fgong(filename, glob, var, fmt='%16.9E',
     var: NumPy array
         The point-wise variables for the stellar model. i.e. things
         that vary through the star like temperature, density, etc.
+    ivers: int (optional)
+        The integer indicating the version number of the file.
+        (default=0)
     comment: list of strs (optional)
         The first four lines of the FGONG file, which usually contain
         notes about the stellar model.
@@ -96,7 +99,6 @@ def save_fgong(filename, glob, var, fmt='%16.9E',
     """
     nn, ivar = var.shape
     iconst = len(glob)
-    ivers = 0
 
     with open(filename, 'w') as f:
         f.writelines(comment)
