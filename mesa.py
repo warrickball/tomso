@@ -96,6 +96,20 @@ def load_results_data(filename):
 
 
 def load_sample(filename):
+    """Reads a MESA sample file that describes a model from one of the
+    optimization routines in the astero module.
+
+    Parameters
+    ----------
+    filename: str
+        Filename of the file containing the result.
+
+    Returns
+    -------
+    d: dict
+        A dictionary containing all the results.
+
+    """
     with open(filename, 'r') as f:
         lines = [line.split() for line in f.readlines() if line.strip()]
 
@@ -133,7 +147,7 @@ def update_inlist(inlist, d):
     # don't search comments
     search_lines = [line.split('!', 1)[0] for line in lines]
 
-    for key, value in d.iteritems():
+    for key, value in d.items():
         i = string_where(search_lines, key)[0]
         lines[i] = replace_value(lines[i], value)
 
@@ -141,10 +155,12 @@ def update_inlist(inlist, d):
 
 
 def string_where(lines, expr):
+    "Returns list of indices of the lines in `lines` containing `expr`."
     return [i for i in range(len(lines)) if expr in lines[i].split()]
 
 
 def replace_value(line, value):
+    "Replaces the parameter value in the given line of a MESA inlist."
     equals = line.index('=')+1
     if type(value) == float:
         return '%s %.20e\n' % (line[:equals], value)
