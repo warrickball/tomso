@@ -14,16 +14,16 @@ class TestStarsFunctions(unittest.TestCase):
         for profile in profiles:
             self.assertTrue(np.all(profile['k']), np.arange(1,200)[::-1])
 
-        self.assertAlmostEqual(summaries[0]['dt'], 2173.234)
+        self.assertAlmostEqual(summaries[0]['dt'], 6308.266)
 
         for i, summary in enumerate(summaries[:10]):
-            self.assertEqual(summary['n'], i)
+            self.assertEqual(summary['n'], i+1)
             self.assertAlmostEqual(summary['H1_cntr'], 0.7)
             self.assertAlmostEqual(summary['He4_cntr'], 0.28)
 
     def test_load_plot(self):
         data = stars.load_plot('data/stars.plot')
-        self.assertEqual(data['n'][0], 0)
+        self.assertEqual(data['n'][0], 1)
 
 
 if __name__ == '__main__':
