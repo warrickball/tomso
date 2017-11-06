@@ -10,9 +10,9 @@ class TestADIPLSFunctions(unittest.TestCase):
     def test_load_mesa_amdl(self):
         nmod, nn, D, A = adipls.load_amdl('data/mesa.amdl')
         self.assertEqual(nmod, 1)
-        self.assertEqual(nn, 599)
-        self.assertAlmostEqual(D[0], 1.989200045e33)
-        self.assertAlmostEqual(D[1], 61888348160.0)
+        self.assertEqual(nn, 601)
+        self.assertAlmostEqual(D[0], 1.988205400E+33)
+        self.assertAlmostEqual(D[1], 6.204550713E+10)
 
     def test_load_modelS_agsm(self):
         css = adipls.load_agsm('data/modelS.agsm')

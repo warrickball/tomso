@@ -13,7 +13,7 @@ class TestIOFunctions(unittest.TestCase):
         self.assertEqual(len(glob), 15)
         self.assertEqual(len(var), 2482)
         self.assertEqual(len(var[0]), 30)
-        # test M, R, L
+
         self.assertAlmostEqual(glob[0], 1.989e33)
         self.assertAlmostEqual(glob[1], 6.959906258e10)
         self.assertAlmostEqual(glob[2], 3.845999350e33)
@@ -34,11 +34,11 @@ class TestIOFunctions(unittest.TestCase):
 
     def test_load_gyre(self):
         header, data = io.load_gyre('data/mesa.gyre')
-        self.assertEqual(header['n'], 599)
-        self.assertAlmostEqual(header['M'], 1.9882054e33)
-        self.assertAlmostEqual(header['R'], 6.2018426552280243E+10)
-        self.assertAlmostEqual(header['L'], 3.4269442963677029E+33)
-        self.assertEqual(header['version'], 100)
+        self.assertEqual(header['n'], 601)
+        self.assertAlmostEqual(header['M'], 1.9882053999999999E+33)
+        self.assertAlmostEqual(header['R'], 6.2045507132959908E+10)
+        self.assertAlmostEqual(header['L'], 3.3408563666602257E+33)
+        self.assertEqual(header['version'], 101)
 
     def test_save_gyre(self):
         header1, data1 = io.load_gyre('data/mesa.gyre')

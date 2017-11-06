@@ -547,17 +547,17 @@
          ! There is no alternative to trying things and tuning the controls for your problem.
       
          ! these are just default values -- you will probably need to adjust them for your problem.
-         max_yrs_dt_when_cold = 1d7 ! when fail Lnuc/L, chi2_spectro, or ch2_delta_nu
-         max_yrs_dt_when_warm = 3.16d6 ! when pass previous but fail chi2_radial; < max_yrs_dt_when_cold
-         max_yrs_dt_when_hot = 1d6 ! when pass chi2_radial; < max_yrs_dt_when_warm
+         max_yrs_dt_when_cold = 1d8 ! when fail Lnuc/L, chi2_spectro, or ch2_delta_nu
+         max_yrs_dt_when_warm = 3.162d7 ! when pass previous but fail chi2_radial; < max_yrs_dt_when_cold
+         max_yrs_dt_when_hot = 1d7 ! when pass chi2_radial; < max_yrs_dt_when_warm
          
-         max_yrs_dt_chi2_small_limit = 3.16d5 ! < max_yrs_dt_when_hot
+         max_yrs_dt_chi2_small_limit = 3.162d6 ! < max_yrs_dt_when_hot
          chi2_limit_for_small_timesteps = 30
          
-         max_yrs_dt_chi2_smaller_limit = 1d5 ! < max_yrs_dt_chi2_small_limit
+         max_yrs_dt_chi2_smaller_limit = 1d6 ! < max_yrs_dt_chi2_small_limit
          chi2_limit_for_smaller_timesteps = -1d99 ! < chi2_limit_for_small_timesteps
          
-         max_yrs_dt_chi2_smallest_limit = 3.16d4 ! < max_yrs_dt_chi2_smaller_limit
+         max_yrs_dt_chi2_smallest_limit = 3.162d5 ! < max_yrs_dt_chi2_smaller_limit
          chi2_limit_for_smallest_timesteps = -1d99 ! < chi2_limit_for_smaller_timesteps
       
       

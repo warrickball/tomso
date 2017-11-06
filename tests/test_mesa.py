@@ -6,7 +6,7 @@ class TestMESAFunctions(unittest.TestCase):
 
     def test_load_history(self):
         header, history = mesa.load_history('data/mesa.history')
-        self.assertEqual(header['version_number'], 9575)
+        self.assertEqual(header['version_number'], 10108)
         self.assertAlmostEqual(header['initial_mass'], 0.9995)
         self.assertAlmostEqual(header['initial_z'], 0.02)
 
@@ -18,8 +18,8 @@ class TestMESAFunctions(unittest.TestCase):
 
     def test_load_profile(self):
         header, profile = mesa.load_profile('data/mesa.profile')
-        self.assertEqual(header['model_number'], 124)
-        self.assertEqual(header['num_zones'], 558)
+        self.assertEqual(header['model_number'], 95)
+        self.assertEqual(header['num_zones'], 559)
         self.assertAlmostEqual(header['initial_mass'], 0.9995)
         self.assertAlmostEqual(header['initial_z'], 0.02)
 

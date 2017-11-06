@@ -30,11 +30,12 @@
 
       ! controls for output
       photo_interval = 100000
-      profile_interval = 100
+      profile_interval = 100000
       history_interval = 10
       terminal_interval = 10
       write_header_frequency = 10
 
+      format_for_FGONG_data = '(1P5E16.9,x)'
 / ! end of controls namelist
 
 
