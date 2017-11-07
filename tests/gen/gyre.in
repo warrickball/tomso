@@ -1,0 +1,48 @@
+&constants
+	G_GRAVITY = 6.67232e-8
+/
+
+&model
+	model_type = 'EVOL'
+	file = 'modelS.fgong'
+	file_format = 'FGONG'
+/
+
+&mode
+	l = 1
+/
+
+&osc
+	variables_set = 'JCD'
+	outer_bound = 'JCD'
+	inertia_norm = 'BOTH'
+	x_ref = 1.0
+/
+
+&num
+/
+
+&scan
+	grid_type = 'LINEAR'
+	freq_min_units = 'UHZ'
+	freq_max_units = 'UHZ'
+	freq_min = 2800
+	freq_max = 3200
+	n_freq = 10
+/
+
+&grid
+/
+
+&ad_output
+	summary_file = 'gyre.summ'
+	summary_file_format = 'TXT'
+	summary_item_list = 'M_star,R_star,l,n_pg,omega,freq'
+	mode_template = 'gyre.mode_%j'
+	mode_file_format = 'TXT'
+	mode_item_list = 'l,n_pg,omega,freq,x,xi_r,xi_h'
+	freq_units = 'UHZ'
+/
+
+&nad_output
+/
