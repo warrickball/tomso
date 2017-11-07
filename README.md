@@ -10,4 +10,4 @@ codes.  Functions are presently implemented for
 * [GYRE](https://bitbucket.org/rhdtownsend/gyre/wiki/Home)
 
 ## Contributors
-* [Warrick Ball](http://bison.ph.bham.ac.uk/~wball/)
+* [Warrick Ball](https://warrickball.github.io)
