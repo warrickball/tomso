@@ -140,8 +140,22 @@ def load_sample(filename):
 
 
 # update_inlist, string_where and replace_value all ported from
-# mesaface.  still needs testing and documenting!
+# mesaface.  still need testing!
 def update_inlist(inlist, d):
+    # check: fail if parameter isn't in the inlist
+    """Updates parameter values in a MESA inlist file.  The function
+    searches the whole file for the parameter key.
+
+    Parameters
+    ----------
+    inlist: str
+        Filename of the inlist file that will be updated.
+    d: dict
+        Dictionary containing the parameter names and their new
+        values. e.g. `{'initial_mass': 1.0}` or
+        `{'use_Ledoux_criterion': True}`.
+
+    """
     with open(inlist, 'r') as f: lines = f.readlines()
 
     # don't search comments
@@ -160,7 +174,9 @@ def string_where(lines, expr):
 
 
 def replace_value(line, value):
-    "Replaces the parameter value in the given line of a MESA inlist."
+    """Replaces the parameter `value` in the given `line` of a MESA inlist.
+    Format is inferred from the type of value: float, str, int or
+    bool."""
     equals = line.index('=')+1
     if type(value) == float:
         return '%s %.20e\n' % (line[:equals], value)
