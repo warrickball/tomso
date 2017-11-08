@@ -32,7 +32,7 @@ def load_pointwise_data(filename, ncols):
 
 
 def load_agsm(filename):
-    """Reads an ADIPLS grand summary file."
+    """Reads an ADIPLS grand summary file.
 
     Parameters
     ----------
@@ -58,7 +58,7 @@ def load_agsm(filename):
 
 
 def load_amde(filename):
-    """Reads an ADIPLS eigenfunction file, written with nmode=1.
+    """Reads an ADIPLS eigenfunction file, written with ``nmode=1``.
 
     Parameters
     ----------
@@ -78,8 +78,10 @@ def load_amde(filename):
 
 
 def load_amdl(filename):
-    """Reads an ADIPLS model file.  See Section 5 of the ADIPLS
-    documentation for details.
+    """Reads an ADIPLS model file.  See Section 5 of the `ADIPLS
+    documentation`_ for details.
+
+    .. _ADIPLS documentation: https://sourceforge.net/p/mesa/code/HEAD/tree/trunk/adipls/adipack.c/notes/adiab.prg.c.pdf
 
     Parameters
     ----------
@@ -139,8 +141,8 @@ def load_rkr(filename):
 
 def save_amdl(filename, nmod, nn, D, A):
     """Writes an ADIPLS model file, given data in the same form as
-    returned by load_amdl.  See Section 5 of the ADIPLS documentation
-    for details.
+    returned by `load_amdl`.  See Section 5 of the ADIPLS
+    documentation for details.
 
     Parameters
     ----------

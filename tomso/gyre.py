@@ -1,5 +1,7 @@
 """
-Functions for manipulating GYRE input and output files.
+Functions for manipulating `GYRE`_ input and output files.
+
+.. _GYRE: https://bitbucket.org/rhdtownsend/gyre/wiki/Home
 """
 
 import numpy as np

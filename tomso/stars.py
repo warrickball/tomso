@@ -1,5 +1,7 @@
 """
-Functions for loading output from the Cambridge STARS code.
+Functions for loading output from the `Cambridge STARS`_ code.
+
+.. _Cambridge STARS: http://www.ast.cam.ac.uk/~stars/index.htm
 """
 
 import numpy as np
@@ -60,7 +62,20 @@ def load_out(filename):
 
 
 def load_plot(filename):
-    """Reads a STARS `plot` file into a structured array."""
+    """Reads a STARS `plot` file into a structured array.
+
+    Parameters
+    ----------
+    filename: str
+        Filename of the STARS plot file to load.
+
+    Returns
+    -------
+    plot: 2-d structured array
+        Data for evolutionary track, with one row per model along the
+        track. e.g. age, effective temperature, etc.
+
+    """
     return np.loadtxt(filename, dtype=plot_dtypes)
 
 

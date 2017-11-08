@@ -1,15 +1,16 @@
 """
 Functions for general I/O, not specific to a particular code.
 """
+
 import numpy as np
 
 
 def load_fgong(filename, N=-1, return_comment=False):
     """Given an FGONG file, returns NumPy arrays `glob` and `var` that
-     correspond to the scalar and point-wise variables, as specified
-     in the FGONG format:
+    correspond to the scalar and point-wise variables, as specified
+    in the `FGONG format`_.
 
-    https://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf
+    .. _FGONG format: https://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf
 
     Also returns the first four lines of the file as a `comment`, if
     desired.

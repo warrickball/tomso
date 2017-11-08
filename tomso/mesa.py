@@ -1,5 +1,7 @@
 """
-Functions for manipulating MESA input and output files.
+Functions for manipulating `MESA`_ input and output files.
+
+.. _MESA: http://mesa.sourceforge.net/
 """
 
 import numpy as np
@@ -19,12 +21,12 @@ def load_history(filename):
     header: structured array
         Global data for the evolutionary run. e.g. initial parameters.
         The keys for the array are the MESA variable names as in
-        history.columns.
+        `history.columns`.
 
     data: structured array
         History data for the run. e.g. age, effective temperature.
         The keys for the array are the MESA variable names as in
-        history.columns.
+        `history.columns`.
     """
 
     with open(filename, 'r') as f:
@@ -50,12 +52,12 @@ def load_profile(filename):
     header: structured array
         Global data for the stellar model. e.g. total mass, luminosity.
         The keys for the array are the MESA variable names as in
-        profile.columns.
+        `profile.columns`.
 
     data: structured array
         Profile data for the stellar model. e.g. radius, pressure.
         The keys for the array are the MESA variable names as in
-        profile.columns.
+        `profile.columns`.
     """
 
     with open(filename, 'r') as f:
@@ -69,7 +71,7 @@ def load_profile(filename):
 
 def load_results_data(filename):
     """Reads a set of MESA results from one of the optimization routines
-    in the astero module.
+    in the `astero` module.
 
     Parameters
     ----------
@@ -97,7 +99,7 @@ def load_results_data(filename):
 
 def load_sample(filename):
     """Reads a MESA sample file that describes a model from one of the
-    optimization routines in the astero module.
+    optimization routines in the `astero` module.
 
     Parameters
     ----------
@@ -174,9 +176,11 @@ def string_where(lines, expr):
 
 
 def replace_value(line, value):
-    """Replaces the parameter `value` in the given `line` of a MESA inlist.
-    Format is inferred from the type of value: float, str, int or
-    bool."""
+    """Replaces the parameter `value` in the given `line` of a MESA
+    inlist.  Format is inferred from the type of value: `float`,
+    `str`, `int` or `bool`.
+
+    """
     equals = line.index('=')+1
     if type(value) == float:
         return '%s %.20e\n' % (line[:equals], value)
