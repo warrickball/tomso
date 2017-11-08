@@ -39,7 +39,6 @@ def load_agsm(filename):
     filename: str
         Name of the grand summary file, usually starting or ending with agsm.
 
-
     Returns
     -------
     css: structured array
@@ -64,7 +63,6 @@ def load_amde(filename):
     ----------
     filename: str
         Name of the eigenfunction file, usually starting or ending with amde
-
 
     Returns
     -------
@@ -93,14 +91,11 @@ def load_amdl(filename):
     nmod: int
         The model number.  I'm not sure what it's used for but it
         doesn't seem to matter.
-
     nn: int
         The number of points in the model.
-
     D: 1-d array
         Global data, as defined by eq. (5.2) of the ADIPLS
         documentation.
-
     A: 2-d array
         Point-wise data, as defined by eq. (5.1) of the ADIPLS
         documentation.
@@ -126,7 +121,6 @@ def load_rkr(filename):
     ----------
     filename: str
         Name of the kernel file, usually starting or ending with rkr
-
 
     Returns
     -------
@@ -155,11 +149,9 @@ def save_amdl(filename, nmod, nn, D, A):
 
     nn: int
         The number of points in the model.
-
     D: 1-d array
         Global data, as defined by eq. (5.2) of the ADIPLS
         documentation.
-
     A: 2-d array
         Point-wise data, as defined by eq. (5.1) of the ADIPLS
         documentation.
@@ -173,6 +165,83 @@ def save_amdl(filename, nmod, nn, D, A):
         D.tofile(f)
         A.tofile(f)
         length.tofile(f)
+
+
+def fgong_to_amdl(glob, var, G=6.67428e-8):
+    """Converts FGONG data (in the form of `glob` and `var`, as returned
+    by `io.load_fgong`) into ADIPLS binary data, which can be saved
+    using `save_amdl`.
+
+    Parameters
+    ----------
+    glob: NumPy array
+        The scalar (or global) variables for the stellar model
+    var: NumPy array
+        The point-wise variables for the stellar model. i.e. things
+        that vary through the star like temperature, density, etc.
+    G: float, optional
+        Newton's gravitational constant in cgs units.
+
+    Returns
+    -------
+    D: 1-d array
+        Global data, as defined by eq. (5.2) of the ADIPLS
+        documentation.
+    A: 2-d array
+        Point-wise data, as defined by eq. (5.1) of the ADIPLS
+        documentation.
+
+    """
+    M, R = glob[:2]
+    r, P, rho, G1, AA = var[::-1,[0,3,4,9,14]].T
+    m = np.exp(var[::-1,1])*M
+    N2 = G*m/r**3*AA
+
+    ioff = (0 if r[0] < 1e6 else 1)
+    nn = len(var) + ioff
+
+    # convert profile
+    A = np.zeros((nn, 6))
+    A[ioff:,0] = r/R
+    A[ioff:,1] = m/M/(r/R)**3
+    A[ioff:,2] = G*m*rho/(G1*P*r)
+    A[ioff:,3] = G1
+    A[ioff:,4] = N2*r**3/(G*m)
+    A[ioff:,5] = 4.*np.pi*rho*r**3/m
+    
+    A[0,0] = 0.
+    A[0,1] = 4.*np.pi/3.*rho[0]*R**3/M
+    A[0,2] = 0.
+    A[0,3] = G1[0]
+    A[0,4] = 0.
+    A[0,5] = 3.
+
+    # convert header
+    D = np.zeros(8)
+    D[0] = M
+    D[1] = R
+    D[2] = P[0]
+    D[3] = rho[0]
+
+    # second derivatives at centre are given
+    if glob[10] < 0.:
+        D[4] = -glob[10]/G1[0]
+        D[5] = -glob[11]
+    else:    
+        D[4] = 4.*np.pi/3.*G*(rho[0]*R)**2/(P[0]*G1[0])
+        # D[5] = np.nanmax((A[1:,4]/A[1:,0]**2)[A[1:,0]<0.05])
+        # D[5] = np.max((D[5], 0.))+D[4]
+        D[5] = D[4]
+
+    D[6] = -1.
+    D[7] = 0.
+
+    if A[-1,4] <= 10.:
+        # chop off outermost point
+        A = A[:-1]
+        nn -= 1
+
+    return D, A
 
 
 cs_dtypes = [('xmod','float'), ('M','float'), ('R','float'),

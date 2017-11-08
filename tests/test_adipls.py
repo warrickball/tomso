@@ -1,4 +1,4 @@
-from tomso import adipls
+from tomso import adipls, io
 import numpy as np
 import unittest
 
@@ -56,6 +56,28 @@ class TestADIPLSFunctions(unittest.TestCase):
         self.assertTrue(np.all(nn1 == nn2))
         self.assertTrue(np.all(D1 == D2))
         self.assertTrue(np.all(A1 == A2))
+
+    def test_fgong_to_amdl_modelS(self):
+        nmod, nn, D1, A1 = adipls.load_amdl('data/modelS.amdl')
+        glob, var = io.load_fgong('data/modelS.fgong')
+        D2, A2 = adipls.fgong_to_amdl(glob, var, G=6.67232e-8)
+        for (x,y) in zip(D1, D2):
+            self.assertAlmostEqual(x,y)
+
+        for i in range(len(A1)):
+            for (x,y) in zip(A1[i], A2[i]):
+                self.assertAlmostEqual(x,y)
+
+    def test_fgong_to_amdl_mesa(self):
+        nmod, nn, D1, A1 = adipls.load_amdl('data/mesa.amdl')
+        glob, var = io.load_fgong('data/mesa.fgong')
+        D2, A2 = adipls.fgong_to_amdl(glob, var, G=6.67232e-8)
+        for (x,y) in zip(D1, D2):
+            self.assertAlmostEqual(x,y)
+
+        for i in range(len(A1)):
+            for (x,y) in zip(A1[i], A2[i]):
+                self.assertAlmostEqual(x,y)
 
     def cross_check_css(self):
         css_agsm = adipls.load_agsm('data/mesa.agsm')
