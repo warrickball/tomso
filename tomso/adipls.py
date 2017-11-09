@@ -135,8 +135,8 @@ def load_rkr(filename):
 
 def save_amdl(filename, nmod, nn, D, A):
     """Writes an ADIPLS model file, given data in the same form as
-    returned by `load_amdl`.  See Section 5 of the ADIPLS
-    documentation for details.
+    returned by :py:meth:`~tomso.adipls.load_amdl`.  See Section 5 of
+    the ADIPLS documentation for details.
 
     Parameters
     ----------
@@ -169,8 +169,8 @@ def save_amdl(filename, nmod, nn, D, A):
 
 def fgong_to_amdl(glob, var, G=6.67428e-8):
     """Converts FGONG data (in the form of `glob` and `var`, as returned
-    by `io.load_fgong`) into ADIPLS binary data, which can be saved
-    using `save_amdl`.
+    by :py:meth:`~tomso.io.load_fgong` into ADIPLS binary data, which
+    can be saved using :py:meth:`~tomso.adipls.save_amdl`.
 
     Parameters
     ----------

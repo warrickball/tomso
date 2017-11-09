@@ -77,9 +77,9 @@ def load_fgong(filename, N=-1, return_comment=False):
 
 def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
                comment=['\n','\n','\n','\n']):
-    """Given data for an FGONG file in the format returned by `load_fgong`
-    (i.e. two NumPy arrays and a possible header), writes the data to
-    a file.
+    """Given data for an FGONG file in the format returned by
+    :py:meth:`~tomso.io.load_fgong` (i.e. two NumPy arrays and a
+    possible header), writes the data to a file.
 
     Parameters
     ----------
@@ -148,8 +148,8 @@ def load_gyre(filename):
 
 def save_gyre(filename, header, data):
     """Given the global data and point-wise data for a stellar model (as
-    returned by `load_gyre`), saves the data to a target file in the
-    GYRE format.
+    returned by :py:meth:`~tomso.io.load_gyre`), saves the data to a
+    target file in the GYRE format.
 
     Parameters
     ----------
