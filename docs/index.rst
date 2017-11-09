@@ -15,6 +15,38 @@ specific stellar evolution or oscillation code.  The exception to this
 is the IO module, which works with formats that are intended not to be
 code specific (e.g. FGONG files).
 
+The code is intended to be the minimum necessary to usefully
+manipulate input and output data.  The only current requirement is
+*NumPy*.  
+
+Installation
+++++++++++++
+
+You can install most recent stable(ish) version of TOMSO from the
+`Python Package Index <https://pypi.python.org/pypi>`_ using
+
+``pip install tomso``
+
+The `development version <https://github.com/warrickball/tomso>`_ is
+on GitHub.  The repo also includes unit tests and test data, which is
+omitted from the PyPI package to keep it very small.
+
+Example usage
++++++++++++++
+
+I use TOMSO's modules with syntax like::
+
+  from tomso import module
+  output = module.function(input)
+
+As a very simple example, to load the header and profile data in an
+FGONG file, I use::
+
+  from tomso import io
+  glob, var = io.load_fgong('model.fgong')
+
+The APIs below give a complete list of available functions.
+
 Module APIs
 +++++++++++
 
