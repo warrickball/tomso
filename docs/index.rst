@@ -17,7 +17,8 @@ code specific (e.g. FGONG files).
 
 The code is intended to be the minimum necessary to usefully
 manipulate input and output data.  The only current requirement is
-*NumPy*.  
+*NumPy*.  It is also *very unstable*.  Expect the API to change
+drastically or completely without warning!
 
 Installation
 ++++++++++++
@@ -66,3 +67,8 @@ Module APIs
    * :ref:`genindex`
    * :ref:`modindex`
    * :ref:`search`
+
+Thanks
+++++++
+
+* `Earl Bellinger <https://earlbellinger.github.io>`_

@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name = 'TOMSO',
+    name = 'tomso',
     packages = ['tomso'],
     version = '0.0.3',
     description = 'Tools for Modelling Stars and their Oscillations',

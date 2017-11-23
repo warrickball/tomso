@@ -24,6 +24,9 @@ def load_fgong(filename, N=-1, return_comment=False):
     N: integer, optional
         Number of characters in each float.  If negative, the function
         tries to guess the size of each float. (default: -1)
+    return_comment: bool, optional
+        If ``True``, return the first four lines of the FGONG file.
+        These are comments that are not used in any calculations.
 
     Returns
     -------
@@ -32,9 +35,10 @@ def load_fgong(filename, N=-1, return_comment=False):
     var: NumPy array
         The point-wise variables for the stellar model. i.e. things
         that vary through the star like temperature, density, etc.
-    comment: list of strs (optional)
-        The first four lines of the FGONG file, which usually contain
-        notes about the stellar model.
+    comment: list of strs, optional
+        The first four lines of the FGONG file.  These are comments
+        that are not used in any calculations.  Only returned if
+        ``return_comment=True``.
 
     """
     f = open(filename, 'r')
@@ -90,10 +94,10 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
     var: NumPy array
         The point-wise variables for the stellar model. i.e. things
         that vary through the star like temperature, density, etc.
-    ivers: int (optional)
+    ivers: int, optional
         The integer indicating the version number of the file.
         (default=0)
-    comment: list of strs (optional)
+    comment: list of strs, optional
         The first four lines of the FGONG file, which usually contain
         notes about the stellar model.
 
