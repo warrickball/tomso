@@ -217,7 +217,6 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
 
     def complement(yy, xx):
         """\int _x ^x[-1] y(x) dx"""
-        # return -integrate(yy[::-1], xx[::-1])[::-1]
         zz = integrate(yy, xx)
         return zz[-1] - zz
 
@@ -248,20 +247,14 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
 
     if ell == 0:
         xi_h = 0.*xi_r # radial modes have zero horizontal component
-        # eta = G*m/r**3/omega**2
         chi = Vg/x*(y[1]-sigma2/A1/x*y[2])
-        # dxi_r_dr = (Vg-2)*y[1]-Vg/x*sigma2/A1*y[2]
-        # dxi_r_dr = dxi_r_dr/x
         dxi_r_dr = chi - 2.*y[1]/x
         dPhi_dr = -4.*np.pi*G*rho*xi_r
-        # Phi = -omega**2*R**2*y[2]
         Phi = -complement(dPhi_dr, r) # but actually you don't even need it
     elif ell > 0:
         xi_h = y[2]*R/L2
         eta = L2*A1/sigma2
         chi = Vg/x*(y[1]-y[2]/eta-y[3])
-        # dxi_r_dr = (Vg-2)*y[1]+(1-Vg/eta)*y[2]-Vg*y[3]
-        # dxi_r_dr = dxi_r_dr/x
         dxi_r_dr = chi - 2.*y[1]/x + y[2]/x
         dPhi_dr = -g/x*(y[3]+y[4])-y[3]*R*(4.*np.pi*G*rho-2.*g/r)
         Phi = -g*R*y[3]
@@ -279,22 +272,7 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
     K_cs2 = rho*cs2*chi**2*r**2 # c.f. equation (60)
     K_cs2 = K/S/omega**2/2.
 
-    # Gough (1991)
-    # first compute the huge bracketed terms in last two lines of equation (61)
-    # K_rho = (ell+1.)/x**ell*(xi_r-ell*xi_h)*integrate((rho*chi+xi_r*drho_dr)*x**(ell+2), x) \
-    #          - ell*x**(ell+1)*(xi_r+(ell+1)*xi_h)*complement((rho*chi+xi_r*drho_dr)*x**(1-ell), x)
-    # K_rho[np.isnan(K_rho)] = 0.  # hope this catches all x**-ell underflows...
-
-    # then combine it with the rest
-    # K_rho = -0.5*(xi_r**2+L2*xi_h**2)*rho*omega**2*r**2 \
-    #         +0.5*rho*cs2*chi**2*r**2 \
-    #         -G*m*chi*rho*xi_r \
-    #         +0.5*G*4.*np.pi*r**2*rho**2*xi_r**2 \
-    #         +G*m*rho*xi_r*dxi_r_dr \
-    #         -4*np.pi*G*rho*r**2*complement((chi*rho+0.5*xi_r*drho_dr)*xi_r, r) \
-    #         -4*np.pi*G*rho/(2.*ell+1.)*K_rho*R**3
-
-    # InversionKit (103)
+    # following InversionKit (103)
     K_rho = cs2*chi**2 - omega**2*(xi_r**2+L2*xi_h**2) \
         - 2.*g*xi_r*(chi - dxi_r_dr) \
         + 4.*np.pi*G*rho*xi_r**2 \
