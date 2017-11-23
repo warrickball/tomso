@@ -75,7 +75,7 @@ def load_amde(filename):
     return load_pointwise_data(filename, 7)
 
 
-def load_amdl(filename):
+def load_amdl(filename, return_nmod=False):
     """Reads an ADIPLS model file.  See Section 5 of the `ADIPLS
     documentation`_ for details.
 
@@ -84,21 +84,21 @@ def load_amdl(filename):
     Parameters
     ----------
     filename: str
-        Name of the model file, usually starting or ending with amdl.
+        Name of the model file, usually starting or ending with ``amdl``.
+    return_nmod: bool, optional
+        If ``True``, return the ``nmod`` parameter in the file.
 
     Returns
     -------
-    nmod: int
-        The model number.  I'm not sure what it's used for but it
-        doesn't seem to matter.
-    nn: int
-        The number of points in the model.
     D: 1-d array
         Global data, as defined by eq. (5.2) of the ADIPLS
         documentation.
     A: 2-d array
         Point-wise data, as defined by eq. (5.1) of the ADIPLS
         documentation.
+    nmod: int, optional
+        The model number.  I'm not sure what it's used for but it
+        doesn't seem to matter.  Only returned if ``return_nmod=True``.
 
     """
 
@@ -111,7 +111,10 @@ def load_amdl(filename):
         f.read(4)
         # check that this is the end of the file
 
-    return int(nmod), int(nn), D, A
+    if return_nmod:
+        return D, A, int(nmod)
+    else:
+        return D, A
 
 
 def load_rkr(filename):
@@ -133,7 +136,7 @@ def load_rkr(filename):
     return load_pointwise_data(filename, 2)
 
 
-def save_amdl(filename, nmod, nn, D, A):
+def save_amdl(filename, D, A, nmod=0):
     """Writes an ADIPLS model file, given data in the same form as
     returned by :py:meth:`~tomso.adipls.load_amdl`.  See Section 5 of
     the ADIPLS documentation for details.
@@ -142,21 +145,18 @@ def save_amdl(filename, nmod, nn, D, A):
     ----------
     filename: str
         Name of the model file, usually starting or ending with amdl.
-
-    nmod: int
-        The model number.  I'm not sure what it's used for but it
-        doesn't seem to matter.
-
-    nn: int
-        The number of points in the model.
     D: 1-d array
         Global data, as defined by eq. (5.2) of the ADIPLS
         documentation.
     A: 2-d array
         Point-wise data, as defined by eq. (5.1) of the ADIPLS
         documentation.
+    nmod: int, optional
+        The model number.  I'm not sure what it's used for but it
+        doesn't seem to matter.
 
     """
+    nn = len(A)
     length = np.array(8*(1+8+6*nn), dtype=np.int32)
     with open(filename, 'wb') as f:
         length.tofile(f)
