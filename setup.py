@@ -12,5 +12,5 @@ setup(
     install_requires=['numpy'],
     keywords = [],
     classifiers = [],
-    licence = 'MIT'
+    license = 'MIT'
     )

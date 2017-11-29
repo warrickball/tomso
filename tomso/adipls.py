@@ -270,7 +270,7 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
     S = np.trapz((xi_r**2+L2*xi_h**2)*rho*r**2, r)
 
     K_cs2 = rho*cs2*chi**2*r**2 # c.f. equation (60)
-    K_cs2 = K/S/omega**2/2.
+    K_cs2 = K_cs2/S/omega**2/2.
 
     # following InversionKit (103)
     K_rho = cs2*chi**2 - omega**2*(xi_r**2+L2*xi_h**2) \
