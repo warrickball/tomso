@@ -246,17 +246,17 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
     xi_r = y[1]*R
 
     if ell == 0:
-        xi_h = 0.*xi_r # radial modes have zero horizontal component
+        xi_h = 0.*xi_r  # radial modes have zero horizontal component
         chi = Vg/x*(y[1]-sigma2/A1/x*y[2])
         dxi_r_dr = chi - 2.*y[1]/x
         dPhi_dr = -4.*np.pi*G*rho*xi_r
-        Phi = -complement(dPhi_dr, r) # but actually you don't even need it
+        Phi = -complement(dPhi_dr, r)  # but actually you don't even need it
     elif ell > 0:
         xi_h = y[2]*R/L2
         eta = L2*A1/sigma2
         chi = Vg/x*(y[1]-y[2]/eta-y[3])
         dxi_r_dr = chi - 2.*y[1]/x + y[2]/x
-        dPhi_dr = -g/x*(y[3]+y[4])-y[3]*R*(4.*np.pi*G*rho-2.*g/r)
+        dPhi_dr = -g/x*(y[3] + y[4]) - y[3]*R*(4.*np.pi*G*rho - 2.*g/r)
         Phi = -g*R*y[3]
     else:
         raise ValueError('ell must be non-negative')
@@ -267,9 +267,9 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
     Phi_r = Phi/r
     Phi_r[x==0] = 0.
 
-    S = np.trapz((xi_r**2+L2*xi_h**2)*rho*r**2, r)
+    S = np.trapz((xi_r**2 + L2*xi_h**2)*rho*r**2, r)
 
-    K_cs2 = rho*cs2*chi**2*r**2 # c.f. equation (60)
+    K_cs2 = rho*cs2*chi**2*r**2  # c.f. equation (60)
     K_cs2 = K_cs2/S/omega**2/2.
 
     # following InversionKit (103)
@@ -330,7 +330,7 @@ def fgong_to_amdl(glob, var, G=6.67428e-8):
     A[ioff:,3] = G1
     A[ioff:,4] = N2*r**3/(G*m)
     A[ioff:,5] = 4.*np.pi*rho*r**3/m
-    
+
     A[0,0] = 0.
     A[0,1] = 4.*np.pi/3.*rho[0]*R**3/M
     A[0,2] = 0.
@@ -349,7 +349,7 @@ def fgong_to_amdl(glob, var, G=6.67428e-8):
     if glob[10] < 0.:
         D[4] = -glob[10]/G1[0]
         D[5] = -glob[11]
-    else:    
+    else:
         D[4] = 4.*np.pi/3.*G*(rho[0]*R)**2/(P[0]*G1[0])
         # D[5] = np.nanmax((A[1:,4]/A[1:,0]**2)[A[1:,0]<0.05])
         # D[5] = np.max((D[5], 0.))+D[4]
