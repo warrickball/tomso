@@ -1,6 +1,8 @@
 from tomso import mesa
 import unittest
 
+tmpfile = 'data/tmpfile'
+
 
 class TestMESAFunctions(unittest.TestCase):
 
@@ -44,6 +46,37 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(results[0]['sample'], 1)
         self.assertEqual(results[1]['sample'], 2)
 
+    def test_string_where(self):
+        I = mesa.string_where(['a','b','c'], 'b')
+        self.assertEqual(I, [1])
+
+        I = mesa.string_where(['b','b','b'], 'b')
+        self.assertEqual(I, [0, 1, 2])
+
+        I = mesa.string_where([], 'b')
+        self.assertEqual(I, [])
+
+    def test_replace_value(self):
+        line = mesa.replace_value('a = foo\n', True)
+        self.assertEqual(line, 'a = .true.\n')
+
+        line = mesa.replace_value('a = foo\n', 1)
+        self.assertEqual(line, 'a = 1\n')
+
+        line = mesa.replace_value('a = foo\n', 'bar')
+        self.assertEqual(line, 'a = bar\n')
+
+    def test_update_inlist(self):
+        with open(tmpfile, 'wb') as f:
+            f.writelines([b'a = foo\n', b'b = .true.\n', b'c = 1\n'])
+
+        d = {'a': 'bar', 'b': False, 'c': 2}
+        mesa.update_inlist(tmpfile, d)
+
+        with open(tmpfile, 'rb') as f:
+            lines = f.readlines()
+
+        self.assertEqual(lines, [b'a = bar\n', b'b = .false.\n', b'c = 2\n'])
 
 if __name__ == '__main__':
     unittest.main()
