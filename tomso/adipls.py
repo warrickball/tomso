@@ -18,20 +18,35 @@ def load_pointwise_data(filename, ncols):
     """Utility function for common structure of ADIPLS data that has a
     value at each point in a stellar model. e.g. eigenfunction and
     kernel files.
+
+    Parameters
+    ----------
+    filename: str
+        Name of the file to be read.
+    ncols: int
+        Number of columns in the data.
+
+    Returns
+    -------
+    css: structured array
+        The ``cs`` arrays for each mode.
+    data: list of arrays
+        The eigenfunction arrays for each mode.
+    
     """
     css = []
-    eigs = []
+    data = []
 
     with open(filename, 'rb') as f:
         while True:
             if not f.read(4): break
             css.append(read_one_cs(f))
             nnw = np.fromfile(f, dtype='i', count=1)[0]
-            eig = np.fromfile(f, dtype='d', count=ncols*nnw).reshape((-1, ncols))
-            eigs.append(eig)
+            row = np.fromfile(f, dtype='d', count=ncols*nnw).reshape((-1, ncols))
+            data.append(row)
             f.read(4)
 
-    return np.squeeze(css), np.squeeze(eigs)
+    return np.squeeze(css), np.squeeze(data)
 
 
 def load_agsm(filename):
@@ -179,9 +194,6 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
 
     Parameters
     ----------
-    variable: str
-        Either ``rho`` or ``c`` to select whether a density or sound speed
-        kernel is returned.
     ell: int
         The angular degree of the mode.
     cs: structured array
@@ -199,14 +211,16 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
         :py:meth:`~tomso.adipls.load_amdl`.
     G: float, optional
         The gravitational constant.
-    alpha: float
+    alpha: float, optional
         Coefficient of the complementary function.  If ``None``, computed
         as in Michael Thompson's kernel code.
 
     Returns
     -------
-    kernel: np.array, length N
-        The density or sound speed structure kernel.
+    K_cs2: np.array, length N
+        The sound speed squared structure kernel.
+    K_rho: np.array, length N
+        The density structure kernel.
 
     """
 
