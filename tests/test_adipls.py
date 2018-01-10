@@ -14,6 +14,14 @@ class TestADIPLSFunctions(unittest.TestCase):
         self.assertAlmostEqual(D[0], 1.988205400E+33)
         self.assertAlmostEqual(D[1], 6.204550713E+10)
 
+    def test_amdl_get(self):
+        D, A = adipls.load_amdl('data/mesa.amdl')
+        M, R, x, G1 = adipls.amdl_get(['M','R','x','G1'], D, A)
+        self.assertEqual(M, D[0])
+        self.assertEqual(R, D[1])
+        self.assertTrue(np.all(x==A[:,0]))
+        self.assertTrue(np.all(G1==A[:,3]))
+
     def test_load_modelS_agsm(self):
         css = adipls.load_agsm('data/modelS.agsm')
         for cs in css:

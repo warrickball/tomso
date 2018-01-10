@@ -5,7 +5,7 @@ various scalar results from the frequency calculation.
 
 """
 import numpy as np
-
+from tomso.common import integrate, DEFAULT_G
 
 def read_one_cs(f):
     """Utility function to parse one ``cs`` array from a binary file."""
@@ -185,7 +185,93 @@ def save_amdl(filename, D, A, nmod=0):
         length.tofile(f)
 
 
-def kernels(ell, cs, eig, D, A, G=6.67428e-8,
+def amdl_get(keys, D, A, G=DEFAULT_G):
+    """Retrieves physical properties of an AMDL model from the ``D`` and
+    ``A`` arrays.
+
+    Parameters
+    ----------
+    keys: list of strs
+        A list of desired variables.  Current options are:
+
+        - ``M``: total mass (float)
+        - ``R``: photospheric radius (float)
+        - ``P_c``: central pressure (float)
+        - ``rho_c``: central density (float)
+        - ``x``: fractional radius (array)
+        - ``m``: mass co-ordinate (array)
+        - ``r``: radius (array)
+        - ``rho``: density (array)
+        - ``G1``: first adiabatic index (array)
+        - ``P``: pressure (array)
+        - ``cs2``: sound speed squared (array)
+        - ``cs``: sound speed squared (array)
+        - ``tau``: acoustic depth
+
+        For example, if ``glob`` and ``var`` have been returned from
+        :py:meth:`~tomso.io.load_fgong`, you could use
+
+        >>> M, m = io.fgong_get('M', 'm', glob, var)
+
+        to get the total mass and mass co-ordinate.  If you only want one variable,
+        remember that you get a length 1 list, not the single item, so use
+
+        >>> x, = io.fgong_get('x', glob, var)
+
+        rather than
+
+        >>> x = io.fgong_get('x', glob, var)
+
+    D: 1-d array
+        Global data, as defined by eq. (5.2) of the ADIPLS
+        documentation and returned by
+        :py:meth:`~tomso.adipls.load_amdl`.
+    A: 2-d array
+        Point-wise data, as defined by eq. (5.1) of the ADIPLS
+        documentation and returned by
+        :py:meth:`~tomso.adipls.load_amdl`.
+    
+    Returns
+    -------
+    output: list of floats and arrays
+        A list returning the floats or arrays in the order requested
+        by the parameter ``keys``.
+
+    """
+    M, R, P_c, rho_c = D[:4]
+    x = A[:,0]
+    m = A[:,1]*x**3*M
+    r = x*R
+    rho = A[:,5]*m/r**3/4./np.pi
+    rho[x==0] = rho_c
+    G1 = A[:,3]                      # first adiabatic index
+    P = G*m*rho/G1/r/A[:,2]          # pressure
+    P[x==0] = P_c
+    cs2 = G1*P/rho                    # square of the sound speed
+    cs = np.sqrt(cs2)
+    tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
+
+    output = []
+    for key in keys:
+        if key == 'M': output.append(M)
+        elif key == 'R': output.append(R)
+        elif key == 'P_c': output.append(P_c)
+        elif key == 'rho_c': output.append(rho_c)
+        elif key == 'x': output.append(x)
+        elif key == 'm': output.append(m)
+        elif key == 'r': output.append(r)
+        elif key == 'rho': output.append(rho)
+        elif key == 'G1': output.append(G1)
+        elif key == 'P': output.append(P)
+        elif key == 'cs2': output.append(cs2)
+        elif key == 'cs': output.append(cs)
+        elif key == 'tau': output.append(tau)
+        else: raise ValueError('invalid key for adipls.amdl_get')
+
+    return output
+
+
+def kernels(ell, cs, eig, D, A, G=DEFAULT_G,
            alpha=None):
     """Returns the density and squared sound speed kernels.  I have tried
     to make this as notationally similar to Gough & Thompson (1991) as
@@ -303,7 +389,7 @@ def kernels(ell, cs, eig, D, A, G=6.67428e-8,
     return K_cs2, K_rho
 
 
-def fgong_to_amdl(glob, var, G=6.67428e-8):
+def fgong_to_amdl(glob, var, G=DEFAULT_G):
     """Converts FGONG data (in the form of `glob` and `var`, as returned
     by :py:meth:`~tomso.io.load_fgong` into ADIPLS binary data, which
     can be saved using :py:meth:`~tomso.adipls.save_amdl`.

@@ -3,6 +3,7 @@ Functions for general I/O, not specific to a particular code.
 """
 
 import numpy as np
+from tomso.common import integrate, DEFAULT_G
 
 
 def load_fgong(filename, N=-1, return_comment=False):
@@ -121,6 +122,95 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
                 N = np.mod(i+4, 5)+1  # number of floats in this row
                 line = fmt*N % tuple(row[i:i+5])
                 f.writelines([line + '\n'])
+
+
+def fgong_get(keys, glob, var, G=DEFAULT_G):
+    """Retrieves physical properties of a FGONG model from the ``glob`` and
+    ``var`` arrays.
+
+    Parameters
+    ----------
+    keys: list of strs
+        A list of desired variables.  Current options are:
+
+        - ``M``: total mass (float)
+        - ``R``: photospheric radius (float)
+        - ``L``: total luminosity (float)
+        - ``r``: radius (array)
+        - ``x``: fractional radius (array)
+        - ``m``: mass co-ordinate (array)
+        - ``q``: fractional mass co-ordinate (array)
+        - ``rho``: density (array)
+        - ``G1``: first adiabatic index (array)
+        - ``P``: pressure (array)
+        - ``T``: temperature (array)
+        - ``X``: hydrogen abundance (array)
+        - ``L_r``: luminosity at radius ``r`` (array)
+        - ``kappa``: opacity (array)
+        - ``epsilon``: specific energy generation rate (array)
+        - ``cs2``: sound speed squared (array)
+        - ``cs``: sound speed squared (array)
+        - ``tau``: acoustic depth
+
+        For example, if ``D`` and ``A`` have been returned from
+        :py:meth:`~tomso.adipls.load_amdl`, you could use
+
+        >>> M, m = adi_struct.get('M', 'm')
+
+        to get the total mass and mass co-ordinate.  If you only want one variable,
+        remember that you get a length 1 list, not the single item, so use
+
+        >>> x, = adipls.amdl_get('x')
+
+        rather than
+
+        >>> x = adipls.amdl_get('x')
+
+    glob: NumPy array
+        The scalar (or global) variables for the stellar model
+    var: NumPy array
+        The point-wise variables for the stellar model. i.e. things
+        that vary through the star like temperature, density, etc.
+    
+    Returns
+    -------
+    output: list of floats and arrays
+        A list returning the floats or arrays in the order requested
+        by the parameter ``keys``.
+
+    """
+    M, R, L = glob[:3]
+    r, lnq, T, P, rho, X, L_r, kappa, epsilon, G1 = var[:,:10].T
+    x = r/R
+    q = np.exp(lnq)
+    m = q*M
+    cs2 = G1*P/rho                    # square of the sound speed
+    cs = np.sqrt(cs2)
+    tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
+
+    output = []
+    for key in keys:
+        if key == 'M': output.append(M)
+        elif key == 'R': output.append(R)
+        elif key == 'L': output.append(L)
+        elif key == 'x': output.append(x)
+        elif key == 'r': output.append(r)
+        elif key == 'q': output.append(q)
+        elif key == 'm': output.append(m)
+        elif key == 'rho': output.append(rho)
+        elif key == 'G1': output.append(G1)
+        elif key == 'P': output.append(P)
+        elif key == 'T': output.append(T)
+        elif key == 'X': output.append(X)
+        elif key == 'L_r': output.append(L_r)
+        elif key == 'kappa': output.append(kappa)
+        elif key == 'epsilon': output.append(epsilon)
+        elif key == 'cs2': output.append(cs2)
+        elif key == 'cs': output.append(cs)
+        elif key == 'tau': output.append(tau)
+        else: raise ValueError('invalid key for adipls.amdl_get')
+
+    return output
 
 
 def load_gyre(filename):

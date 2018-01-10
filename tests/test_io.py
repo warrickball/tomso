@@ -32,6 +32,13 @@ class TestIOFunctions(unittest.TestCase):
             for j in range(len(var1[i])):
                 self.assertAlmostEqual(var1[i,j], var2[i,j])
 
+    def test_fgong_get(self):
+        glob, var = io.load_fgong('data/modelS.fgong')
+        x, r, R, M = io.fgong_get(['x','r','R','M'], glob, var)
+        self.assertTrue(np.all(x==r/R))
+        self.assertAlmostEqual(M, 1.989e33)
+        self.assertAlmostEqual(R, 6.959906258e10)
+
     def test_load_gyre(self):
         header, data = io.load_gyre('data/mesa.gyre')
         self.assertEqual(header['n'], 601)
