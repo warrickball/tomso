@@ -14,6 +14,11 @@ class TestADIPLSFunctions(unittest.TestCase):
         self.assertAlmostEqual(D[0], 1.988205400E+33)
         self.assertAlmostEqual(D[1], 6.204550713E+10)
 
+    def test_load_mesa_amdl_fail(self):
+        np.savetxt(tmpfile, np.random.rand(100,100))
+        with self.assertRaises(IOError):
+            D, A = adipls.load_amdl(tmpfile)
+
     def test_amdl_get(self):
         D, A = adipls.load_amdl('data/mesa.amdl')
         M, R, x, G1 = adipls.amdl_get(['M','R','x','G1'], D, A)

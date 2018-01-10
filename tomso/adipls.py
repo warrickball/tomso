@@ -93,7 +93,7 @@ def load_amde(filename):
     return load_pointwise_data(filename, 7)
 
 
-def load_amdl(filename, return_nmod=False):
+def load_amdl(filename, return_nmod=False, live_dangerously=False):
     """Reads an ADIPLS model file.  See Section 5 of the `ADIPLS
     documentation`_ for details.
 
@@ -105,6 +105,9 @@ def load_amdl(filename, return_nmod=False):
         Name of the model file, usually starting or ending with ``amdl``.
     return_nmod: bool, optional
         If ``True``, return the ``nmod`` parameter in the file.
+    live_dangerously: bool, optional
+        If ``True``, load the file even if it looks like it might be
+        too large for an AMDL file (i.e. has more than a million points).
 
     Returns
     -------
@@ -124,6 +127,12 @@ def load_amdl(filename, return_nmod=False):
         f.read(4)
         nmod = np.fromfile(f, dtype='i', count=1)[0]
         nn = np.fromfile(f, dtype='i', count=1)[0]
+        if not live_dangerously and nn > 1000000:
+            raise IOError("Model appears to have %i points; "
+                          "it probably isn't an AMDL file. "
+                          "If you're sure that it is, try again "
+                          "with live_dangerously=True" % nn)
+
         D = np.fromfile(f, dtype='d', count=8)
         A = np.fromfile(f, dtype='d', count=6*nn).reshape((-1,6))
         f.read(4)
