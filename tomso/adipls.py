@@ -16,7 +16,7 @@ def read_one_cs(f):
 
 def load_pointwise_data(filename, ncols):
     """Utility function for common structure of ADIPLS data that has a
-    value at each point in a stellar model. e.g. eigenfunction and
+    value at each point in a stellar model. e.g. eigenfunction or
     kernel files.
 
     Parameters
@@ -31,7 +31,7 @@ def load_pointwise_data(filename, ncols):
     css: structured array
         The ``cs`` arrays for each mode.
     data: list of arrays
-        The eigenfunction arrays for each mode.
+        The point-wise data arrays for each mode.
     
     """
     css = []
@@ -150,7 +150,8 @@ def load_rkr(filename):
     Parameters
     ----------
     filename: str
-        Name of the kernel file, usually starting or ending with rkr
+        Name of the kernel file, usually starting or ending with
+        ``rkr``.
 
     Returns
     -------
@@ -158,6 +159,7 @@ def load_rkr(filename):
         The ``cs`` arrays for each mode.
     rkrs: list of arrays
         The kernel arrays for each mode.
+
     """
 
     return load_pointwise_data(filename, 2)
