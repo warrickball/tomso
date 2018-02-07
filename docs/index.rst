@@ -59,6 +59,7 @@ Module APIs
    gyre
    mesa
    stars
+   common
 	     
 ..
    Indices and tables
