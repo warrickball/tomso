@@ -149,22 +149,22 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
         - ``kappa``: opacity (array)
         - ``epsilon``: specific energy generation rate (array)
         - ``cs2``: sound speed squared (array)
-        - ``cs``: sound speed squared (array)
+        - ``cs``: sound speed (array)
         - ``tau``: acoustic depth
 
-        For example, if ``D`` and ``A`` have been returned from
-        :py:meth:`~tomso.adipls.load_amdl`, you could use
+        For example, if ``glob`` and ``var`` have been returned from
+        :py:meth:`~tomso.io.load_fgong`, you could use
 
-        >>> M, m = adi_struct.get('M', 'm')
+        >>> M, m = io.fgong_get(['M', 'm'], glob, var)
 
         to get the total mass and mass co-ordinate.  If you only want one variable,
         remember that you get a length 1 list, not the single item, so use
 
-        >>> x, = adipls.amdl_get('x')
+        >>> x, = io.fgong_get(['x'], glob, var)
 
         rather than
 
-        >>> x = adipls.amdl_get('x')
+        >>> x = io.fgong_get(['x'], glob, var)
 
     glob: NumPy array
         The scalar (or global) variables for the stellar model
@@ -193,10 +193,10 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
         if key == 'M': output.append(M)
         elif key == 'R': output.append(R)
         elif key == 'L': output.append(L)
-        elif key == 'x': output.append(x)
         elif key == 'r': output.append(r)
-        elif key == 'q': output.append(q)
+        elif key == 'x': output.append(x)
         elif key == 'm': output.append(m)
+        elif key == 'q': output.append(q)
         elif key == 'rho': output.append(rho)
         elif key == 'G1': output.append(G1)
         elif key == 'P': output.append(P)

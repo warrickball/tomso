@@ -21,12 +21,12 @@ def load_summary(filename):
     header: structured array
         Global data for the frequency calculation. e.g. initial parameters.
         The keys for the array are the GYRE variable names as in
-        the &output namelist in the GYRE input file.
+        the ``&output`` namelist in the GYRE input file.
 
     data: structured array
         Mode data for the frequency calculation. e.g. mode frequencies.
         The keys for the array are the GYRE variable names as in
-        the &output namelist in the GYRE input file.
+        the ``&output`` namelist in the GYRE input file.
 
     """
 
@@ -38,6 +38,7 @@ def load_summary(filename):
         header = []
     else:
         header = np.genfromtxt(lines[2:4], names=True)
+        
     data = np.genfromtxt(lines[5:], names=True)
 
     return header, data

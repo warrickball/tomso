@@ -1,14 +1,16 @@
 """Functions for reading and writing ADIPLS binary output.  Many
 return what I call ``cs`` arrays.  These are defined in Section 8.2 of
-the ADIPLS documentation.  They are structured arrays containing
+the `ADIPLS documentation`_.  They are structured arrays containing
 various scalar results from the frequency calculation.
 
+    .. _ADIPLS documentation: https://sourceforge.net/p/mesa/code/HEAD/tree/trunk/adipls/adipack.c/notes/adiab.prg.c.pdf
 """
 import numpy as np
 from tomso.common import integrate, DEFAULT_G
 
 def read_one_cs(f):
-    """Utility function to parse one ``cs`` array from a binary file."""
+    """Utility function to parse one ``cs`` array from a binary file
+    handle ``f``."""
     cs = np.fromfile(f, dtype=cs_floats, count=1)
     cs = cs.astype(cs_dtypes, copy=False)
     return cs
@@ -87,7 +89,12 @@ def load_amde(filename):
     css: structured array
         The ``cs`` arrays for each mode.
     eigs: list of arrays
-        The eigenfunction arrays for each mode.
+        The eigenfunction arrays for each mode.  Each array has seven
+        columns: the fractional radius :math:`x` and six columns of
+        ADIPLS's :math:`y` matrix.  The first four columns of
+        :math:`y` are defined by equation (2.5) of the documentation
+        and the last two by equations (4.4) and (4.6).
+
     """
 
     return load_pointwise_data(filename, 7)
@@ -97,16 +104,14 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False):
     """Reads an ADIPLS model file.  See Section 5 of the `ADIPLS
     documentation`_ for details.
 
-    .. _ADIPLS documentation: https://sourceforge.net/p/mesa/code/HEAD/tree/trunk/adipls/adipack.c/notes/adiab.prg.c.pdf
-
     Parameters
     ----------
     filename: str
         Name of the model file, usually starting or ending with ``amdl``.
     return_nmod: bool, optional
-        If ``True``, return the ``nmod`` parameter in the file.
+        If `True`, return the ``nmod`` parameter in the file.
     live_dangerously: bool, optional
-        If ``True``, load the file even if it looks like it might be
+        If `True`, load the file even if it looks like it might be
         too large for an AMDL file (i.e. has more than a million points).
 
     Returns
@@ -119,7 +124,7 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False):
         documentation.
     nmod: int, optional
         The model number.  I'm not sure what it's used for but it
-        doesn't seem to matter.  Only returned if ``return_nmod=True``.
+        doesn't seem to matter.  Only returned if `return_nmod=True`.
 
     """
 
@@ -158,7 +163,8 @@ def load_rkr(filename):
     css: structured array
         The ``cs`` arrays for each mode.
     rkrs: list of arrays
-        The kernel arrays for each mode.
+        The kernel arrays for each mode.  Each array has two columns:
+        the fractional radius :math:`x` and the kernel :math:`K(x)`.
 
     """
 
@@ -168,18 +174,18 @@ def load_rkr(filename):
 def save_amdl(filename, D, A, nmod=0):
     """Writes an ADIPLS model file, given data in the same form as
     returned by :py:meth:`~tomso.adipls.load_amdl`.  See Section 5 of
-    the ADIPLS documentation for details.
+    the `ADIPLS documentation`_ for details.
 
     Parameters
     ----------
     filename: str
         Name of the model file, usually starting or ending with amdl.
     D: 1-d array
-        Global data, as defined by eq. (5.2) of the ADIPLS
-        documentation.
+        Global data, as defined by eq. (5.2) of the `ADIPLS
+        documentation`_.
     A: 2-d array
-        Point-wise data, as defined by eq. (5.1) of the ADIPLS
-        documentation.
+        Point-wise data, as defined by eq. (5.1) of the `ADIPLS
+        documentation`_.
     nmod: int, optional
         The model number.  I'm not sure what it's used for but it
         doesn't seem to matter.
@@ -216,30 +222,30 @@ def amdl_get(keys, D, A, G=DEFAULT_G):
         - ``G1``: first adiabatic index (array)
         - ``P``: pressure (array)
         - ``cs2``: sound speed squared (array)
-        - ``cs``: sound speed squared (array)
+        - ``cs``: sound speed (array)
         - ``tau``: acoustic depth
 
-        For example, if ``glob`` and ``var`` have been returned from
-        :py:meth:`~tomso.io.load_fgong`, you could use
+        For example, if ``D`` and ``A`` have been returned from
+        :py:meth:`~tomso.adipls.load_amdl`, you could use
 
-        >>> M, m = io.fgong_get('M', 'm', glob, var)
+        >>> M, m = adipls.amdl_get(['M', 'm'], D, A)
 
         to get the total mass and mass co-ordinate.  If you only want one variable,
         remember that you get a length 1 list, not the single item, so use
 
-        >>> x, = io.fgong_get('x', glob, var)
+        >>> x, = adipls.amdl_get(['x'], D, A)
 
         rather than
 
-        >>> x = io.fgong_get('x', glob, var)
+        >>> x = adipls.amdl_get('x', D, A)
 
     D: 1-d array
-        Global data, as defined by eq. (5.2) of the ADIPLS
-        documentation and returned by
+        Global data, as defined by eq. (5.2) of the `ADIPLS
+        documentation`_ and returned by
         :py:meth:`~tomso.adipls.load_amdl`.
     A: 2-d array
-        Point-wise data, as defined by eq. (5.1) of the ADIPLS
-        documentation and returned by
+        Point-wise data, as defined by eq. (5.1) of the `ADIPLS
+        documentation`_ and returned by
         :py:meth:`~tomso.adipls.load_amdl`.
     
     Returns
@@ -299,12 +305,12 @@ def kernels(ell, cs, eig, D, A, G=DEFAULT_G,
         Eigenfunction data for the mode, as returned by
         :py:meth:`~tomso.adipls.load_amde`.
     D: 1-d array
-        Global data, as defined by eq. (5.2) of the ADIPLS
-        documentation and returned by
+        Global data, as defined by eq. (5.2) of the `ADIPLS
+        documentation`_ and returned by
         :py:meth:`~tomso.adipls.load_amdl`.
     A: 2-d array
-        Point-wise data, as defined by eq. (5.1) of the ADIPLS
-        documentation and returned by
+        Point-wise data, as defined by eq. (5.1) of the `ADIPLS
+        documentation`_ and returned by
         :py:meth:`~tomso.adipls.load_amdl`.
     G: float, optional
         The gravitational constant.
@@ -405,6 +411,10 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
     by :py:meth:`~tomso.io.load_fgong` into ADIPLS binary data, which
     can be saved using :py:meth:`~tomso.adipls.save_amdl`.
 
+    The output should be identical (to within a few times machine
+    error) to the output of ``fgong-amdl.d`` tool distributed with
+    ADIPLS.
+
     Parameters
     ----------
     glob: NumPy array
@@ -418,11 +428,11 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
     Returns
     -------
     D: 1-d array
-        Global data, as defined by eq. (5.2) of the ADIPLS
-        documentation.
+        Global data, as defined by eq. (5.2) of the `ADIPLS
+        documentation`_.
     A: 2-d array
-        Point-wise data, as defined by eq. (5.1) of the ADIPLS
-        documentation.
+        Point-wise data, as defined by eq. (5.1) of the `ADIPLS
+        documentation`_.
 
     """
     M, R = glob[:2]

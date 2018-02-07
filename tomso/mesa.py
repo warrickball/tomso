@@ -144,9 +144,10 @@ def load_sample(filename):
 # update_inlist, string_where and replace_value all ported from
 # mesaface.  still need testing!
 def update_inlist(inlist, d):
-    # check: fail if parameter isn't in the inlist
     """Updates parameter values in a MESA inlist file.  The function
-    searches the whole file for the parameter key.
+    searches the whole file for the parameter key.  An ``IndexError``
+    usually means that one of the keys in dict `d` wasn't found in
+    `inlist`.
 
     Parameters
     ----------
