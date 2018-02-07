@@ -78,5 +78,13 @@ class TestMESAFunctions(unittest.TestCase):
 
         self.assertEqual(lines, [b'a = bar\n', b'b = .false.\n', b'c = 2\n'])
 
+    def test_update_inlist_no_key(self):
+        with open(tmpfile, 'wb') as f:
+            f.writelines([b'a = foo\n', b'b = .true.\n', b'c = 1\n'])
+
+        d = {'a': 'bar', 'd': -1}
+        with self.assertRaises(IndexError):
+            mesa.update_inlist(tmpfile, d)
+
 if __name__ == '__main__':
     unittest.main()
