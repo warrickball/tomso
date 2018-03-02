@@ -16,7 +16,21 @@ class TestCommonFunctions(unittest.TestCase):
         x = np.linspace(0., 4., 101)
         y = x
 
-        self.assertTrue(np.allclose(common.integrate(y, x), x**2/2., atol=4.*EPS))
+        self.assertTrue(np.allclose(common.integrate(y, x),
+                                    x**2/2., atol=4.*EPS))
+
+    def test_complement_constant(self):
+        x = np.linspace(0., 4., 101)
+        y = np.ones_like(x)
+
+        self.assertTrue(np.all(common.complement(y, x) == x[-1]-x))
+
+    def test_complement_line(self):
+        x = np.linspace(0., 4., 101)
+        y = x
+
+        self.assertTrue(np.allclose(common.complement(y, x),
+                                    (x[-1]**2-x**2)/2., atol=4.*EPS))
 
 
 if __name__ == '__main__':
