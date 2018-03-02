@@ -3,7 +3,7 @@ import numpy as np
 import unittest
 
 tmpfile = 'data/tmpfile'
-
+EPS = np.finfo(float).eps
 
 class TestIOFunctions(unittest.TestCase):
 
@@ -39,6 +39,18 @@ class TestIOFunctions(unittest.TestCase):
         self.assertAlmostEqual(M, 1.989e33)
         self.assertAlmostEqual(R, 6.959906258e10)
 
+    def test_fgong_get_cross_check(self):
+        glob, var = io.load_fgong('data/modelS.fgong')
+        M, R, L, r, x, m, q, g, rho, P, Hp, G1, T, X, L_r, kappa, epsilon, cs2, cs, tau \
+            = io.fgong_get(['M','R', 'L', 'r', 'x', 'm', 'q', 'g',
+                            'rho', 'P', 'Hp', 'G1', 'T', 'X', 'L_r',
+                            'kappa', 'epsilon', 'cs2', 'cs', 'tau'],
+                           glob, var)
+        self.assertTrue(np.allclose(q, m/M, rtol=4*EPS))
+        self.assertTrue(np.allclose(x, r/R, rtol=4*EPS))
+        self.assertTrue(np.allclose(Hp, P/(rho*g), rtol=4*EPS, equal_nan=True))
+        self.assertTrue(np.allclose(cs2, G1*P/rho, rtol=4*EPS))
+        
     def test_load_gyre(self):
         header, data = io.load_gyre('data/mesa.gyre')
         self.assertEqual(header['n'], 601)

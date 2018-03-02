@@ -3,7 +3,7 @@ import numpy as np
 import unittest
 
 tmpfile = 'data/tmpfile'
-
+EPS = np.finfo(float).eps
 
 class TestADIPLSFunctions(unittest.TestCase):
 
@@ -26,6 +26,17 @@ class TestADIPLSFunctions(unittest.TestCase):
         self.assertEqual(R, D[1])
         self.assertTrue(np.all(x==A[:,0]))
         self.assertTrue(np.all(G1==A[:,3]))
+
+    def test_amdl_get_cross_check(self):
+        D, A = adipls.load_amdl('data/mesa.amdl')
+        M, R, P_c, rho_c, r, x, m, q, g, rho, P, Hp, G1, cs2, cs, tau \
+            = adipls.amdl_get(['M','R', 'P_c', 'rho_c', 'r', 'x', 'm',
+                                'q', 'g', 'rho', 'P', 'Hp', 'G1', 'cs2',
+                                'cs', 'tau'], D, A)
+        self.assertTrue(np.allclose(q, m/M, rtol=4*EPS))
+        self.assertTrue(np.allclose(x, r/R, rtol=4*EPS))
+        self.assertTrue(np.allclose(Hp, P/(rho*g), rtol=4*EPS, equal_nan=True))
+        self.assertTrue(np.allclose(cs2, G1*P/rho, rtol=4*EPS))
 
     def test_load_modelS_agsm(self):
         css = adipls.load_agsm('data/modelS.agsm')

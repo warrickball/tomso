@@ -215,12 +215,15 @@ def amdl_get(keys, D, A, G=DEFAULT_G):
         - ``R``: photospheric radius (float)
         - ``P_c``: central pressure (float)
         - ``rho_c``: central density (float)
+        - ``r``: radius (array)
         - ``x``: fractional radius (array)
         - ``m``: mass co-ordinate (array)
-        - ``r``: radius (array)
+        - ``q``: fractional mass co-ordinate (array)
+        - ``g``: gravity (array)
         - ``rho``: density (array)
-        - ``G1``: first adiabatic index (array)
         - ``P``: pressure (array)
+        - ``Hp``: pressure scale height (array)
+        - ``G1``: first adiabatic index (array)
         - ``cs2``: sound speed squared (array)
         - ``cs``: sound speed (array)
         - ``tau``: acoustic depth
@@ -257,14 +260,17 @@ def amdl_get(keys, D, A, G=DEFAULT_G):
     """
     M, R, P_c, rho_c = D[:4]
     x = A[:,0]
-    m = A[:,1]*x**3*M
+    q = A[:,1]*x**3
+    m = q*M
     r = x*R
+    g = G*m/r**2
     rho = A[:,5]*m/r**3/4./np.pi
     rho[x==0] = rho_c
-    G1 = A[:,3]                      # first adiabatic index
-    P = G*m*rho/G1/r/A[:,2]          # pressure
+    G1 = A[:,3]  # first adiabatic index
+    P = G*m*rho/G1/r/A[:,2]  # pressure
     P[x==0] = P_c
-    cs2 = G1*P/rho                    # square of the sound speed
+    Hp = P/(rho*g)  # pressure scale height
+    cs2 = G1*P/rho  # square of the sound speed
     cs = np.sqrt(cs2)
     tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
 
@@ -274,16 +280,19 @@ def amdl_get(keys, D, A, G=DEFAULT_G):
         elif key == 'R': output.append(R)
         elif key == 'P_c': output.append(P_c)
         elif key == 'rho_c': output.append(rho_c)
+        elif key == 'r': output.append(r)
         elif key == 'x': output.append(x)
         elif key == 'm': output.append(m)
-        elif key == 'r': output.append(r)
+        elif key == 'q': output.append(q)
+        elif key == 'g': output.append(g)
         elif key == 'rho': output.append(rho)
-        elif key == 'G1': output.append(G1)
         elif key == 'P': output.append(P)
+        elif key == 'Hp': output.append(Hp)
+        elif key == 'G1': output.append(G1)
         elif key == 'cs2': output.append(cs2)
         elif key == 'cs': output.append(cs)
         elif key == 'tau': output.append(tau)
-        else: raise ValueError('invalid key for adipls.amdl_get')
+        else: raise ValueError('%s is not a valid key for adipls.amdl_get' % key)
 
     return output
 

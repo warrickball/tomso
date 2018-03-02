@@ -140,9 +140,11 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
         - ``x``: fractional radius (array)
         - ``m``: mass co-ordinate (array)
         - ``q``: fractional mass co-ordinate (array)
+        - ``g``: gravity (array)
         - ``rho``: density (array)
-        - ``G1``: first adiabatic index (array)
         - ``P``: pressure (array)
+        - ``Hp``: pressure scale height (array)
+        - ``G1``: first adiabatic index (array)
         - ``T``: temperature (array)
         - ``X``: hydrogen abundance (array)
         - ``L_r``: luminosity at radius ``r`` (array)
@@ -184,6 +186,8 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
     x = r/R
     q = np.exp(lnq)
     m = q*M
+    g = G*m/r**2
+    Hp = P/(rho*g)
     cs2 = G1*P/rho                    # square of the sound speed
     cs = np.sqrt(cs2)
     tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
@@ -197,9 +201,11 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
         elif key == 'x': output.append(x)
         elif key == 'm': output.append(m)
         elif key == 'q': output.append(q)
+        elif key == 'g': output.append(g)
         elif key == 'rho': output.append(rho)
-        elif key == 'G1': output.append(G1)
         elif key == 'P': output.append(P)
+        elif key == 'Hp': output.append(Hp)
+        elif key == 'G1': output.append(G1)
         elif key == 'T': output.append(T)
         elif key == 'X': output.append(X)
         elif key == 'L_r': output.append(L_r)
