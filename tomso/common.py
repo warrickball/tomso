@@ -8,5 +8,5 @@ by all modules."""
 def integrate(y, x):
     """Integral of `y` over `x`. 
     i.e. :math:`\int _{x[0]} ^x y(x') dx'`"""
-    dz = (yy[1:]+yy[:-1])/2.*np.diff(xx)
+    dz = (y[1:]+y[:-1])/2.*np.diff(x)
     return np.hstack((0., np.cumsum(dz)))
