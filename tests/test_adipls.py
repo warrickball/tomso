@@ -116,12 +116,10 @@ class TestADIPLSFunctions(unittest.TestCase):
             for (x,y) in zip(A1[i], A2[i]):
                 self.assertAlmostEqual(x,y)
 
-    def cross_check_css(self):
-        css_agsm = adipls.load_agsm('data/mesa.agsm')
-        css_amdl = adipls.load_amdl('data/mesa.amdl')[0]
-        css_amde = adipls.load_amde('data/mesa.amde')[0]
-        css_rkr = adipls.load_rkr('data/mesa.rkr')[0]
-        self.assertTrue(np.all(css_agsm == css_amdl))
+    def test_cross_check_css(self):
+        css_agsm = adipls.load_agsm('data/modelS.agsm')
+        css_amde = adipls.load_amde('data/modelS_nfmode1.amde')[0]
+        css_rkr = adipls.load_rkr('data/modelS.rkr')[0]
         self.assertTrue(np.all(css_agsm == css_amde))
         self.assertTrue(np.all(css_agsm == css_rkr))
 
