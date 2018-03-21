@@ -6,7 +6,7 @@ codes.  Functions are presently implemented for
 
 * [MESA](http://mesa.sourceforge.net)
 * [STARS](http://www.ast.cam.ac.uk/~stars)
-* ADIPLS
+* [ADIPLS](http://users-phys.au.dk/jcd/adipack.n/)
 * [GYRE](https://bitbucket.org/rhdtownsend/gyre/wiki/Home)
 
 Documentation is available on
