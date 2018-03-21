@@ -72,4 +72,9 @@ Module APIs
 Thanks
 ++++++
 
-* `Earl Bellinger <https://earlbellinger.github.io>`_
+* `Earl Bellinger <https://earlbellinger.github.io>`_, who showed me
+  how to read Fortran binary files in Python, without which most of
+  the ADIPLS module would be impossible.
+* `Vincent Böning <http://www.mps.mpg.de/staff/59381>`_, who
+  extended ``adipls.load_amde`` to read output with ``inomde=2`` or
+  ``3``.

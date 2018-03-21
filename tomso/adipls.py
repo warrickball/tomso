@@ -57,12 +57,14 @@ def load_agsm(filename):
     Parameters
     ----------
     filename: str
-        Name of the grand summary file, usually starting or ending with agsm.
+        Name of the grand summary file, usually starting or ending
+        with ``agsm``.
 
     Returns
     -------
     css: structured array
         The ``cs`` arrays for each mode.
+
     """
 
     css = []
@@ -76,13 +78,21 @@ def load_agsm(filename):
     return np.squeeze(css)
 
 
-def load_amde(filename):
-    """Reads an ADIPLS eigenfunction file, written with ``nmode=1``.
+def load_amde(filename, nfmode=1):
+    """Reads an ADIPLS eigenfunction file written with the specified value
+    of ``nfmode`` in the input file (either 1, 2 or 3).
 
     Parameters
     ----------
     filename: str
-        Name of the eigenfunction file, usually starting or ending with amde
+        Name of the eigenfunction file, usually starting or ending
+        with ``amde``.
+    nfmode: int, optional
+        ADIPLS's ``nfmode`` parameter, which determines the format of
+        the eigenfunction data.  See Section 8.4 of the `ADIPLS
+        documentation`_ for details of the output.  Note that for
+        ``nfmode=2`` or ``3``, the fractional radius is returned as an
+        extra (third) component.
 
     Returns
     -------
@@ -94,10 +104,36 @@ def load_amde(filename):
         ADIPLS's :math:`y` matrix.  The first four columns of
         :math:`y` are defined by equation (2.5) of the documentation
         and the last two by equations (4.4) and (4.6).
+    x: array, optional
+        Fractional radius co-ordinate ``x`` of the eigenfunctions.
+        Only returned for ``nfmode=2`` or ``3``, in which case the
+        radial co-ordinate isn't a part of ``eigs``.
 
     """
 
-    return load_pointwise_data(filename, 7)
+    if nfmode == 1:
+        return load_pointwise_data(filename, 7)
+    elif nfmode == 2 or nfmode == 3:
+        # thanks to Vincent Boening for this
+        ncols = 2
+        css = []
+        data = []
+        with open(filename, 'rb') as f:
+            f.read(4)
+            nnw = np.fromfile(f, dtype='i', count=1)[0]
+            x = np.fromfile(f, dtype='d', count=nnw)
+            f.read(4)
+
+            while True:
+                if not f.read(4): break
+                css.append(read_one_cs(f))
+                row = np.fromfile(f, dtype='d', count=ncols*nnw).reshape((-1, ncols))
+                data.append(row)
+                f.read(4)
+                
+        return np.squeeze(css), np.squeeze(data), x
+    else:
+        raise ValueError('nfmode must be 1, 2 or 3 but got %i' % nfmode)
 
 
 def load_amdl(filename, return_nmod=False, live_dangerously=False):

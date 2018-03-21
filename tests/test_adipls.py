@@ -45,10 +45,23 @@ class TestADIPLSFunctions(unittest.TestCase):
             self.assertAlmostEqual(cs['R'], 69599062580.0)
 
     def test_load_modelS_amde(self):
-        css, eigs = adipls.load_amde('data/modelS.amde')
-        for cs in css:
-            self.assertAlmostEqual(cs['M'], 1.989e33)
-            self.assertAlmostEqual(cs['R'], 69599062580.0)
+        css1, eigs1 = adipls.load_amde('data/modelS_nfmode1.amde')
+        css2, eigs2, x2 = adipls.load_amde('data/modelS_nfmode2.amde', nfmode=2)
+        css3, eigs3, x3 = adipls.load_amde('data/modelS_nfmode3.amde', nfmode=3)
+        for cs1, cs2, cs3 in zip(css1, css2, css3):
+            self.assertTrue(np.all(cs1==cs2))
+            self.assertTrue(np.all(cs1==cs3))
+            self.assertAlmostEqual(cs1['M'], 1.989e33)
+            self.assertAlmostEqual(cs1['R'], 69599062580.0)
+
+        for eig1, eig2, eig3 in zip(eigs1, eigs2, eigs3):
+            self.assertTrue(np.all(eig1[:,1:3] == eig2))
+            self.assertTrue(np.all(eig1[:,5:] == eig3))
+            self.assertTrue(np.all(eig1[:,0] == x2))
+            self.assertTrue(np.all(eig1[:,0] == x3))
+
+    def test_load_amde_nfmode_value_error(self):
+        self.assertRaises(ValueError, adipls.load_amde, 'data/modelS_nfmode1.amde', nfmode=4)
 
     def test_load_modelS_amdl(self):
         D, A, nmod = adipls.load_amdl('data/modelS.amdl', return_nmod=True)
@@ -105,9 +118,9 @@ class TestADIPLSFunctions(unittest.TestCase):
 
     def cross_check_css(self):
         css_agsm = adipls.load_agsm('data/mesa.agsm')
-        css_amdl = adipls.load_agsm('data/mesa.amdl')[0]
-        css_amde = adipls.load_agsm('data/mesa.amde')[0]
-        css_rkr = adipls.load_agsm('data/mesa.rkr')[0]
+        css_amdl = adipls.load_amdl('data/mesa.amdl')[0]
+        css_amde = adipls.load_amde('data/mesa.amde')[0]
+        css_rkr = adipls.load_rkr('data/mesa.rkr')[0]
         self.assertTrue(np.all(css_agsm == css_amdl))
         self.assertTrue(np.all(css_agsm == css_amde))
         self.assertTrue(np.all(css_agsm == css_rkr))
