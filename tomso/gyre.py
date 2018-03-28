@@ -34,10 +34,11 @@ def load_summary(filename):
         lines = [line.encode('utf-8') for line in f.readlines()]
 
     # catch case of no global data
-    if lines[1] == '\n':
-        header = []
-    else:
+    # just try to load header and give up on failure
+    try:
         header = np.genfromtxt(lines[2:4], names=True)
+    except IndexError:
+        header = None
         
     data = np.genfromtxt(lines[5:], names=True)
 
