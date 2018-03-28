@@ -15,7 +15,10 @@ class TestGYREFunctions(unittest.TestCase):
             self.assertEqual(row['l'], 1)
             self.assertEqual(row['n_pg'], i+19)
 
-        header, data = gyre.load_summary('data/gyre.summ')
+        header, data = gyre.load_summary('data/gyre_noheader.summ')
+        for i, row in enumerate(data):
+            self.assertEqual(row['l'], 0)
+            self.assertEqual(row['n_pg'], i+8)
 
     def test_load_mode(self):
         for i in range(3):
