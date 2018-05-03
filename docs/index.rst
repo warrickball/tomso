@@ -54,8 +54,8 @@ Module APIs
 .. toctree::
    :maxdepth: 2
 
-   fgong
    adipls
+   fgong
    gyre
    mesa
    stars
