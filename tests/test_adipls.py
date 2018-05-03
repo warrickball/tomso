@@ -1,4 +1,4 @@
-from tomso import adipls, io
+from tomso import adipls, fgong
 import numpy as np
 import unittest
 
@@ -96,7 +96,7 @@ class TestADIPLSFunctions(unittest.TestCase):
 
     def test_fgong_to_amdl_modelS(self):
         D1, A1 = adipls.load_amdl('data/modelS.amdl')
-        glob, var = io.load_fgong('data/modelS.fgong')
+        glob, var = fgong.load_fgong('data/modelS.fgong')
         D2, A2 = adipls.fgong_to_amdl(glob, var, G=6.67232e-8)
         for (x,y) in zip(D1, D2):
             self.assertAlmostEqual(x,y)
@@ -107,7 +107,7 @@ class TestADIPLSFunctions(unittest.TestCase):
 
     def test_fgong_to_amdl_mesa(self):
         D1, A1 = adipls.load_amdl('data/mesa.amdl')
-        glob, var = io.load_fgong('data/mesa.fgong')
+        glob, var = fgong.load_fgong('data/mesa.fgong')
         D2, A2 = adipls.fgong_to_amdl(glob, var, G=6.67232e-8)
         for (x,y) in zip(D1, D2):
             self.assertAlmostEqual(x,y)

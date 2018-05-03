@@ -453,7 +453,7 @@ def kernels(ell, cs, eig, D, A, G=DEFAULT_G,
 
 def fgong_to_amdl(glob, var, G=DEFAULT_G):
     """Converts FGONG data (in the form of `glob` and `var`, as returned
-    by :py:meth:`~tomso.io.load_fgong` into ADIPLS binary data, which
+    by :py:meth:`~tomso.fgong.load_fgong` into ADIPLS binary data, which
     can be saved using :py:meth:`~tomso.adipls.save_amdl`.
 
     The output should be identical (to within a few times machine

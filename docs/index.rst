@@ -43,8 +43,8 @@ I use TOMSO's modules with syntax like::
 As a very simple example, to load the header and profile data in an
 FGONG file, I use::
 
-  from tomso import io
-  glob, var = io.load_fgong('model.fgong')
+  from tomso import fgong
+  glob, var = fgong.load_fgong('model.fgong')
 
 The APIs below give a complete list of available functions.
 
@@ -54,7 +54,7 @@ Module APIs
 .. toctree::
    :maxdepth: 2
 
-   io
+   fgong
    adipls
    gyre
    mesa
