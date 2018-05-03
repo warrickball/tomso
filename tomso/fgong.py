@@ -4,6 +4,7 @@ Functions for manipulating FGONG files.
 
 import numpy as np
 from tomso.common import integrate, DEFAULT_G
+from tomso.adipls import fgong_to_amdl
 
 
 def load_fgong(filename, N=-1, return_comment=False):
@@ -214,6 +215,6 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
         elif key == 'cs2': output.append(cs2)
         elif key == 'cs': output.append(cs)
         elif key == 'tau': output.append(tau)
-        else: raise ValueError('invalid key for adipls.amdl_get')
+        else: raise ValueError('invalid key for fgong.fgong_get')
 
     return output

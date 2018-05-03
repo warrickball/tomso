@@ -110,7 +110,7 @@ def load_gyre(filename):
 
 def save_gyre(filename, header, data):
     """Given the global data and point-wise data for a stellar model (as
-    returned by :py:meth:`~tomso.fgong.load_gyre`), saves the data to a
+    returned by :py:meth:`~tomso.gyre.load_gyre`), saves the data to a
     target file in the GYRE format.
 
     Parameters
