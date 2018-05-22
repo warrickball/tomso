@@ -102,8 +102,17 @@ def load_gyre(filename):
     with open(filename, 'r') as f:
         lines = [line.replace('D','E') for line in f.readlines()]
 
-    header = np.loadtxt(lines[:1], dtype=gyre_header_dtypes)
-    data = np.loadtxt(lines[1:], dtype=gyre_data_dtypes)
+    header_length = len(lines[0].split())
+    if header_length == 4:
+        version = 1
+    elif header_length == 5:
+        version = int(lines[0].split()[-1])
+    else:
+        raise ValueError("header should have 4 or 5 components but "
+                         "it appears to have %i" % header_length)
+        
+    header = np.loadtxt(lines[:1], dtype=gyre_header_dtypes[version])
+    data = np.loadtxt(lines[1:], dtype=gyre_data_dtypes[version])
 
     return header, data
 
@@ -135,14 +144,47 @@ def save_gyre(filename, header, data):
             f.writelines([fmt % tuple(row)])
 
 
-gyre_header_dtypes = [('n','int'), ('M','float'), ('R','float'),
-                      ('L','float'), ('version','int')]
-gyre_data_dtypes = [('k','int'), ('r','float'), ('m','float'),
-                    ('L_r','float'), ('p','float'), ('T','float'),
-                    ('rho','float'), ('nabla','float'),
-                    ('N2','float'), ('Gamma_1','float'),
-                    ('nabla_ad','float'), ('delta','float'),
-                    ('kappa','float'), ('kappa_T','float'),
-                    ('kappa_rho','float'), ('eps','float'),
-                    ('eps_T','float'), ('eps_rho','float'),
-                    ('omega','float')]
+gyre_header_dtypes = {1: [('n','int'), ('M','float'), ('R','float'),
+                          ('L','float')],
+                      19: [('n','int'), ('M','float'), ('R','float'),
+                           ('L','float'), ('version','int')],
+                      100: [('n','int'), ('M','float'), ('R','float'),
+                            ('L','float'), ('version','int')],
+                      101: [('n','int'), ('M','float'), ('R','float'),
+                            ('L','float'), ('version','int')]}
+
+gyre_data_dtypes = {1: [('k','int'), ('r','float'), ('w','float'),
+                        ('L_r','float'), ('P','float'), ('T','float'),
+                        ('rho','float'), ('nabla','float'),
+                        ('N2','float'), ('c_V','float'), ('c_P','float'),
+                        ('chi_T','float'), ('chi_rho','float'), 
+                        ('kappa','float'), ('kappa_T','float'),
+                        ('kappa_rho','float'), ('eps_tot','float'),
+                        ('eps_eps_T','float'), ('eps_eps_rho','float')],
+                    19: [('k','int'), ('r','float'), ('w','float'),
+                         ('L_r','float'), ('P','float'), ('T','float'),
+                         ('rho','float'), ('nabla','float'),
+                         ('N2','float'), ('Gamma_1','float'),
+                         ('nabla_ad','float'), ('delta','float'),
+                         ('kappa','float'), ('kappa_T','float'),
+                         ('kappa_rho','float'), ('eps_tot','float'),
+                         ('eps_eps_T','float'), ('eps_eps_rho','float'),
+                         ('Omega','float')],
+                    100: [('k','int'), ('r','float'), ('m','float'),
+                          ('L_r','float'), ('P','float'), ('T','float'),
+                          ('rho','float'), ('nabla','float'),
+                          ('N2','float'), ('Gamma_1','float'),
+                          ('nabla_ad','float'), ('delta','float'),
+                          ('kappa','float'), ('kappa_kappa_T','float'),
+                          ('kappa_kappa_rho','float'), ('eps_tot','float'),
+                          ('eps_eps_T','float'), ('eps_eps_rho','float'),
+                          ('Omega','float')],
+                    101: [('k','int'), ('r','float'), ('m','float'),
+                          ('L_r','float'), ('P','float'), ('T','float'),
+                          ('rho','float'), ('nabla','float'),
+                          ('N2','float'), ('Gamma_1','float'),
+                          ('nabla_ad','float'), ('delta','float'),
+                          ('kappa','float'), ('kappa_kappa_T','float'),
+                          ('kappa_kappa_rho','float'), ('eps','float'),
+                          ('eps_eps_T','float'), ('eps_eps_rho','float'),
+                          ('Omega','float')]}
