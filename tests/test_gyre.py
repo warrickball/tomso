@@ -39,6 +39,12 @@ class TestGYREFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['L'], 3.3408563666602257E+33)
         self.assertEqual(header['version'], 101)
 
+    def test_load_spb_mesa_versions(self):
+        filenames = ['data/spb.mesa.78677cc', 'data/spb.mesa.813eed2',
+                     'data/spb.mesa.adc6989']
+        for filename in filenames:
+            header, data = gyre.load_gyre(filename)
+
     def test_save_gyre(self):
         header1, data1 = gyre.load_gyre('data/mesa.gyre')
         gyre.save_gyre(tmpfile, header1, data1)

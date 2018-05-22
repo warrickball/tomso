@@ -99,8 +99,21 @@ def load_gyre(filename):
         Profile data for the stellar model. e.g. radius, pressure.
 
     """
+    def replace(s):
+        t = s[:]
+        t = t.replace('D','E')
+        t = t.replace('+','E+')
+        t = t.replace('-','E-')
+        t = t.replace('EE','E')
+        t = t.replace(' E-',' -')
+        return t
+    
     with open(filename, 'r') as f:
-        lines = [line.replace('D','E') for line in f.readlines()]
+        # this one-liner is horrible
+        # lines = [line.replace('D','E').replace('+','E+').replace('-','E-').replace('EE','E').replace(' E-',' -')
+        #          for line in f.readlines()]
+        #  this is slower but neater, IMO
+        lines = [replace(line) for line in f.readlines()]
 
     header_length = len(lines[0].split())
     if header_length == 4:
