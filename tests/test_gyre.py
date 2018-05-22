@@ -43,7 +43,13 @@ class TestGYREFunctions(unittest.TestCase):
         filenames = ['data/spb.mesa.78677cc', 'data/spb.mesa.813eed2',
                      'data/spb.mesa.adc6989']
         for filename in filenames:
-            header, data = gyre.load_gyre(filename)
+            header1, data1 = gyre.load_gyre(filename)
+            gyre.save_gyre(tmpfile, header1, data1)
+            header2, data2 = gyre.load_gyre(tmpfile)
+            self.assertEqual(header1, header2)
+            for row1, row2 in zip(data1, data2):
+                self.assertEqual(row1, row2)
+
 
     def test_save_gyre(self):
         header1, data1 = gyre.load_gyre('data/mesa.gyre')

@@ -148,7 +148,15 @@ def save_gyre(filename, header, data):
 
     """
     with open(filename, 'w') as f:
-        fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
+        header_length = len(list(header[()]))
+        if header_length == 4:
+            fmt = ''.join(['%6i','%26.16E'*3,'\n'])
+        elif header_length == 5:
+            fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
+        else:
+            raise ValueError("header should have 4 or 5 components but "
+                             "it appears to have %i" % header_length)
+            
         f.writelines([fmt % tuple(header[()])])
 
         N = len(data[0])-1
