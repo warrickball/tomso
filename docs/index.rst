@@ -11,9 +11,7 @@ Tools for Modelling Stars and their Oscillations
 TOMSO is a set of Python modules for loading and saving input and
 output files for and from stellar evolution and oscillation codes.
 The functions are bundled together in modules that correspond to a
-specific stellar evolution or oscillation code.  The exception to this
-is the IO module, which works with formats that are intended not to be
-code specific (e.g. FGONG files).
+specific stellar evolution, oscillation code or file format.
 
 The code is intended to be the minimum necessary to usefully
 manipulate input and output data.  The only current requirement is
