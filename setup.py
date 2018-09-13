@@ -6,7 +6,7 @@ setup(
     version = '0.0.7',
     description = 'Tools for Modelling Stars and their Oscillations',
     author = 'Warrick Ball',
-    author_email = 'wball@bison.ph.bham.ac.uk',
+    author_email = 'W.H.Ball@bham.ac.uk',
     url = 'https://github.com/warrickball/tomso',
     download_url = 'https://github.com/warrickball/tomso/archive/v0.0.7.tar.gz',
     install_requires=['numpy'],
