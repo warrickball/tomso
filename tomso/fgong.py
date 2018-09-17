@@ -125,14 +125,15 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
                 f.writelines([line + '\n'])
 
 
-def fgong_get(keys, glob, var, G=DEFAULT_G):
+def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
     """Retrieves physical properties of a FGONG model from the ``glob`` and
     ``var`` arrays.
 
     Parameters
     ----------
-    keys: list of strs
-        A list of desired variables.  Current options are:
+    key_or_keys: str or list of strs
+        The desired variable or a list of desired variables.  Current
+        options are:
 
         - ``M``: total mass (float)
         - ``R``: photospheric radius (float)
@@ -160,14 +161,16 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
 
         >>> M, m = fgong.fgong_get(['M', 'm'], glob, var)
 
-        to get the total mass and mass co-ordinate.  If you only want one variable,
-        remember that you get a length 1 list, not the single item, so use
+        to get the total mass and mass co-ordinate.  If you only want
+        one variable, you don't need to use a list.  The return type
+        is just the one corresponding float or array.  So, to get a
+        single variable you could use either
 
         >>> x, = fgong.fgong_get(['x'], glob, var)
 
-        rather than
+        or
 
-        >>> x = fgong.fgong_get(['x'], glob, var)
+        >>> x = fgong.fgong_get('x', glob, var)
 
     glob: NumPy array
         The scalar (or global) variables for the stellar model
@@ -193,6 +196,13 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
     cs = np.sqrt(cs2)
     tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
 
+    if type(key_or_keys) == str:
+        keys = [key_or_keys]
+        just_one = True
+    else:
+        keys = key_or_keys
+        just_one = False
+    
     output = []
     for key in keys:
         if key == 'M': output.append(M)
@@ -215,6 +225,10 @@ def fgong_get(keys, glob, var, G=DEFAULT_G):
         elif key == 'cs2': output.append(cs2)
         elif key == 'cs': output.append(cs)
         elif key == 'tau': output.append(tau)
-        else: raise ValueError('invalid key for fgong.fgong_get')
+        else: raise ValueError('%s is not a valid key for fgong.fgong_get' % key)
 
-    return output
+    if just_one:
+        assert(len(output) == 1)
+        return output[0]
+    else:
+        return output

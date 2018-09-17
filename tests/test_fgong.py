@@ -5,7 +5,7 @@ import unittest
 tmpfile = 'data/tmpfile'
 EPS = np.finfo(float).eps
 
-class TestIOFunctions(unittest.TestCase):
+class TestFGONGFunctions(unittest.TestCase):
 
     def test_load_fgong(self):
         glob, var, comment = fgong.load_fgong('data/modelS.fgong', return_comment=True)
@@ -39,6 +39,10 @@ class TestIOFunctions(unittest.TestCase):
         self.assertAlmostEqual(M, 1.989e33)
         self.assertAlmostEqual(R, 6.959906258e10)
 
+        cs, = fgong.fgong_get(['cs'], glob, var)
+        cs2 = fgong.fgong_get('cs2', glob, var)
+        self.assertTrue(np.allclose(cs**2, cs2))
+        
     def test_fgong_get_cross_check(self):
         glob, var = fgong.load_fgong('data/modelS.fgong')
         M, R, L, r, x, m, q, g, rho, P, Hp, G1, T, X, L_r, kappa, epsilon, cs2, cs, tau \

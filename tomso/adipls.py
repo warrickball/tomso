@@ -238,14 +238,15 @@ def save_amdl(filename, D, A, nmod=0):
         length.tofile(f)
 
 
-def amdl_get(keys, D, A, G=DEFAULT_G):
+def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
     """Retrieves physical properties of an AMDL model from the ``D`` and
     ``A`` arrays.
 
     Parameters
     ----------
     keys: list of strs
-        A list of desired variables.  Current options are:
+        A desired variable or a list of desired variables.  Current
+        options are:
 
         - ``M``: total mass (float)
         - ``R``: photospheric radius (float)
@@ -269,12 +270,14 @@ def amdl_get(keys, D, A, G=DEFAULT_G):
 
         >>> M, m = adipls.amdl_get(['M', 'm'], D, A)
 
-        to get the total mass and mass co-ordinate.  If you only want one variable,
-        remember that you get a length 1 list, not the single item, so use
+        to get the total mass and mass co-ordinate.  If you only want
+        one variable, you don't need to use a list.  The return type
+        is just the one corresponding float or array.  So, to get a
+        single variable you could use either
 
         >>> x, = adipls.amdl_get(['x'], D, A)
 
-        rather than
+        or
 
         >>> x = adipls.amdl_get('x', D, A)
 
@@ -309,6 +312,13 @@ def amdl_get(keys, D, A, G=DEFAULT_G):
     cs2 = G1*P/rho  # square of the sound speed
     cs = np.sqrt(cs2)
     tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
+    
+    if type(key_or_keys) == str:
+        keys = [key_or_keys]
+        just_one = True
+    else:
+        keys = key_or_keys
+        just_one = False
 
     output = []
     for key in keys:
@@ -330,7 +340,11 @@ def amdl_get(keys, D, A, G=DEFAULT_G):
         elif key == 'tau': output.append(tau)
         else: raise ValueError('%s is not a valid key for adipls.amdl_get' % key)
 
-    return output
+    if just_one:
+        assert(len(output) == 1)
+        return output[0]
+    else:
+        return output
 
 
 def kernels(ell, cs, eig, D, A, G=DEFAULT_G,

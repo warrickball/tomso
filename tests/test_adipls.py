@@ -26,6 +26,10 @@ class TestADIPLSFunctions(unittest.TestCase):
         self.assertEqual(R, D[1])
         self.assertTrue(np.all(x==A[:,0]))
         self.assertTrue(np.all(G1==A[:,3]))
+        
+        cs, = adipls.amdl_get(['cs'], D, A)
+        cs2 = adipls.amdl_get('cs2', D, A)
+        self.assertTrue(np.allclose(cs**2, cs2))
 
     def test_amdl_get_cross_check(self):
         D, A = adipls.load_amdl('data/mesa.amdl')
