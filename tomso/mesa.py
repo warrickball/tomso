@@ -64,7 +64,7 @@ def load_profile(filename):
     """
 
     with tomso_open(filename, 'r') as f:
-        lines = [line.encode('utf-8') for line in f.readlines()]
+        lines = [line.decode('utf-8') for line in f.readlines()]
 
     header = np.genfromtxt(lines[1:3], names=True)
     data = np.genfromtxt(lines[5:], names=True)
