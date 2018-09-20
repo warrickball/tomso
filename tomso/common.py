@@ -1,5 +1,6 @@
 """Functions and constants common to multiple modules."""
 import numpy as np
+import gzip
 
 DEFAULT_G = 6.67428e-8
 """Default value of the gravitational constant that is shared
@@ -16,3 +17,14 @@ def complement(y, x):
     trapezoidal rule.  i.e. :math:`\int _x^{x[-1]}y(x') dx'`."""
     z = integrate(y, x)
     return z[-1] - z
+
+
+def tomso_open(filename, *args, **kwargs):
+    """Wrapper function to open files ending with `.gz` with built-in
+    `gzip` module, otherwise use normal open.  Takes the same
+    arguments as `open` and `gzip.open` and returns a file object.
+    """
+    if filename.lower().endswith('.gz'):
+        return gzip.open(filename, *args, **kwargs)
+    else:
+        return open(filename, *args, **kwargs)

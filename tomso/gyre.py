@@ -5,11 +5,13 @@ Functions for manipulating `GYRE`_ input and output files.
 """
 
 import numpy as np
+from tomso.common import tomso_open
 
 
 def load_summary(filename):
     """Reads a GYRE summary file and returns the global data and mode data
-    in two structured arrays.
+    in two structured arrays.  Uses builtin `gzip` module to read
+    files ending with `.gz`.
 
     Parameters
     ----------
@@ -30,8 +32,8 @@ def load_summary(filename):
 
     """
 
-    with open(filename, 'r') as f:
-        lines = [line.encode('utf-8') for line in f.readlines()]
+    with tomso_open(filename, 'rb') as f:
+        lines = [line.decode('utf-8') for line in f.readlines()]
 
     # catch case of no global data
     # just try to load header and give up on failure
@@ -47,7 +49,8 @@ def load_summary(filename):
 
 def load_mode(filename):
     """Reads a GYRE mode file and returns the global data and mode profile
-    data in two structured arrays.
+    data in two structured arrays.  Uses builtin `gzip` module to read
+    files ending with `.gz`.
 
     Parameters
     ----------
@@ -59,16 +62,16 @@ def load_mode(filename):
     header: structured array
         Global data for the frequency calculation. e.g. initial parameters.
         The keys for the array are the GYRE variable names as in
-        the &output namelist in the GYRE input file.
+        the ``&output`` namelist in the GYRE input file.
 
     data: structured array
         Mode data for the frequency calculation. e.g. mode frequencies.
         The keys for the array are the GYRE variable names as in
-        the &output namelist in the GYRE input file.
+        the ``&output`` namelist in the GYRE input file.
 
     """
-    with open(filename, 'r') as f:
-        lines = [line.encode('utf-8') for line in f.readlines()]
+    with tomso_open(filename, 'rb') as f:
+        lines = [line.decode('utf-8') for line in f.readlines()]
 
     # catch case of no global data
     if lines[1] == '\n':
@@ -83,7 +86,8 @@ def load_mode(filename):
 
 def load_gyre(filename):
     """Reads a GYRE stellar model file and returns the global data and
-    point-wise data in a pair of NumPy record arrays.
+    point-wise data in a pair of NumPy record arrays.  Uses builtin
+    `gzip` module to read files ending with `.gz`.
 
     Parameters
     ----------
@@ -108,12 +112,12 @@ def load_gyre(filename):
         t = t.replace(' E-',' -')
         return t
     
-    with open(filename, 'r') as f:
+    with tomso_open(filename, 'rb') as f:
         # this one-liner is horrible
         # lines = [line.replace('D','E').replace('+','E+').replace('-','E-').replace('EE','E').replace(' E-',' -')
         #          for line in f.readlines()]
         #  this is slower but neater, IMO
-        lines = [replace(line) for line in f.readlines()]
+        lines = [replace(line.decode('utf-8')) for line in f.readlines()]
 
     header_length = len(lines[0].split())
     if header_length == 4:

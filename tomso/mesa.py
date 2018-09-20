@@ -5,11 +5,13 @@ Functions for manipulating `MESA`_ input and output files.
 """
 
 import numpy as np
+from tomso.common import tomso_open
 
 
 def load_history(filename):
     """Reads a MESA history file and returns the global data and history
-    data in two structured arrays.
+    data in two structured arrays.  Uses builtin `gzip` module to read
+    files ending with `.gz`.
 
     Parameters
     ----------
@@ -29,8 +31,8 @@ def load_history(filename):
         `history.columns`.
     """
 
-    with open(filename, 'r') as f:
-        lines = [line.encode('utf-8') for line in f.readlines()]
+    with tomso_open(filename, 'rb') as f:
+        lines = [line.decode('utf-8') for line in f.readlines()]
 
     header = np.genfromtxt(lines[1:3], names=True)
     data = np.genfromtxt(lines[5:], names=True)
@@ -40,7 +42,8 @@ def load_history(filename):
 
 def load_profile(filename):
     """Reads a MESA profile and returns the global data and profile
-    data in two structured arrays.
+    data in two structured arrays.  Uses builtin `gzip` module to read
+    files ending with `.gz`.
 
     Parameters
     ----------
@@ -60,7 +63,7 @@ def load_profile(filename):
         `profile.columns`.
     """
 
-    with open(filename, 'r') as f:
+    with tomso_open(filename, 'r') as f:
         lines = [line.encode('utf-8') for line in f.readlines()]
 
     header = np.genfromtxt(lines[1:3], names=True)
@@ -112,7 +115,7 @@ def load_sample(filename):
         A dictionary containing all the results.
 
     """
-    with open(filename, 'r') as f:
+    with tomso_open(filename, 'r') as f:
         lines = [line.split() for line in f.readlines() if line.strip()]
 
     d = {}
