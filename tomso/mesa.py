@@ -171,7 +171,8 @@ def update_inlist(inlist, d):
         i = string_where(search_lines, key)[0]
         lines[i] = replace_value(lines[i], value)
 
-    with open(inlist, 'w') as f: f.writelines(lines)
+    with open(inlist, 'wt') as f:
+        f.writelines(lines)
 
 
 def string_where(lines, expr):

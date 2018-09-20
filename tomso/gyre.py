@@ -151,7 +151,7 @@ def save_gyre(filename, header, data):
         Profile data for the stellar model. e.g. radius, pressure.
 
     """
-    with open(filename, 'w') as f:
+    with open(filename, 'wt') as f:
         header_length = len(list(header[()]))
         if header_length == 4:
             fmt = ''.join(['%6i','%26.16E'*3,'\n'])

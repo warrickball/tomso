@@ -107,7 +107,7 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
     nn, ivar = var.shape
     iconst = len(glob)
 
-    with open(filename, 'w') as f:
+    with open(filename, 'wt') as f:
         f.writelines(comment)
 
         line = '%10i'*4 % (nn, iconst, ivar, ivers)
