@@ -1,3 +1,5 @@
+v0.0.8, 2018-09-xx -- Some functions now automagically read gzipped files ending `.gz.`.
+                      `fgong_` and `amdl_get` now return single keys in the same form as requested.
 v0.0.7, 2018-05-30 -- Improvements to GYRE file manipulation.
 v0.0.6, 2018-05-03 -- Renamed IO module to FGONG.
 v0.0.5, 2018-03-02 -- Bugfix in integrate.  Also added test and improved fgong/amdl_get.
