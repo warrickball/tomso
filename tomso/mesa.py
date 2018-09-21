@@ -32,8 +32,8 @@ def load_history(filename):
     """
 
     with tomso_open(filename, 'rb') as f:
-        lines = [line.decode('utf-8') for line in f.readlines()]
-
+        lines = f.read().decode('utf-8').split('\n')
+    
     header = np.genfromtxt(lines[1:3], names=True)
     data = np.genfromtxt(lines[5:], names=True)
 
@@ -63,8 +63,8 @@ def load_profile(filename):
         `profile.columns`.
     """
 
-    with tomso_open(filename, 'r') as f:
-        lines = [line.decode('utf-8') for line in f.readlines()]
+    with tomso_open(filename, 'rb') as f:
+        lines = f.read().decode('utf-8').split('\n')
 
     header = np.genfromtxt(lines[1:3], names=True)
     data = np.genfromtxt(lines[5:], names=True)
@@ -115,8 +115,9 @@ def load_sample(filename):
         A dictionary containing all the results.
 
     """
-    with tomso_open(filename, 'r') as f:
-        lines = [line.split() for line in f.readlines() if line.strip()]
+    with tomso_open(filename, 'rb') as f:
+        lines = [line.split() for line in f.read().decode('utf-8').split('\n')
+                 if line.strip()]
 
     d = {}
     ell = 0

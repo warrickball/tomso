@@ -34,10 +34,10 @@ class TestCommonFunctions(unittest.TestCase):
 
     def test_tomso_open(self):
         with common.tomso_open('data/test.txt', 'rb') as f:
-            lines = [line.decode('utf-8') for line in f.readlines()]
+            lines = f.read().decode('utf-8').split('\n')
 
         with common.tomso_open('data/test.txt.gz', 'rb') as f:
-            lines_gz = [line.decode('utf-8') for line in f.readlines()]
+            lines_gz = f.read().decode('utf-8').split('\n')
 
         for line, line_gz in zip(lines, lines_gz):
             self.assertEqual(line, line_gz)
