@@ -33,7 +33,7 @@ def load_summary(filename):
     """
 
     with tomso_open(filename, 'rb') as f:
-        lines = f.read().decode('utf-8').split('\n')
+        lines = f.readlines()
 
     # catch case of no global data
     # just try to load header and give up on failure
@@ -71,7 +71,7 @@ def load_mode(filename):
 
     """
     with tomso_open(filename, 'rb') as f:
-        lines = f.read().decode('utf-8').split('\n')
+        lines = f.readlines()
 
     # catch case of no global data
     if lines[1] == '\n':
@@ -106,15 +106,15 @@ def load_gyre(filename):
     def replace(s):
         # handles annoying Fortran formatting
         t = s[:]
-        t = t.replace('D','E')
-        t = t.replace('+','E+')
-        t = t.replace('-','E-')
-        t = t.replace('EE','E')
-        t = t.replace(' E-',' -')
+        t = t.replace(b'D', b'E')
+        t = t.replace(b'+', b'E+')
+        t = t.replace(b'-', b'E-')
+        t = t.replace(b'EE', b'E')
+        t = t.replace(b' E-', b' -')
         return t
     
     with tomso_open(filename, 'rb') as f:
-        lines = [replace(line) for line in f.read().decode('utf-8').split('\n')]
+        lines = [replace(line) for line in f.readlines()]
 
     header_length = len(lines[0].split())
     if header_length == 4:
