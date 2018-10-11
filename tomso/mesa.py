@@ -118,7 +118,7 @@ def load_sample(filename):
     with tomso_open(filename, 'rb') as f:
         # lines = [line.split() for line in f.read().decode('utf-8').split('\n')
         #          if line.strip()]
-        lines = [line.split() for line in f.readlines() if line.strip()]
+        lines = [line.decode('utf-8').split() for line in f.readlines() if line.strip()]
 
     d = {}
     ell = 0
