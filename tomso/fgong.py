@@ -146,6 +146,7 @@ def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
         - ``rho``: density (array)
         - ``P``: pressure (array)
         - ``Hp``: pressure scale height (array)
+        - ``Hrho``: density scale height (array)
         - ``G1``: first adiabatic index (array)
         - ``T``: temperature (array)
         - ``X``: hydrogen abundance (array)
@@ -154,7 +155,7 @@ def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
         - ``epsilon``: specific energy generation rate (array)
         - ``cs2``: sound speed squared (array)
         - ``cs``: sound speed (array)
-        - ``tau``: acoustic depth
+        - ``tau``: acoustic depth (array)
 
         For example, if ``glob`` and ``var`` have been returned from
         :py:meth:`~tomso.fgong.load_fgong`, you could use
@@ -187,11 +188,14 @@ def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
     """
     M, R, L = glob[:3]
     r, lnq, T, P, rho, X, L_r, kappa, epsilon, G1 = var[:,:10].T
+    A = var[:,14]
+    
     x = r/R
     q = np.exp(lnq)
     m = q*M
     g = G*m/r**2
     Hp = P/(rho*g)
+    Hrho = 1/(1/G1/Hp + A/r)
     cs2 = G1*P/rho                    # square of the sound speed
     cs = np.sqrt(cs2)
     tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
@@ -216,6 +220,7 @@ def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
         elif key == 'rho': output.append(rho)
         elif key == 'P': output.append(P)
         elif key == 'Hp': output.append(Hp)
+        elif key == 'Hrho': output.append(Hrho)
         elif key == 'G1': output.append(G1)
         elif key == 'T': output.append(T)
         elif key == 'X': output.append(X)
