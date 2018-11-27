@@ -72,7 +72,7 @@ def load_profile(filename):
     return header, data
 
 
-def load_results_data(filename):
+def load_astero_results(filename):
     """Reads a set of MESA results from one of the optimization routines
     in the `astero` module.
 
@@ -86,16 +86,18 @@ def load_results_data(filename):
     data: structured array
         Array with all the results.
     """
-    with open(filename, 'r') as f:
-        lines = [line.replace('D', 'E') for line in f.readlines()]
+    with tomso_open(filename, 'rb') as f:
+        lines = [line.replace(b'D', b'E') for line in f.readlines()]
 
-    dtypes = [(word, 'float') for word in lines[1].split()]
-    dtypes[0] = ('sample', 'int')
-    for i in range(4):
-        dtypes[31+i] = ('nl%i' % i, 'int')
-
-    data = np.loadtxt(lines[2:-4], dtype=dtypes,
-                      usecols=range(len(dtypes)))
+    # the last column results for `search_type = simplex` fits have a
+    # nameless column that says what kind of simplex step was taken.
+    # we have to give it a name ourselves
+    names = [name.decode('utf-8') for name in lines[1].split()]
+    N_columns = len(lines[2].split())
+    if len(names) == N_columns - 1:
+        names.append('step_type')
+        
+    data = np.genfromtxt(lines[2:-4], dtype=None, names=names)
 
     return data
 
