@@ -43,6 +43,18 @@ def load_fgong(filename, N=-1, return_comment=False):
         ``return_comment=True``.
 
     """
+    
+    def replace(s):
+        # handles annoying Fortran formatting
+        t = s[:].lower().strip()
+        t = t.replace('d', 'e')
+        t = t.replace('+', 'e+')
+        t = t.replace('-', 'e-')
+        t = t.replace('ee', 'e')
+        if t.startswith('e'):
+            t = t[1:]
+        return t
+    
     f = open(filename, 'r')
 
     comment = [f.readline() for i in range(4)]
@@ -66,7 +78,9 @@ def load_fgong(filename, N=-1, return_comment=False):
             elif s.lower().endswith('nan'):
                 s = 'nan'
             elif 'd' in s.lower():
-                s.lower().replace('d','e')
+                s.lower().replace('d', 'e')
+            else:
+                s = replace(s.lower())
 
             tmp.append(float(s))
 
@@ -116,12 +130,26 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
         for i in range(0, iconst, 5):
             N = np.mod(i+4, 5)+1  # number of floats in this row
             line = fmt*N % tuple(glob[i:i+5])
+            if len(line) != N*int(fmt[1:3]):
+                line = ''
+                for j in range(5):
+                    part = fmt % glob[i:i+5][j]
+                    if len(part) != int(fmt[1:3]):
+                        part = part.replace('E', '')
+                    line += part
             f.writelines([line + '\n'])
 
         for row in var:
             for i in range(0, ivar, 5):
                 N = np.mod(i+4, 5)+1  # number of floats in this row
                 line = fmt*N % tuple(row[i:i+5])
+                if len(line) != N * int(fmt[1:3]):
+                    line = ''
+                    for j in range(5):
+                        part = fmt % row[i:i+5][j]
+                        if len(part) != int(fmt[1:3]):
+                            part = part.replace('E', '')
+                        line += part
                 f.writelines([line + '\n'])
 
 
