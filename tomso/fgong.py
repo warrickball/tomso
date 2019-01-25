@@ -65,8 +65,9 @@ def load_fgong(filename, N=-1, return_comment=False):
     tmp = []
 
     # try to guess the length of each float in the data
-    if N < 0: N = len(lines[0])//5
-
+    if N < 0:
+        N = len(lines[0].strip('\n').rstrip(' '))//5
+    
     for line in lines:
         for i in range(len(line)//N):
             s = line[i*N:i*N+N]
@@ -81,7 +82,9 @@ def load_fgong(filename, N=-1, return_comment=False):
                 s.lower().replace('d', 'e')
             else:
                 s = replace(s.lower())
-
+                
+            if s == '':  # Catch files with space padding.
+                continue
             tmp.append(float(s))
 
     glob = np.array(tmp[:iconst])
