@@ -302,12 +302,16 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
     q = A[:,1]*x**3
     m = q*M
     r = x*R
-    g = G*m/r**2
-    rho = A[:,5]*m/r**3/4./np.pi
-    rho[x==0] = rho_c
     G1 = A[:,3]  # first adiabatic index
-    P = G*m*rho/G1/r/A[:,2]  # pressure
-    P[x==0] = P_c
+
+    # we can safely ignore 0/0s here
+    with np.errstate(invalid='ignore'):
+        g = G*m/r**2
+        rho = A[:,5]*m/r**3/4./np.pi
+        rho[x==0] = rho_c
+        P = G*m*rho/G1/r/A[:,2]  # pressure
+        P[x==0] = P_c
+        
     Hp = P/(rho*g)  # pressure scale height
     cs2 = G1*P/rho  # square of the sound speed
     cs = np.sqrt(cs2)
@@ -497,19 +501,21 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
     M, R = glob[:2]
     r, P, rho, G1, AA = var[::-1,[0,3,4,9,14]].T
     m = np.exp(var[::-1,1])*M
-    N2 = G*m/r**3*AA
 
     ioff = (0 if r[0] < 1e6 else 1)
     nn = len(var) + ioff
 
     # convert profile
     A = np.zeros((nn, 6))
-    A[ioff:,0] = r/R
-    A[ioff:,1] = m/M/(r/R)**3
-    A[ioff:,2] = G*m*rho/(G1*P*r)
-    A[ioff:,3] = G1
-    A[ioff:,4] = N2*r**3/(G*m)
-    A[ioff:,5] = 4.*np.pi*rho*r**3/m
+
+    # we can safely ignore division by 0 here
+    with np.errstate(divide='ignore', invalid='ignore'):
+        A[ioff:,0] = r/R
+        A[ioff:,1] = m/M/(r/R)**3
+        A[ioff:,2] = G*m*rho/(G1*P*r)
+        A[ioff:,3] = G1
+        A[ioff:,4] = AA
+        A[ioff:,5] = 4.*np.pi*rho*r**3/m
 
     A[0,0] = 0.
     A[0,1] = 4.*np.pi/3.*rho[0]*R**3/M
