@@ -1,4 +1,5 @@
 from tomso import mesa
+import numpy as np
 import unittest
 
 tmpfile = 'data/tmpfile'
@@ -59,8 +60,13 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(sample['logg_sigma'], 0.06)
         self.assertAlmostEqual(sample['FeH_sigma'], 0.05)
         for ell in range(4):
-            for sigma in sample['l%i' % ell]['err']:
-                self.assertAlmostEqual(sigma, 0.3)
+            table = sample['l%i' % ell]  # for brevity
+            self.assertTrue(np.allclose(table['sigma'], 0.3))
+            self.assertTrue(np.allclose(table['chi2term'],
+                                        (table['corr']-table['obs'])**2/table['sigma']**2))
+            
+            # for sigma in table['err']:
+            #     self.assertAlmostEqual(sigma, 0.3)
 
     def test_load_gzipped_sample(self):
         sample = mesa.load_sample('data/mesa.sample.gz')
@@ -71,8 +77,12 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(sample['logg_sigma'], 0.06)
         self.assertAlmostEqual(sample['FeH_sigma'], 0.05)
         for ell in range(4):
-            for sigma in sample['l%i' % ell]['err']:
-                self.assertAlmostEqual(sigma, 0.3)
+            table = sample['l%i' % ell]  # for brevity
+            self.assertTrue(np.allclose(table['sigma'], 0.3))
+            self.assertTrue(np.allclose(table['chi2term'],
+                                        (table['corr']-table['obs'])**2/table['sigma']**2))
+            # for sigma in sample['l%i' % ell]['err']:
+            #     self.assertAlmostEqual(sigma, 0.3)
 
     def test_load_astero_results(self):
         results = mesa.load_astero_results('data/simplex_results.data')

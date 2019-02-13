@@ -97,7 +97,8 @@ def load_astero_results(filename):
     if len(names) == N_columns - 1:
         names.append('step_type')
         
-    data = np.genfromtxt(lines[2:-4], dtype=None, names=names)
+    data = np.genfromtxt(lines[2:-4], dtype=None, names=names,
+                         encoding='utf-8')
 
     return data
 
@@ -122,21 +123,32 @@ def load_sample(filename):
         #          if line.strip()]
         lines = [line.decode('utf-8').split() for line in f.readlines() if line.strip()]
 
-    d = {}
+    table_dtype = [('n', int), ('chi2term', float), ('freq', float), ('corr', float),
+                   ('obs', float), ('sigma', float), ('logE', float)]
+    d = {'l%i' % ell: np.zeros(0, dtype=table_dtype) for ell in range(4)}
+    # d = {'l0': np.zeros(0, dtype=table_dtype),
+    #      'l1': np.zeros(0, dtype=table_dtype),
+    #      'l2': np.zeros(0, dtype=table_dtype),
+    #      'l3': np.zeros(0, dtype=table_dtype)}
     ell = 0
+
     for line in lines:
         if line[0][:2] == 'l=':
             ell = int(line[0][-1])
-            d['l%i' % ell] = {'n': [], 'chi2': [], 'mdl': [], 'cor': [],
-                              'obs': [], 'err': [], 'logE': []}
         elif len(line) == 7:
-            d['l%i' % ell]['n'].append(int(line[0]))
-            d['l%i' % ell]['chi2'].append(float(line[1]))
-            d['l%i' % ell]['mdl'].append(float(line[2]))
-            d['l%i' % ell]['cor'].append(float(line[3]))
-            d['l%i' % ell]['obs'].append(float(line[4]))
-            d['l%i' % ell]['err'].append(float(line[5]))
-            d['l%i' % ell]['logE'].append(float(line[6]))
+            # I'm not quite sure why this hideous construction is
+            # necessary but it seems that the recarray construction
+            # depends on whether it gets a tuple or a list
+            row = np.array(tuple([int(line[0])] + list(map(float, line[1:]))),
+                           dtype=table_dtype)
+            d['l%i' % ell] = np.append(d['l%i' % ell], row)
+            # d['l%i' % ell]['n'].append(int(line[0]))
+            # d['l%i' % ell]['chi2'].append(float(line[1]))
+            # d['l%i' % ell]['mdl'].append(float(line[2]))
+            # d['l%i' % ell]['cor'].append(float(line[3]))
+            # d['l%i' % ell]['obs'].append(float(line[4]))
+            # d['l%i' % ell]['err'].append(float(line[5]))
+            # d['l%i' % ell]['logE'].append(float(line[6]))
         else:
             key = ''.join([word + ' ' for word in line[:-1]])[:-1]
             # if key == 'mass/Msun':
