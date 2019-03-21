@@ -28,3 +28,30 @@ def tomso_open(filename, *args, **kwargs):
         return gzip.open(filename, *args, **kwargs)
     else:
         return open(filename, *args, **kwargs)
+
+
+def load_mesa_gyre(filename, mesa_or_gyre):
+    """Most MESA and GYRE output files both adhere to a similar columned
+    ASCII format, so it makes more sense to have one implementation
+    for reading them, rather than re-implementing it in each
+    submodule.
+
+    """
+    with tomso_open(filename, 'rb') as f:
+        lines = f.readlines()
+
+    if mesa_or_gyre == 'mesa':
+        header = np.genfromtxt(lines[1:3], names=True, dtype=None)
+    elif mesa_or_gyre == 'gyre':
+        # the GYRE header might be empty
+        try:
+            header = np.genfromtxt(lines[2:4], names=True, dtype=None)
+        except IndexError:
+            header = None
+    else:
+        raise ValueError("mesa_or_gyre must be either 'mesa' or 'gyre', not %s"
+                         % mesa_or_gyre)
+            
+    data = np.genfromtxt(lines[5:], names=True, dtype=None)
+
+    return header, data

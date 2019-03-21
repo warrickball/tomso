@@ -5,7 +5,7 @@ Functions for manipulating `MESA`_ input and output files.
 """
 
 import numpy as np
-from tomso.common import tomso_open
+from tomso.common import tomso_open, load_mesa_gyre
 
 
 def load_history(filename):
@@ -30,15 +30,9 @@ def load_history(filename):
         The keys for the array are the MESA variable names as in
         `history.columns`.
     """
-
-    with tomso_open(filename, 'rb') as f:
-        lines = f.readlines()
-   
-    header = np.genfromtxt(lines[1:3], names=True)
-    data = np.genfromtxt(lines[5:], names=True)
-
-    return header, data
-
+    
+    return load_mesa_gyre(filename, 'mesa')
+    
 
 def load_profile(filename):
     """Reads a MESA profile and returns the global data and profile
@@ -63,13 +57,7 @@ def load_profile(filename):
         `profile.columns`.
     """
 
-    with tomso_open(filename, 'rb') as f:
-        lines = f.readlines()
-
-    header = np.genfromtxt(lines[1:3], names=True)
-    data = np.genfromtxt(lines[5:], names=True)
-
-    return header, data
+    return load_mesa_gyre(filename, 'mesa')
 
 
 def load_astero_results(filename):
@@ -154,7 +142,7 @@ def load_sample(filename):
             # if key == 'mass/Msun':
             #     key = 'initial mass'
 
-            value = float(line[-1].replace('D', 'e'))
+            value = float(line[-1].lower().replace('d', 'e'))
             d[key] = value
 
     return d

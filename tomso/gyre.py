@@ -5,7 +5,7 @@ Functions for manipulating `GYRE`_ input and output files.
 """
 
 import numpy as np
-from tomso.common import tomso_open
+from tomso.common import tomso_open, load_mesa_gyre
 
 
 def load_summary(filename):
@@ -32,19 +32,7 @@ def load_summary(filename):
 
     """
 
-    with tomso_open(filename, 'rb') as f:
-        lines = f.readlines()
-
-    # catch case of no global data
-    # just try to load header and give up on failure
-    try:
-        header = np.genfromtxt(lines[2:4], names=True)
-    except IndexError:
-        header = None
-        
-    data = np.genfromtxt(lines[5:], names=True)
-
-    return header, data
+    return load_mesa_gyre(filename, 'gyre')
 
 
 def load_mode(filename):
@@ -70,18 +58,8 @@ def load_mode(filename):
         the ``&output`` namelist in the GYRE input file.
 
     """
-    with tomso_open(filename, 'rb') as f:
-        lines = f.readlines()
-
-    # catch case of no global data
-    if lines[1] == '\n':
-        header = []
-    else:
-        header = np.genfromtxt(lines[2:4], names=True)
-
-    data = np.genfromtxt(lines[5:], names=True)
-
-    return header, data
+    
+    return load_mesa_gyre(filename, 'gyre')
 
 
 def load_gyre(filename):
