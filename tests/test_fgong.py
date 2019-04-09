@@ -42,6 +42,12 @@ class TestFGONGFunctions(unittest.TestCase):
         cs, = fgong.fgong_get(['cs'], glob, var)
         cs2 = fgong.fgong_get('cs2', glob, var)
         self.assertTrue(np.allclose(cs**2, cs2))
+
+    def test_fgong_get_reverse(self):
+        glob, var = fgong.load_fgong('data/modelS.fgong')
+        x_fwd, = fgong.fgong_get(['x'], glob, var)
+        x_rev = fgong.fgong_get('x', glob, var, reverse=True)
+        self.assertTrue(np.all(x_fwd[::-1] == x_rev))
         
     def test_fgong_get_cross_check(self):
         glob, var = fgong.load_fgong('data/modelS.fgong')

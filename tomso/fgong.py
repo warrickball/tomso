@@ -125,7 +125,7 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
                 f.writelines([line + '\n'])
 
 
-def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
+def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
     """Retrieves physical properties of a FGONG model from the ``glob`` and
     ``var`` arrays.
 
@@ -153,6 +153,7 @@ def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
         - ``L_r``: luminosity at radius ``r`` (array)
         - ``kappa``: opacity (array)
         - ``epsilon``: specific energy generation rate (array)
+        - ``cp``: specific heat capacity (array)
         - ``cs2``: sound speed squared (array)
         - ``cs``: sound speed (array)
         - ``tau``: acoustic depth (array)
@@ -178,6 +179,11 @@ def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
     var: NumPy array
         The point-wise variables for the stellar model. i.e. things
         that vary through the star like temperature, density, etc.
+    reverse: bool (optional)
+        If ``True``, reverse the arrays so that the first element is
+        the centre.
+    G: float (optional)
+        Value of the gravitational constant.
     
     Returns
     -------
@@ -188,6 +194,7 @@ def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
     """
     M, R, L = glob[:3]
     r, lnq, T, P, rho, X, L_r, kappa, epsilon, G1 = var[:,:10].T
+    cp = var[:,12]
     A = var[:,14]
     
     x = r/R
@@ -206,30 +213,35 @@ def fgong_get(key_or_keys, glob, var, G=DEFAULT_G):
     else:
         keys = key_or_keys
         just_one = False
-    
+
+    I = np.arange(len(var), dtype=int)
+    if reverse:
+        I = I[::-1]
+        
     output = []
     for key in keys:
         if key == 'M': output.append(M)
         elif key == 'R': output.append(R)
         elif key == 'L': output.append(L)
-        elif key == 'r': output.append(r)
-        elif key == 'x': output.append(x)
-        elif key == 'm': output.append(m)
-        elif key == 'q': output.append(q)
-        elif key == 'g': output.append(g)
-        elif key == 'rho': output.append(rho)
-        elif key == 'P': output.append(P)
-        elif key == 'Hp': output.append(Hp)
-        elif key == 'Hrho': output.append(Hrho)
-        elif key == 'G1': output.append(G1)
-        elif key == 'T': output.append(T)
-        elif key == 'X': output.append(X)
-        elif key == 'L_r': output.append(L_r)
-        elif key == 'kappa': output.append(kappa)
-        elif key == 'epsilon': output.append(epsilon)
-        elif key == 'cs2': output.append(cs2)
-        elif key == 'cs': output.append(cs)
-        elif key == 'tau': output.append(tau)
+        elif key == 'r': output.append(r[I])
+        elif key == 'x': output.append(x[I])
+        elif key == 'm': output.append(m[I])
+        elif key == 'q': output.append(q[I])
+        elif key == 'g': output.append(g[I])
+        elif key == 'rho': output.append(rho[I])
+        elif key == 'P': output.append(P[I])
+        elif key == 'Hp': output.append(Hp[I])
+        elif key == 'Hrho': output.append(Hrho[I])
+        elif key == 'G1': output.append(G1[I])
+        elif key == 'T': output.append(T[I])
+        elif key == 'X': output.append(X[I])
+        elif key == 'L_r': output.append(L_r[I])
+        elif key == 'kappa': output.append(kappa[I])
+        elif key == 'epsilon': output.append(epsilon[I])
+        elif key == 'cp': output.append(cp[I])
+        elif key == 'cs2': output.append(cs2[I])
+        elif key == 'cs': output.append(cs[I])
+        elif key == 'tau': output.append(tau[I])
         else: raise ValueError('%s is not a valid key for fgong.fgong_get' % key)
 
     if just_one:
