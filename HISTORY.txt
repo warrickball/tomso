@@ -2,6 +2,8 @@ v0.0.10,  2019-02-05 -- frequency tables in MESA samples now in stored in record
                         arrays using same keys as MESA
                      -- suppressed divide by zero and 0/0 warnings in ADIPLS
                         manipulation
+                     -- refactored MESA/GYRE readers to use common code and
+                        tweaked them to infer column widths from header names
 v0.0.9,   2018-09-24 -- should fix bugs in gzip support in v0.0.8 
 v0.0.8,   2018-09-21 -- Some functions now automagically read gzipped files
                         ending `.gz.`.
