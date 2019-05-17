@@ -1,4 +1,5 @@
-v0.0.10,  2019-04-09 -- frequency tables in MESA samples now in stored in record
+v0.0.10,  2019-05-17 -- added function to convert AMDL back into FGONG
+                     -- frequency tables in MESA samples now in stored in record
                         arrays using same keys as MESA
                      -- suppressed divide by zero and 0/0 warnings in ADIPLS
                         manipulation

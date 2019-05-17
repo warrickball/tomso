@@ -471,8 +471,8 @@ def kernels(ell, cs, eig, D, A, G=DEFAULT_G,
 
 def fgong_to_amdl(glob, var, G=DEFAULT_G):
     """Converts FGONG data (in the form of `glob` and `var`, as returned
-    by :py:meth:`~tomso.fgong.load_fgong` into ADIPLS binary data, which
-    can be saved using :py:meth:`~tomso.adipls.save_amdl`.
+    by :py:meth:`~tomso.fgong.load_fgong`) into ADIPLS binary data,
+    which can be saved using :py:meth:`~tomso.adipls.save_amdl`.
 
     The output should be identical (to within a few times machine
     error) to the output of ``fgong-amdl.d`` tool distributed with
@@ -550,6 +550,76 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
         nn -= 1
 
     return D, A
+
+
+def amdl_to_fgong(D, A, G=DEFAULT_G):
+    """Converts ADIPLS binary data (in the form of `D` and `A`, as
+    returned by :py:meth:`~tomso.adipls.load_amdl`) into FGONG data,
+    which can be saved using :py:meth:`~tomso.fgong.save_fgong`.
+
+    Designed to be the inverse of the ``fgong-amdl.d`` tool
+    distributed with ADIPLS, modulo the fact that various thermal
+    variables (e.g. temperature and luminosity) are not stored in the
+    AMDL format, and that the innermost point may have been truncated.
+    It's impossible to tell when reversing the process, so we assume
+    not.
+
+    The output should be identical (to within a few times machine
+    error) of going from FGONG to AMDL and back again.
+
+    Parameters
+    ----------
+    D: 1-d array
+        Global data, as defined by eq. (5.2) of the `ADIPLS
+        documentation`_.
+    A: 2-d array
+        Point-wise data, as defined by eq. (5.1) of the `ADIPLS
+        documentation`_.
+    G: float, optional
+        Newton's gravitational constant in cgs units.
+
+    Returns
+    -------
+    glob: NumPy array
+        The scalar (or global) variables for the stellar model
+    var: NumPy array
+        The point-wise variables for the stellar model. i.e. things
+        that vary through the star like temperature, density, etc.
+
+    """
+    M, R = D[:2]
+
+    glob = np.zeros(15)
+    var = np.zeros((len(A), 40))
+    
+    r = A[:,0]*R
+    q = A[:,1]*A[:,0]**3
+    m = q*M
+    G1 = A[:,3]
+    AA = A[:,4]
+    
+    # we can safely ignore division by 0 here
+    with np.errstate(divide='ignore', invalid='ignore'):
+        lnq = np.log(q)
+        rho = A[:,5]*m/(4.*np.pi*r**3)
+        P = G*m*rho/(G1*r*A[:,2])
+
+    P[0] = D[2]
+    rho[0] = D[3]
+
+    var[::-1,0] = r
+    var[::-1,1] = lnq
+    var[::-1,3] = P
+    var[::-1,4] = rho
+    var[::-1,9] = G1
+    var[::-1,14] = AA
+
+    glob[0] = M
+    glob[1] = R
+    glob[10] = -D[4]*G1[0]
+    glob[11] = -D[5]
+
+    return glob, var
 
 
 cs_dtypes = [('xmod','float'), ('M','float'), ('R','float'),
