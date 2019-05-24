@@ -1,4 +1,7 @@
-v0.0.10,  2019-05-17 -- added function to convert AMDL back into FGONG
+v0.0.10,  2019-05-24 -- added `prune` keyword to `mesa.load_history` to force a
+                        strictly increasing model number by only taking last
+                        model of any given model number
+                     -- added function to convert AMDL back into FGONG
                      -- frequency tables in MESA samples now in stored in record
                         arrays using same keys as MESA
                      -- suppressed divide by zero and 0/0 warnings in ADIPLS
