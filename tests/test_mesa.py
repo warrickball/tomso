@@ -13,6 +13,12 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['initial_mass'], 0.9995)
         self.assertAlmostEqual(header['initial_z'], 0.02)
 
+    def test_load_pruned_history(self):
+        header, history = mesa.load_history('data/mesa.history', prune=True)
+        self.assertEqual(header['version_number'], 10108)
+        self.assertAlmostEqual(header['initial_mass'], 0.9995)
+        self.assertAlmostEqual(header['initial_z'], 0.02)
+
         for i, row in enumerate(history[:-1]):
             self.assertLessEqual(history['model_number'][i],
                                  history['model_number'][i+1])
@@ -24,12 +30,6 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(header['version_number'], 10108)
         self.assertAlmostEqual(header['initial_mass'], 0.9995)
         self.assertAlmostEqual(header['initial_z'], 0.02)
-
-        for i, row in enumerate(history[:-1]):
-            self.assertLessEqual(history['model_number'][i],
-                                 history['model_number'][i+1])
-            self.assertLessEqual(history['star_age'][i],
-                                 history['star_age'][i+1])
 
     def test_load_profile(self):
         header, profile = mesa.load_profile('data/mesa.profile')

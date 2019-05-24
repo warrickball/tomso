@@ -8,7 +8,7 @@ import numpy as np
 from tomso.common import tomso_open, load_mesa_gyre
 
 
-def load_history(filename):
+def load_history(filename, prune=False):
     """Reads a MESA history file and returns the global data and history
     data in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.
@@ -17,6 +17,11 @@ def load_history(filename):
     ----------
     filename: str
         Filename of the MESA history file to load.
+    prune: bool, optional
+        If `True`, make the model number monotonic by only using the
+        last model of with any given model number.  Useful for
+        removing apparent reversals in time or model number because of
+        backups and retries.
 
     Returns
     -------
@@ -29,9 +34,15 @@ def load_history(filename):
         History data for the run. e.g. age, effective temperature.
         The keys for the array are the MESA variable names as in
         `history.columns`.
+
     """
     
-    return load_mesa_gyre(filename, 'mesa')
+    header, data = load_mesa_gyre(filename, 'mesa')
+    if prune:
+        I = np.unique(data['model_number'][::-1], return_index=True)[1][::-1]
+        data = data[len(data) - I - 1][::-1]
+    
+    return header, data
     
 
 def load_profile(filename):
