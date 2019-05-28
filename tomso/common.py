@@ -41,17 +41,17 @@ def load_mesa_gyre(filename, mesa_or_gyre):
         lines = f.readlines()
 
     if mesa_or_gyre == 'mesa':
-        header = np.genfromtxt(lines[1:3], names=True, dtype=None)
+        header = np.genfromtxt(lines[1:3], names=True, dtype=None, encoding='utf-8')
     elif mesa_or_gyre == 'gyre':
         # the GYRE header might be empty
         try:
-            header = np.genfromtxt(lines[2:4], names=True, dtype=None)
+            header = np.genfromtxt(lines[2:4], names=True, dtype=None, encoding='utf-8')
         except IndexError:
             header = None
     else:
         raise ValueError("mesa_or_gyre must be either 'mesa' or 'gyre', not %s"
                          % mesa_or_gyre)
             
-    data = np.genfromtxt(lines[5:], names=True, dtype=None)
+    data = np.genfromtxt(lines[5:], names=True, dtype=None, encoding='utf-8')
 
     return header, data

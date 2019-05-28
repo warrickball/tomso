@@ -19,9 +19,11 @@ def load_history(filename, prune=False):
         Filename of the MESA history file to load.
     prune: bool, optional
         If `True`, make the model number monotonic by only using the
-        last model of with any given model number.  Useful for
-        removing apparent reversals in time or model number because of
-        backups and retries.
+        last model of with any given model number and restrict models
+        to those with model number less than that of the last model.
+        Useful for removing apparent reversals in time or model number
+        because of backups and retries, and for models that finished
+        with fewer models following a restart.
 
     Returns
     -------
@@ -39,6 +41,7 @@ def load_history(filename, prune=False):
     
     header, data = load_mesa_gyre(filename, 'mesa')
     if prune:
+        data = data[data['model_number'] <= data['model_number'][-1]]
         I = np.unique(data['model_number'][::-1], return_index=True)[1][::-1]
         data = data[len(data) - I - 1][::-1]
     

@@ -9,15 +9,19 @@ class TestMESAFunctions(unittest.TestCase):
 
     def test_load_history(self):
         header, history = mesa.load_history('data/mesa.history')
-        self.assertEqual(header['version_number'], 10108)
-        self.assertAlmostEqual(header['initial_mass'], 0.9995)
-        self.assertAlmostEqual(header['initial_z'], 0.02)
+        self.assertEqual(header['version_number'], 11701)
+        self.assertAlmostEqual(header['burn_min1'], 50.0)
+        self.assertAlmostEqual(header['burn_min2'], 1000.0)
+        self.assertEqual(history['model_number'][-1], 125)
+        self.assertEqual(max(history['model_number']), 137)
 
     def test_load_pruned_history(self):
         header, history = mesa.load_history('data/mesa.history', prune=True)
-        self.assertEqual(header['version_number'], 10108)
-        self.assertAlmostEqual(header['initial_mass'], 0.9995)
-        self.assertAlmostEqual(header['initial_z'], 0.02)
+        self.assertEqual(header['version_number'], 11701)
+        self.assertAlmostEqual(header['burn_min1'], 50.0)
+        self.assertAlmostEqual(header['burn_min2'], 1000.0)
+        self.assertEqual(history['model_number'][-1], 125)
+        self.assertEqual(max(history['model_number']), 125)
 
         for i, row in enumerate(history[:-1]):
             self.assertLessEqual(history['model_number'][i],
@@ -27,9 +31,11 @@ class TestMESAFunctions(unittest.TestCase):
 
     def test_gzipped_load_history(self):
         header, history = mesa.load_history('data/mesa.history.gz')
-        self.assertEqual(header['version_number'], 10108)
-        self.assertAlmostEqual(header['initial_mass'], 0.9995)
-        self.assertAlmostEqual(header['initial_z'], 0.02)
+        self.assertEqual(header['version_number'], 11701)
+        self.assertAlmostEqual(header['burn_min1'], 50.0)
+        self.assertAlmostEqual(header['burn_min2'], 1000.0)
+        self.assertEqual(history['model_number'][-1], 125)
+        self.assertEqual(max(history['model_number']), 137)
 
     def test_load_profile(self):
         header, profile = mesa.load_profile('data/mesa.profile')
