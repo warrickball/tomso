@@ -351,8 +351,7 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
         return output
 
 
-def kernels(ell, cs, eig, D, A, G=DEFAULT_G,
-           alpha=None):
+def kernels(cs, eig, D, A, G=DEFAULT_G, alpha=None):
     """Returns the density and squared sound speed kernels.  I have tried
     to make this as notationally similar to Gough & Thompson (1991) as
     possible.  The kernels are normalized to have unit integrals over
@@ -360,8 +359,6 @@ def kernels(ell, cs, eig, D, A, G=DEFAULT_G,
 
     Parameters
     ----------
-    ell: int
-        The angular degree of the mode.
     cs: structured array
         The ``cs`` array for the mode.
     eig: np.array, shape(N,7)
@@ -400,6 +397,7 @@ def kernels(ell, cs, eig, D, A, G=DEFAULT_G,
         zz = integrate(yy, xx)
         return zz[-1] - zz
 
+    ell = cs['ell']
     M, R, P_c, rho_c = D[:4]                # mass and radius from FGONG
     y = eig.T
     sigma2 = cs['sigma2']
