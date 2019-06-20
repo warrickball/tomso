@@ -298,24 +298,24 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
 
     """
     M, R, P_c, rho_c = D[:4]
-    x = A[:,0]
-    q = A[:,1]*x**3
-    m = q*M
-    r = x*R
-    G1 = A[:,3]  # first adiabatic index
+    x = A[:,0]                                      # fractional radius
+    q = A[:,1]*x**3                                 # fractional mass
+    m = q*M                                         # mass
+    r = x*R                                         # radius
+    G1 = A[:,3]                                     # first adiabatic index
 
     # we can safely ignore 0/0s here
     with np.errstate(invalid='ignore'):
         g = G*m/r**2
-        rho = A[:,5]*m/r**3/4./np.pi
+        rho = A[:,5]*m/r**3/4./np.pi                # density
         rho[x==0] = rho_c
-        P = G*m*rho/G1/r/A[:,2]  # pressure
+        P = G*m*rho/G1/r/A[:,2]                     # pressure
         P[x==0] = P_c
-        
-    Hp = P/(rho*g)  # pressure scale height
-    cs2 = G1*P/rho  # square of the sound speed
-    cs = np.sqrt(cs2)
-    tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
+
+    Hp = P/(rho*g)                                  # pressure scale height
+    cs2 = G1*P/rho                                  # sound speed squared
+    cs = np.sqrt(cs2)                               # sound speed
+    tau = -integrate(1./cs[::-1], r[::-1])[::-1]    # acoustic depth
     
     if type(key_or_keys) == str:
         keys = [key_or_keys]
