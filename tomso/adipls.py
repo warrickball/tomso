@@ -259,6 +259,7 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
         - ``g``: gravity (array)
         - ``rho``: density (array)
         - ``P``: pressure (array)
+        - ``AA``: Ledoux discriminant (array)
         - ``Hp``: pressure scale height (array)
         - ``G1``: first adiabatic index (array)
         - ``cs2``: sound speed squared (array)
@@ -303,6 +304,7 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
     m = q*M                                         # mass
     r = x*R                                         # radius
     G1 = A[:,3]                                     # first adiabatic index
+    AA = A[:,4]                                     # Ledoux disciminant
 
     # we can safely ignore 0/0s here
     with np.errstate(invalid='ignore'):
@@ -337,6 +339,7 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
         elif key == 'g': output.append(g)
         elif key == 'rho': output.append(rho)
         elif key == 'P': output.append(P)
+        elif key == 'AA': output.append(AA)
         elif key == 'Hp': output.append(Hp)
         elif key == 'G1': output.append(G1)
         elif key == 'cs2': output.append(cs2)

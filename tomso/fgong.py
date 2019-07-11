@@ -145,6 +145,7 @@ def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
         - ``g``: gravity (array)
         - ``rho``: density (array)
         - ``P``: pressure (array)
+        - ``AA``: Ledoux discriminant (array)
         - ``Hp``: pressure scale height (array)
         - ``Hrho``: density scale height (array)
         - ``G1``: first adiabatic index (array)
@@ -195,14 +196,14 @@ def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
     M, R, L = glob[:3]
     r, lnq, T, P, rho, X, L_r, kappa, epsilon, G1 = var[:,:10].T
     cp = var[:,12]
-    A = var[:,14]
+    AA = var[:,14]
     
     x = r/R
     q = np.exp(lnq)
     m = q*M
     g = G*m/r**2
     Hp = P/(rho*g)
-    Hrho = 1/(1/G1/Hp + A/r)
+    Hrho = 1/(1/G1/Hp + AA/r)
     cs2 = G1*P/rho                    # square of the sound speed
     cs = np.sqrt(cs2)
     tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
@@ -230,6 +231,7 @@ def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
         elif key == 'g': output.append(g[I])
         elif key == 'rho': output.append(rho[I])
         elif key == 'P': output.append(P[I])
+        elif key == 'AA': output.append(AA[I])
         elif key == 'Hp': output.append(Hp[I])
         elif key == 'Hrho': output.append(Hrho[I])
         elif key == 'G1': output.append(G1[I])
