@@ -1,4 +1,4 @@
-v0.0.10,  2019-05-24 -- added `prune` keyword to `mesa.load_history` to force a
+v0.0.10,  2019-08-01 -- added `prune` keyword to `mesa.load_history` to force a
                         strictly increasing model number by only taking last
                         model of any given model number
                      -- added function to convert AMDL back into FGONG
