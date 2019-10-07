@@ -2,8 +2,10 @@
 
 TOMSO is a set of Python modules for loading and saving input and
 output files for and from stellar evolution and oscillation
-codes.  Functions are presently implemented for
+codes.  Functions are presently implemented for the following
+standard or code-specific formats:
 
+* [FGONG] (https://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf)
 * [MESA](http://mesa.sourceforge.net)
 * [STARS](http://www.ast.cam.ac.uk/~stars)
 * [ADIPLS](http://users-phys.au.dk/jcd/adipack.n/)
