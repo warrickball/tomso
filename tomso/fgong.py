@@ -43,13 +43,11 @@ def load_fgong(filename, N=-1, return_comment=False):
         ``return_comment=True``.
 
     """
-    f = open(filename, 'r')
+    with open(filename, 'r') as f:
+        comment = [f.readline() for i in range(4)]
+        nn, iconst, ivar, ivers = [int(i) for i in f.readline().split()]
+        lines = f.readlines()
 
-    comment = [f.readline() for i in range(4)]
-
-    nn, iconst, ivar, ivers = [int(i) for i in f.readline().split()]
-
-    lines = f.readlines()
     tmp = []
 
     # try to guess the length of each float in the data
@@ -72,8 +70,6 @@ def load_fgong(filename, N=-1, return_comment=False):
 
     glob = np.array(tmp[:iconst])
     var = np.array(tmp[iconst:]).reshape((-1, ivar))
-
-    f.close()
 
     if return_comment:
         return glob, var, comment
