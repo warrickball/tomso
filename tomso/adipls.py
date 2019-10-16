@@ -1,12 +1,15 @@
-"""Functions for reading and writing ADIPLS binary output.  Many
-return what I call ``cs`` arrays.  These are defined in Section 8.2 of
+# -*- coding: utf-8 -*-
+
+"""Functions and classes for reading and writing ADIPLS binary output.  Many
+return or contain what I call ``cs`` arrays.  These are defined in Section 8.2 of
 the `ADIPLS documentation`_.  They are structured arrays containing
 various scalar results from the frequency calculation.
 
     .. _ADIPLS documentation: https://sourceforge.net/p/mesa/code/HEAD/tree/trunk/adipls/adipack.c/notes/adiab.prg.c.pdf
 """
 import numpy as np
-from tomso.common import integrate, DEFAULT_G
+import warnings
+from .common import integrate, DEFAULT_G
 
 def read_one_cs(f):
     """Utility function to parse one ``cs`` array from a binary file
@@ -34,7 +37,7 @@ def load_pointwise_data(filename, ncols):
         The ``cs`` arrays for each mode.
     data: list of arrays
         The point-wise data arrays for each mode.
-    
+
     """
     css = []
     data = []
@@ -51,8 +54,13 @@ def load_pointwise_data(filename, ncols):
     return np.squeeze(css), np.squeeze(data)
 
 
-def load_agsm(filename):
-    """Reads an ADIPLS grand summary file.
+def load_agsm(filename, return_object=False):
+    """Reads an ADIPLS grand summary file and returns a structured array.
+
+    If `return_object` is `True`, instead returns an
+    `ADIPLSGrandSummary` object.  This will become default behaviour
+    from v0.0.11.  The old behaviour will be dropped completely from
+    v0.1.0.
 
     Parameters
     ----------
@@ -75,7 +83,14 @@ def load_agsm(filename):
             css.append(read_one_cs(f))
             f.read(4)
 
-    return np.squeeze(css)
+    if return_object:
+        return ADIPLSGrandSummary(np.squeeze(css))
+    else:
+        warnings.warn("From tomso 0.1.0+, `adipls.load_agsm` will only "
+                      "return an `FGONG` object: use `return_object=True` "
+                      "to mimic future behaviour",
+                      FutureWarning)
+        return np.squeeze(css)
 
 
 def load_amde(filename, nfmode=1):
@@ -130,15 +145,21 @@ def load_amde(filename, nfmode=1):
                 row = np.fromfile(f, dtype='d', count=ncols*nnw).reshape((-1, ncols))
                 data.append(row)
                 f.read(4)
-                
+
         return np.squeeze(css), np.squeeze(data), x
     else:
         raise ValueError('nfmode must be 1, 2 or 3 but got %i' % nfmode)
 
 
-def load_amdl(filename, return_nmod=False, live_dangerously=False):
+def load_amdl(filename, return_nmod=False, live_dangerously=False,
+              return_object=False, G=DEFAULT_G):
     """Reads an ADIPLS model file.  See Section 5 of the `ADIPLS
     documentation`_ for details.
+
+    If `return_object` is `True`, instead returns an
+    `ADIPLSStellarModel` object.  This will become default behaviour
+    from v0.0.12.  The old behaviour will be dropped completely from
+    v0.1.0.
 
     Parameters
     ----------
@@ -179,13 +200,20 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False):
         f.read(4)
         # check that this is the end of the file
 
-    if return_nmod:
-        return D, A, int(nmod)
+    if return_object:
+        return ADIPLSStellarModel(D, A, nmod=nmod, G=G)
     else:
-        return D, A
+        warnings.warn("From tomso 0.1.0+, `adipls.load_amdl` will only "
+                      "return an `ADIPLSStellarModel` object: use "
+                      "`return_object=True` to mimic future behaviour",
+                      FutureWarning)
+        if return_nmod:
+            return D, A, int(nmod)
+        else:
+            return D, A
 
 
-def load_rkr(filename):
+def load_rkr(filename, return_object=False):
     """Reads an ADIPLS rotational kernel file.
 
     Parameters
@@ -204,6 +232,13 @@ def load_rkr(filename):
 
     """
 
+    if return_object:
+        return ADIPLSRotationKernels(*load_pointwise_data(filename, 2))
+    else:
+        warnings.warn("From tomso 0.1.0+, `adipls.load_rkr` will only "
+                      "return an `ADIPLSRotationKernels` object: use "
+                      "`return_object=True` to mimic future behaviour",
+                      FutureWarning)
     return load_pointwise_data(filename, 2)
 
 
@@ -290,7 +325,7 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
         Point-wise data, as defined by eq. (5.1) of the `ADIPLS
         documentation`_ and returned by
         :py:meth:`~tomso.adipls.load_amdl`.
-    
+
     Returns
     -------
     output: list of floats and arrays
@@ -318,7 +353,7 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
     cs2 = G1*P/rho                                  # sound speed squared
     cs = np.sqrt(cs2)                               # sound speed
     tau = -integrate(1./cs[::-1], r[::-1])[::-1]    # acoustic depth
-    
+
     if type(key_or_keys) == str:
         keys = [key_or_keys]
         just_one = True
@@ -499,6 +534,13 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
         documentation`_.
 
     """
+    warnings.warn("From tomso 0.1.0+, FGONG should be converted to "
+                  "AMDL by loading an `FGONG` object and using its "
+                  "`to_amdl` function.  To mimic the future behaviour, "
+                  "load an FGONG object by using `fgong.load_fgong` "
+                  "with `return_object=True`.",
+                  FutureWarning)
+
     M, R = glob[:2]
     r, P, rho, G1, AA = var[::-1,[0,3,4,9,14]].T
     m = np.exp(var[::-1,1])*M
@@ -588,17 +630,23 @@ def amdl_to_fgong(D, A, G=DEFAULT_G):
         that vary through the star like temperature, density, etc.
 
     """
+    warnings.warn("From tomso 0.1.0+, AMDL should be converted to "
+                  "FGONG by loading an `ADIPLSStellarModel` object "
+                  "and using its `to_fgong` function.  To mimic the "
+                  "future behaviour, load an FGONG object by using "
+                  "`adipls.load_amdl` with `return_object=True`.",
+                  FutureWarning)
     M, R = D[:2]
 
     glob = np.zeros(15)
     var = np.zeros((len(A), 40))
-    
+
     r = A[:,0]*R
     q = A[:,1]*A[:,0]**3
     m = q*M
     G1 = A[:,3]
     AA = A[:,4]
-    
+
     # we can safely ignore division by 0 here
     with np.errstate(divide='ignore', invalid='ignore'):
         lnq = np.log(q)
@@ -643,3 +691,258 @@ for i in range(len(cs_dtypes), 50):
     cs_dtypes.append(('col%i' % i, 'float'))
 
 cs_floats = [(k, 'float') for (k,v) in cs_dtypes]
+
+
+class ADIPLSStellarModel(object):
+    """A class that contains and allows one to manipulate the data in a
+    stellar model stored in ADIPLS's internal binary model format.
+    See Section 5 of the `ADIPLS documentation`_ for details.
+
+    The main attributes are the **D** and **A** arrays, which follow
+    the definitions in the ADIPLS documentation.  The data in these
+    arrays can be accessed via the attributes with more
+    physically-meaningful names (e.g. the radius is
+    ``ADIPLSStellarModel.r``).
+
+    Some of these values can also be set via the attributes if doing
+    so is unambiguous. For example, the fractional radius **x** is not a
+    member of the **var** array but setting **x** will assign the actual
+    radius **r**, which is the first column of **var**.  Values that are
+    settable are indicated in the list of parameters.
+
+    Parameters
+    ----------
+    D: 1-d array
+        Global data, as defined by eq. (5.2) of the ADIPLS
+        documentation.
+    A: 2-d array
+        Point-wise data, as defined by eq. (5.1) of the ADIPLS
+        documentation.
+    nmod: int, optional
+        The model number.  I'm not sure what it's used for but it
+        doesn't seem to matter.
+    G: float, optional
+        Value for the gravitational constant.  If not given (which is
+        the default behaviour), we use ``glob[14]`` if its close to
+        the module-wise default value.  Otherwise, we use the
+        module-wise default value.
+
+    Attributes
+    ----------
+    nn: int
+        number of points in stellar model (i.e. number of rows in **A**)
+    M: float, settable
+        total mass
+    R: float, settable
+        photospheric radius
+    P_c: float, settable
+        central pressure
+    rho_c: float, settable
+        central density
+    x: NumPy array, settable
+        fractional radius co-ordinate
+    q: NumPy array, settable
+        fractional mass co-ordinate
+    lnq: NumPy array, settable
+        natural logarithm of the fractional mass co-ordinate
+    Vg: NumPy array
+        homology invariant *V/Gamma_1*
+    Gamma_1: NumPy array, settable
+        first adiabatic index
+    AA: NumPy array, settable
+        Ledoux discriminant
+    U: NumPy array
+        homology invariant *dlnm/dlnr*
+    V: NumPy array
+        homology invariant *dlnP/dlnr*
+    r: NumPy array, settable
+        radius co-ordinate
+    m: NumPy array, settable
+        mass co-ordinate
+    P: NumPy array
+        pressure
+    rho: NumPy array
+        density
+    g: NumPy array
+        local gravitational acceleration
+    Hp: NumPy array
+        pressure scale height
+    Hrho: NumPy array
+        density scale height
+    N2: NumPy array
+        squared Brunt–Väisälä (angular) frequency
+    cs2: NumPy array
+        squared adiabatic sound speed
+    cs: NumPy array
+        adiabatic sound speed
+
+    """
+    def __init__(self, D, A, nmod=0, G=DEFAULT_G):
+        self.D = D
+        self.A = A
+        self.nmod = nmod
+        self.G = G
+
+    def to_file(self, filename):
+        """Save the model to an ADIPLS binary stellar model file (usually
+        either starting or ending with `amdl`).
+
+        Parameters
+        ----------
+        filename: str
+            Filename to which the data is written.
+        """
+        save_amdl(filename, self.D, self.A, nmod=self.nmod)
+
+    def to_fgong(self):
+        """Convert the model to an ``FGONG`` object.
+
+        Note that the ADIPLS binary format only has the data necessary
+        to compute adiabiatic stellar oscillations, so the FGONG will
+        be missing other data (e.g. temperature, luminosity).
+        """
+        from .fgong import FGONG
+
+        return FGONG(*amdl_to_fgong(self.D, self.A, G=self.G))
+
+    # AMDL parameters that can be derived from data
+    @property
+    def nn(self): return len(self.A)
+
+    # Various properties for easier access to the data in `glob` and
+    # `var`.
+
+    @property
+    def M(self): return self.D[0]
+
+    @M.setter
+    def M(self, val): self.D[0] = val
+
+    @property
+    def R(self): return self.D[1]
+
+    @R.setter
+    def R(self, val): self.D[1] = val
+
+    @property
+    def P_c(self): return self.D[2]
+
+    @P_c.setter
+    def P_c(self, val): self.D[2] = val
+
+    @property
+    def rho_c(self): return self.D[3]
+
+    @rho_c.setter
+    def rho_c(self, val): self.D[3] = val
+
+    @property
+    def x(self): return self.A[:,0]
+
+    @x.setter
+    def x(self, val): self.A[:,0] = val
+
+    @property
+    def q(self): return self.A[:,1]*self.x**3
+
+    @q.setter
+    def q(self, val): self.A[:,1] = val/self.x**3
+
+    @property
+    def Vg(self): return self.A[:,2]
+
+    @Vg.setter
+    def Vg(self, val): self.A[:,2] = val
+
+    @property
+    def Gamma_1(self): return self.A[:,3]
+
+    @Gamma_1.setter
+    def Gamma_1(self, val): self.A[:,3] = val
+
+    @property
+    def AA(self): return self.A[:,4]
+
+    @AA.setter
+    def AA(self, val): self.A[:,4] = val
+
+    @property
+    def U(self): return self.A[:,5]
+
+    @U.setter
+    def U(self, val): self.A[:,5] = val
+
+    @property
+    def V(self): return self.Vg*self.Gamma_1
+
+    @V.setter
+    def V(self, val): self.Vg = val/self.Gamma_1
+
+    @property
+    def r(self): return self.x*self.R
+
+    @r.setter
+    def r(self, val): self.x = val/self.R
+
+    @property
+    def m(self): return self.q*self.M
+
+    @m.setter
+    def m(self, val): self.q = val/self.M
+
+    @property
+    def lnq(self): return np.log(self.q)
+
+    @q.setter
+    def lnq(self, val): self.q = np.exp(val)
+
+    @property
+    def P(self):
+        with np.errstate(invalid='ignore'):
+            val = self.G*self.m*self.rho/(self.Gamma_1*self.r*self.A[:,2])
+
+        val[self.x==0] = self.P_c
+        return val
+
+    @property
+    def rho(self):
+        with np.errstate(invalid='ignore'):
+            val = self.A[:,5]*self.m/self.r**3/4./np.pi
+
+        val[self.x==0] = self.rho_c
+        return val
+
+    @property
+    def g(self): return self.G*self.m/self.r**2
+
+    @property
+    def Hp(self): return self.P/(self.rho*self.g)
+
+    @property
+    def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
+
+    @property
+    def N2(self): return self.AA*self.g/self.r
+
+    @property
+    def cs2(self): return self.Gamma_1*self.P/self.rho
+
+    @property
+    def cs(self): return self.cs2**0.5
+
+    # tau
+
+class ADIPLSGrandSummary(object):
+    def __init__(self, css):
+        self.css = css
+
+class ADIPLSEigenfunctions(object):
+    def __init__(self, css, eigs, nfmode):
+        self.css = css
+        self.eigs = eigs
+        self.nfmode = nfmode
+
+class ADIPLSRotationKernels(object):
+    def __init__(self, css, rkr):
+        self.css = css
+        self.rkr = rkr

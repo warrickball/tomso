@@ -179,3 +179,4 @@ texinfo_documents = [
 
 # -- Options for autodoc output
 autodoc_member_order = 'bysource'
+napoleon_use_ivar = True
