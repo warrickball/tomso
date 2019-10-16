@@ -16,7 +16,9 @@ specific stellar evolution, oscillation code or file format.
 The code is intended to be the minimum necessary to usefully
 manipulate input and output data.  The only current requirement is
 *NumPy*.  It is also *very unstable*.  Expect the API to change
-drastically or completely without warning!
+drastically or completely without warning!  The FGONG and ADIPLS
+modules are currently undergoing a shift to object-oriented
+interfaces.  The old methods will be dropped completely from v0.1.0.
 
 Installation
 ++++++++++++
@@ -24,25 +26,35 @@ Installation
 You can install most recent stable(ish) version of TOMSO from the
 `Python Package Index <https://pypi.python.org/pypi>`_ using
 
-``pip install tomso``
+``pip3 install tomso``
 
 The `development version <https://github.com/warrickball/tomso>`_ is
 on GitHub.  The repo also includes unit tests and test data, which is
 omitted from the PyPI package to keep it very small.
 
+TOMSO still appears to work with Python 2 but I'm not specifically
+supporting Python 2 anymore.
+
 Example usage
 +++++++++++++
 
-I use TOMSO's modules with syntax like::
+I typically use TOMSO's modules with syntax like::
 
   from tomso import module
   output = module.function(input)
 
-As a very simple example, to load the header and profile data in an
-FGONG file, I use::
+As a simple real-world example, to convert an FGONG file to an ADIPLS
+binary stellar model file, I would use::
 
   from tomso import fgong
-  glob, var = fgong.load_fgong('model.fgong')
+  m = fgong.load_fgong('model.fgong', return_object=True)
+  a = m.to_amdl()
+  a.to_file('model.amdl')
+
+or, in two lines,::
+
+  from tomso import fgong
+  fgong.load_fgong('model.fgong', return_object=True).to_amdl().to_file('model.amdl')
 
 The APIs below give a complete list of available functions.
 
@@ -58,7 +70,7 @@ Module APIs
    mesa
    stars
    common
-	     
+
 ..
    Indices and tables
    ==================
