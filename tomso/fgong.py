@@ -347,6 +347,8 @@ class FGONG(object):
         specific heat capacity
     AA: NumPy array, settable
         Ledoux discriminant
+    Z: NumPy array, settable
+        metal abundance
     x: NumPy array, settable
         fractional radius co-ordinate
     q: NumPy array, settable
@@ -448,7 +450,9 @@ class FGONG(object):
     def r(self): return self.var[:,0]
 
     @r.setter
-    def r(self, val): self.var[:,0] = val
+    def r(self, val):
+        self.var[:,0] = val
+        self.var[:,17] = self.R-val
 
     @property
     def lnq(self): return self.var[:,1]
@@ -515,6 +519,12 @@ class FGONG(object):
 
     @AA.setter
     def AA(self, val): self.var[:,14] = val
+
+    @property
+    def Z(self): return self.var[:,16]
+
+    @Z.setter
+    def Z(self, val): self.var[:,16] = val
 
     # Some convenient quantities derived from `glob` and `var`.
     @property
