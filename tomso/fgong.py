@@ -73,7 +73,7 @@ def load_fgong(filename, N=-1, return_comment=False,
             elif s.lower().endswith('nan'):
                 s = 'nan'
             elif 'd' in s.lower():
-                s.lower().replace('d','e')
+                s = s.lower().replace('d','e')
 
             tmp.append(float(s))
 
