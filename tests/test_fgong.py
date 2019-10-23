@@ -24,6 +24,7 @@ class TestFGONGFunctions(unittest.TestCase):
         self.assertEqual(glob[2], m.L)
         self.assertTrue(np.all(m.m == np.exp(var[:,1])*glob[0]))
         self.assertTrue(np.all(m.x == var[:,0]/glob[1]))
+        self.assertTrue(np.all(m.G1 == m.Gamma_1))
 
     def test_save_fgong(self):
         glob1, var1, comment1 = fgong.load_fgong('data/modelS.fgong', return_comment=True)

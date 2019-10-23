@@ -46,6 +46,8 @@ class TestADIPLSFunctions(unittest.TestCase):
         self.assertEqual(m.R, m.D[1])
         self.assertTrue(np.all(m.x==m.A[:,0]))
         self.assertTrue(np.all(m.Gamma_1==m.A[:,3]))
+        self.assertTrue(np.all(m.G1==m.A[:,3]))
+        self.assertTrue(np.all(m.G1==m.Gamma_1))
         self.assertTrue(np.allclose(m.cs**2, m.cs2))
 
     def test_amdl_get_cross_check(self):

@@ -748,7 +748,9 @@ class ADIPLSStellarModel(object):
     Vg: NumPy array
         homology invariant *V/Gamma_1*
     Gamma_1: NumPy array, settable
-        first adiabatic index
+        first adiabatic index, aliased by **G1**
+    G1: NumPy array, settable
+        first adiabatic index, alias of **Gamma_1**
     AA: NumPy array, settable
         Ledoux discriminant
     U: NumPy array
@@ -859,6 +861,12 @@ class ADIPLSStellarModel(object):
 
     @Gamma_1.setter
     def Gamma_1(self, val): self.A[:,3] = val
+
+    @property
+    def G1(self): return self.A[:,3]
+
+    @G1.setter
+    def G1(self, val): self.A[:,3] = val
 
     @property
     def AA(self): return self.A[:,4]

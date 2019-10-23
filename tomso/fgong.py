@@ -342,7 +342,9 @@ class FGONG(object):
     epsilon: NumPy array, settable
         specific energy generation rate
     Gamma_1: NumPy array, settable
-        first adiabatic index
+        first adiabatic index, aliased by **G1**
+    G1: NumPy array, settable
+        first adiabatic index, alias of **Gamma_1**
     cp: NumPy array, settable
         specific heat capacity
     AA: NumPy array, settable
@@ -507,6 +509,12 @@ class FGONG(object):
 
     @Gamma_1.setter
     def Gamma_1(self, val): self.var[:,9] = val
+
+    @property
+    def G1(self): return self.var[:,9]
+
+    @G1.setter
+    def G1(self, val): self.var[:,9] = val
 
     @property
     def cp(self): return self.var[:,12]
