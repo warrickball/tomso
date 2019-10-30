@@ -93,7 +93,7 @@ def load_agsm(filename, return_object=False):
         return np.squeeze(css)
 
 
-def load_amde(filename, nfmode=1):
+def load_amde(filename, nfmode=1, return_object=False):
     """Reads an ADIPLS eigenfunction file written with the specified value
     of ``nfmode`` in the input file (either 1, 2 or 3).
 
@@ -119,15 +119,16 @@ def load_amde(filename, nfmode=1):
         ADIPLS's :math:`y` matrix.  The first four columns of
         :math:`y` are defined by equation (2.5) of the documentation
         and the last two by equations (4.4) and (4.6).
-    x: array, optional
-        Fractional radius co-ordinate ``x`` of the eigenfunctions.
-        Only returned for ``nfmode=2`` or ``3``, in which case the
-        radial co-ordinate isn't a part of ``eigs``.
-
+    x: array
+        Fractional radius co-ordinate ``x`` of the eigenfunctions.  If
+        ``nfmode=1``, the radial co-ordinate is also stored in
+        ``eigs[...,0]`` but it's returned anyway so that the returned
+        data always has the same structure.
     """
 
     if nfmode == 1:
-        return load_pointwise_data(filename, 7)
+        css, data = load_pointwise_data(filename, 7)
+        x = data[0,:,0]
     elif nfmode == 2 or nfmode == 3:
         # thanks to Vincent Boening for this
         ncols = 2
@@ -145,11 +146,17 @@ def load_amde(filename, nfmode=1):
                 row = np.fromfile(f, dtype='d', count=ncols*nnw).reshape((-1, ncols))
                 data.append(row)
                 f.read(4)
-
-        return np.squeeze(css), np.squeeze(data), x
     else:
         raise ValueError('nfmode must be 1, 2 or 3 but got %i' % nfmode)
 
+    if return_object:
+        return ADIPLSEigenfunctions(np.squeeze(css), np.squeeze(data), x=x, nfmode=nfmode)
+    else:
+        warnings.warn("From tomso 0.1.0+, `adipls.load_agsm` will only "
+                      "return an `FGONG` object: use `return_object=True` "
+                      "to mimic future behaviour",
+                      FutureWarning)
+        return np.squeeze(css), np.squeeze(data), x
 
 def load_amdl(filename, return_nmod=False, live_dangerously=False,
               return_object=False, G=DEFAULT_G):
@@ -173,10 +180,10 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
 
     Returns
     -------
-    D: 1-d array
+    D: 1-d NumPy array
         Global data, as defined by eq. (5.2) of the ADIPLS
         documentation.
-    A: 2-d array
+    A: 2-d NumPy array
         Point-wise data, as defined by eq. (5.1) of the ADIPLS
         documentation.
     nmod: int, optional
@@ -251,10 +258,10 @@ def save_amdl(filename, D, A, nmod=0):
     ----------
     filename: str
         Name of the model file, usually starting or ending with amdl.
-    D: 1-d array
+    D: 1-d NumPy array
         Global data, as defined by eq. (5.2) of the `ADIPLS
         documentation`_.
-    A: 2-d array
+    A: 2-d NumPy array
         Point-wise data, as defined by eq. (5.1) of the `ADIPLS
         documentation`_.
     nmod: int, optional
@@ -941,16 +948,174 @@ class ADIPLSStellarModel(object):
     # tau
 
 class ADIPLSGrandSummary(object):
+    """A class that represents the information for a set of mode
+    frequencies, loaded from an ADIPLS grand summary file (often
+    starting or ending with ``agsm``).  The main data is stored in the
+    ``css`` attribute, which is a structured array.  This will usually
+    be provided from a file by using `load_agsm` but an object can be
+    constructed from any similarly structured array.
+
+    A subset of the information in the ``css`` array is made available
+    through attributes.
+
+    Parameters
+    ----------
+    css: structured NumPy array
+        The ``cs`` arrays for each mode.
+
+    Attributes
+    ----------
+    M: float
+        total mass
+    R: float
+        photospheric radius
+    l: NumPy array of ints
+        angular degrees
+    n: NumPy array of ints
+        angular degrees
+
+    """
     def __init__(self, css):
         self.css = css
 
-class ADIPLSEigenfunctions(object):
-    def __init__(self, css, eigs, nfmode):
-        self.css = css
-        self.eigs = eigs
-        self.nfmode = nfmode
+    @property
+    def M(self): return self.css[0]['M']
 
-class ADIPLSRotationKernels(object):
+    @property
+    def R(self): return self.css[0]['R']
+
+    @property
+    def l(self): return self.css['ell']
+
+    @property
+    def n(self): return self.css['enn']
+
+    @property
+    def sigma2(self): return self.css['sigma2']
+
+    @property
+    def sigma2_c(self): return self.css['sigma2_c']
+
+    @property
+    def Pi_E(self): return self.css['Pi_E']*60.0
+
+    @property
+    def Pi_V(self): return self.css['Pi_V']*60.0
+
+    @property
+    def nu_Ri(self): return self.css['nu_Ri']/1e3
+
+    @property
+    def nu_V(self): return self.css['nu_V']/1e3
+
+    @property
+    def nu_E(self): return 1/self.Pi_E
+
+    @property
+    def nu_c(self): return np.sqrt(self.sigma2_c/self.sigma2)/self.Pi_E
+
+    @property
+    def nu(self): return self.nu_c
+
+    @property
+    def E(self): return self.css['E']
+
+    @property
+    def beta(self): return self.css['beta_nl']
+
+    def index_ln(self, l, n):
+        """Returns the index of mode with angular degree *l* 
+        and radial order *n*."""
+        return np.where((self.l==l)&(self.n==n))[0][0]
+
+    def index_nl(self, n, l):
+        """Returns the index of mode with radial order *n* 
+        and angular degree *l*."""
+        return self.index_ln(l, n)
+
+
+class ADIPLSEigenfunctions(ADIPLSGrandSummary):
+    """A class that represents the information for a set of eigenfunction
+    data kernels produced by ADIPLS.  This will usually be provided
+    from a file by using `load_amde` but an object can be constructed
+    from any similarly structured array.
+
+    Parameters
+    ----------
+    css: structured NumPy array
+        The ``cs`` arrays for each mode.
+    eigs: 3-d NumPy array
+
+        The eigenfunction arrays for each mode.  The *n*th element of
+        the array has the eigenfunction data for the *n*th mode, in
+        the same order as the summary data in *css*.  The number of
+        rows in the array for a given mode is the number of meshpoints
+        in the model.  The number of columns is either 6 or 2,
+        depending on **nfmode**.
+    nfmode: int
+        The output mode used by ADIPLS' when the data was stored.
+    x: NumPy array, optional
+        If **nfmode** is 2 or 3, the fractional radius must be
+        provided separately.  If **nfmode** is 1, it will be inferred
+        from the eigenfunction data if not explicitly provided.
+
+    This class has all the attributes of ``ADIPLSGrandSummary`` as
+    well as the following extras.
+
+    """
+    def __init__(self, css, eigs, nfmode=1, x=None):
+        ADIPLSGrandSummary.__init__(self, css)
+
+        if nfmode == 1:
+            if x is None:
+                self.x = eigs[0,:,0]
+            else:
+                self.x = x
+        elif nfmode == 2 or nfmode == 3:
+            self.x = x
+        else:
+            raise ValueError('nfmode must be 1, 2 or 3, not %i' % nfmode)
+
+        self.eigs = eigs
+
+
+class ADIPLSRotationKernels(ADIPLSGrandSummary):
+    """A class that represents the information for a set of rotational
+    kernels produced by ADIPLS.  This will usually be provided from a
+    file by using `load_rkr` but an object can be constructed from any
+    similarly structured array.
+
+    Parameters
+    ----------
+    css: structured NumPy array
+        The ``cs`` arrays for each mode.
+    rkrs: list of arrays
+        The kernel arrays for each mode.  Each array has two columns:
+        the fractional radius :math:`x` and the kernel :math:`K(x)`.
+
+    This class has all the attributes of ``ADIPLSGrandSummary`` as
+    well as the following extras.
+
+    Attributes
+    ----------
+    x: NumPy array
+        fractional radius co-ordinate
+    K: list of NumPy arrays
+        The *n*th row is the rotation kernel for the *n*th mode, in
+        the same order as the summary data in *css*.  The mode with
+        radial order *n* and angular degree *l* can be accessed by the
+        functions ``K_ln(l,n)`` or ``K_nl(n,l)``.
+
+    """
     def __init__(self, css, rkr):
-        self.css = css
-        self.rkr = rkr
+        ADIPLSGrandSummary.__init__(self, css)
+        self.x = rkr[0,:,0]
+        self.K = rkr[:,:,1]
+
+    def K_ln(self, l, n):
+        "Load kernels by *l* and *n*."
+        return self.K[(self.l==l)&(self.n==n)][0]
+
+    def K_nl(self, n, l):
+        "Load kernels by *n* and *l*."
+        return self.K_ln(l, n)
