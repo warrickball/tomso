@@ -301,9 +301,9 @@ class FGONG(object):
         (default=0)
     G: float, optional
         Value for the gravitational constant.  If not given (which is
-        the default behaviour), we use ``glob[14]`` if its close to
-        the module-wise default value.  Otherwise, we use the
-        module-wise default value.
+        the default behaviour), we use ``glob[14]`` if it exists and
+        is close to the module-wise default value.  Otherwise, we use
+        the module-wise default value.
     description: list of 4 strs, optional
         The first four lines of the FGONG file, which usually contain
         notes about the stellar model.
@@ -385,11 +385,11 @@ class FGONG(object):
         self.var = var
         self.description = description
 
-        # if G is None, use glob[14] if it looks like it's a
+        # if G is None, use glob[14] if it exists and looks like a
         # reasonable value of G
         if G is None:
-            if np.isclose(glob[14], DEFAULT_G,
-                          rtol=1e-3, atol=0.01e-8):
+            if len(glob) >= 14 and np.isclose(glob[14], DEFAULT_G,
+                                              rtol=1e-3, atol=0.01e-8):
                 self.G = glob[14]
             else:
                 self.G = DEFAULT_G
