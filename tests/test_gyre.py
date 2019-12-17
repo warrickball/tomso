@@ -39,6 +39,13 @@ class TestGYREFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['L'], 3.3408563666602257E+33)
         self.assertEqual(header['version'], 101)
 
+        m = gyre.load_gyre('data/mesa.gyre', return_object=True)
+        self.assertEqual(len(m.data), 601)
+        self.assertAlmostEqual(m.M, 1.9882053999999999E+33)
+        self.assertAlmostEqual(m.R, 6.2045507132959908E+10)
+        self.assertAlmostEqual(m.L, 3.3408563666602257E+33)
+        self.assertEqual(m.version, 101)
+
     def test_load_spb_mesa_versions(self):
         filenames = ['data/spb.mesa.78677cc', 'data/spb.mesa.813eed2',
                      'data/spb.mesa.adc6989']
@@ -50,6 +57,16 @@ class TestGYREFunctions(unittest.TestCase):
             for row1, row2 in zip(data1, data2):
                 self.assertEqual(row1, row2)
 
+            m1 = gyre.load_gyre('data/mesa.gyre', return_object=True)
+            m1.to_file(tmpfile)
+            m2 = gyre.load_gyre(tmpfile, return_object=True)
+            self.assertEqual(m1.header, m2.header)
+            for row1, row2 in zip(m1.data, m2.data):
+                self.assertEqual(row1, row2)
+
+            self.assertTrue(np.allclose(m1.r, m2.x*m2.R))
+            self.assertTrue(np.allclose(m1.cs2, m2.Gamma_1*m2.P/m2.rho))
+            self.assertTrue(np.allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:]))
 
     def test_save_gyre(self):
         header1, data1 = gyre.load_gyre('data/mesa.gyre')
@@ -58,6 +75,17 @@ class TestGYREFunctions(unittest.TestCase):
         self.assertEqual(header1, header2)
         for row1, row2 in zip(data1, data2):
             self.assertEqual(row1, row2)
+
+        m1 = gyre.load_gyre('data/mesa.gyre', return_object=True)
+        m1.to_file(tmpfile)
+        m2 = gyre.load_gyre(tmpfile, return_object=True)
+        self.assertEqual(m1.header, m2.header)
+        for row1, row2 in zip(m1.data, m2.data):
+            self.assertEqual(row1, row2)
+
+        self.assertTrue(np.allclose(m1.r, m2.x*m2.R))
+        self.assertTrue(np.allclose(m1.cs2, m2.Gamma_1*m2.P/m2.rho))
+        self.assertTrue(np.allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:]))
 
 
 if __name__ == '__main__':
