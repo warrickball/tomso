@@ -808,7 +808,7 @@ class ADIPLSStellarModel(object):
 
         Note that the ADIPLS binary format only has the data necessary
         to compute adiabiatic stellar oscillations, so the FGONG will
-        be missing other data (e.g. temperature, luminosity).
+        be missing some data (e.g. temperature, luminosity).
         """
         from .fgong import FGONG
 
@@ -973,6 +973,34 @@ class ADIPLSGrandSummary(object):
         angular degrees
     n: NumPy array of ints
         angular degrees
+    sigma2: NumPy array of floats
+        square of the dimensionless angular eigenfrequency
+    sigma2_c: NumPy array of floats
+        square of the dimensionless angular eigenfrequency corrected
+        for the Cowling approximation
+    Pi_E: NumPy array of floats
+        eigenperiod, in seconds
+    Pi_V: NumPy array of floats
+        variational period, in seconds
+    nu_Ri: NumPy array of floats
+        cyclic eigenfrequency corrected using Richardson
+        extrapolation, in seconds
+    nu_V: NumPy array of floats
+        variational cyclic frequency, in Hz
+    nu_E: NumPy array of floats
+        cyclic eigenfrequency, in seconds
+    nu_c: NumPy array of floats
+        cyclic eigenfrequency corrected for the Cowling approximation,
+        in seconds
+    nu: NumPy array of floats
+        alias of ``nu_c``
+    E: NumPy array of floats
+        Normalised mode inertia (see eq. (4.3) of ADIPLS notes).  Note
+        that ADIPLS's definition is smaller than GYRE's by a factor of
+        4π.
+    beta: NumPy array of floats
+        Weight for rotation kernel (see eq. (4.7) of ADIPLS notes or
+        (8.43) of JCD's oscillation notes).
 
     """
     def __init__(self, css):
