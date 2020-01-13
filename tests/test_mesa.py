@@ -15,6 +15,14 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(history['model_number'][-1], 125)
         self.assertEqual(max(history['model_number']), 137)
 
+        h = mesa.load_history('data/mesa.history', return_object=True)
+        self.assertEqual(h['version_number'], 11701)
+        self.assertAlmostEqual(h['burn_min1'], 50.0)
+        self.assertAlmostEqual(h['burn_min2'], 1000.0)
+        self.assertEqual(h['model_number'][-1], 125)
+        self.assertEqual(max(h['model_number']), 137)
+        self.assertTrue(np.allclose(h['log_dt'], np.log10(h['dt'])))
+
     def test_load_pruned_history(self):
         header, history = mesa.load_history('data/mesa.history', prune=True)
         self.assertEqual(header['version_number'], 11701)
@@ -29,6 +37,19 @@ class TestMESAFunctions(unittest.TestCase):
             self.assertLessEqual(history['star_age'][i],
                                  history['star_age'][i+1])
 
+        h = mesa.load_history('data/mesa.history', prune=True, return_object=True)
+        self.assertEqual(h['version_number'], 11701)
+        self.assertAlmostEqual(h['burn_min1'], 50.0)
+        self.assertAlmostEqual(h['burn_min2'], 1000.0)
+        self.assertEqual(h['model_number'][-1], 125)
+        self.assertEqual(max(h['model_number']), 125)
+
+        for i, row in enumerate(h[:-1]):
+            self.assertLessEqual(h['model_number'][i],
+                                 h['model_number'][i+1])
+            self.assertLessEqual(h['star_age'][i],
+                                 h['star_age'][i+1])
+
     def test_gzipped_load_history(self):
         header, history = mesa.load_history('data/mesa.history.gz')
         self.assertEqual(header['version_number'], 11701)
@@ -36,6 +57,13 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['burn_min2'], 1000.0)
         self.assertEqual(history['model_number'][-1], 125)
         self.assertEqual(max(history['model_number']), 137)
+
+        h = mesa.load_history('data/mesa.history.gz', return_object=True)
+        self.assertEqual(h['version_number'], 11701)
+        self.assertAlmostEqual(h['burn_min1'], 50.0)
+        self.assertAlmostEqual(h['burn_min2'], 1000.0)
+        self.assertEqual(h['model_number'][-1], 125)
+        self.assertEqual(max(h['model_number']), 137)
 
     def test_load_profile(self):
         header, profile = mesa.load_profile('data/mesa.profile')
@@ -47,6 +75,15 @@ class TestMESAFunctions(unittest.TestCase):
         for i in range(len(profile)):
             self.assertEqual(profile['zone'][i], i+1)
 
+        p = mesa.load_profile('data/mesa.profile', return_object=True)
+        self.assertEqual(p['model_number'], 95)
+        self.assertEqual(p['num_zones'], 559)
+        self.assertAlmostEqual(p['initial_mass'], 0.9995)
+        self.assertAlmostEqual(p['initial_z'], 0.02)
+
+        for i in range(len(profile)):
+            self.assertEqual(p['zone'][i], i+1)
+
     def test_load_gzipped_profile(self):
         header, profile = mesa.load_profile('data/mesa.profile.gz')
         self.assertEqual(header['model_number'], 95)
@@ -56,6 +93,15 @@ class TestMESAFunctions(unittest.TestCase):
 
         for i in range(len(profile)):
             self.assertEqual(profile['zone'][i], i+1)
+
+        p = mesa.load_profile('data/mesa.profile.gz', return_object=True)
+        self.assertEqual(p['model_number'], 95)
+        self.assertEqual(p['num_zones'], 559)
+        self.assertAlmostEqual(p['initial_mass'], 0.9995)
+        self.assertAlmostEqual(p['initial_z'], 0.02)
+
+        for i in range(len(profile)):
+            self.assertEqual(p['zone'][i], i+1)
 
     def test_load_sample(self):
         sample = mesa.load_sample('data/mesa.sample')
@@ -70,7 +116,7 @@ class TestMESAFunctions(unittest.TestCase):
             self.assertTrue(np.allclose(table['sigma'], 0.3))
             self.assertTrue(np.allclose(table['chi2term'],
                                         (table['corr']-table['obs'])**2/table['sigma']**2))
-            
+
             # for sigma in table['err']:
             #     self.assertAlmostEqual(sigma, 0.3)
 

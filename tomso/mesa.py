@@ -5,13 +5,18 @@ Functions for manipulating `MESA`_ input and output files.
 """
 
 import numpy as np
+import warnings
 from tomso.common import tomso_open, load_mesa_gyre
 
 
-def load_history(filename, prune=False):
+def load_history(filename, prune=False, return_object=False):
     """Reads a MESA history file and returns the global data and history
     data in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.
+
+    If `return_object` is `True`, instead returns an `MESALog` object.
+    This will become default behaviour from v0.0.12.  The old
+    behaviour will be dropped completely from v0.1.0.
 
     Parameters
     ----------
@@ -38,20 +43,31 @@ def load_history(filename, prune=False):
         `history.columns`.
 
     """
-    
+
     header, data = load_mesa_gyre(filename, 'mesa')
     if prune:
         data = data[data['model_number'] <= data['model_number'][-1]]
         I = np.unique(data['model_number'][::-1], return_index=True)[1][::-1]
         data = data[len(data) - I - 1][::-1]
-    
-    return header, data
-    
 
-def load_profile(filename):
+    if return_object:
+        return MESALog(header, data)
+    else:
+        warnings.warn("From tomso 0.1.0+, `mesa.load_history` will only "
+                      "return a `MESALog` object: use `return_object=True` "
+                      "to mimic future behaviour",
+                      FutureWarning)
+        return header, data
+
+
+def load_profile(filename, return_object=False):
     """Reads a MESA profile and returns the global data and profile
     data in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.
+
+    If `return_object` is `True`, instead returns an `MESALog` object.
+    This will become default behaviour from v0.0.12.  The old
+    behaviour will be dropped completely from v0.1.0.
 
     Parameters
     ----------
@@ -71,7 +87,15 @@ def load_profile(filename):
         `profile.columns`.
     """
 
-    return load_mesa_gyre(filename, 'mesa')
+    header, data = load_mesa_gyre(filename, 'mesa')
+    if return_object:
+        return MESALog(header, data)
+    else:
+        warnings.warn("From tomso 0.1.0+, `mesa.load_profile` will only "
+                      "return a `MESALog` object: use `return_object=True` "
+                      "to mimic future behaviour",
+                      FutureWarning)
+        return header, data
 
 
 def load_astero_results(filename):
@@ -98,7 +122,7 @@ def load_astero_results(filename):
     N_columns = len(lines[2].split())
     if len(names) == N_columns - 1:
         names.append('step_type')
-        
+
     data = np.genfromtxt(lines[2:-4], dtype=None, names=names,
                          encoding='utf-8')
 
@@ -218,3 +242,29 @@ def replace_value(line, value):
             return '%s .false.\n' % line[:equals]
     else:
         raise ValueError('Value in mesa.replace_value() is not a valid type!')
+
+
+class MESALog(object):
+    def __init__(self, header, data):
+        self.header = header
+        self.data = data
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, key):
+        if type(key) in (int, slice):
+            return self.data[key]
+        elif type(key) is str:
+            for source in [self.data, self.header]:
+                names = source.dtype.names
+                if key in names:
+                    return source[key]
+                elif ('log_' + key) in names:
+                    return 10.**source['log_' + key]
+                elif ('log' + key) in names:
+                    return 10.**source['log' + key]
+                elif key.startswith('log_') and key[4:] in names:
+                    return np.log10(source[key[4:]])
+                elif key.startswith('log') and key[3:] in names:
+                    return np.log10(source[key[3:]])
