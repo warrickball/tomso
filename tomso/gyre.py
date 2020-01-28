@@ -206,11 +206,11 @@ class GYREStellarModel(object):
         luminosity at radius **r**
     kappa: NumPy array, settable
         Rosseland mean opacity
-    epsilon: NumPy array, settable
+    eps: NumPy array, settable
         specific energy generation rate
-    Gamma_1: NumPy array, settable
+    Gamma_1: NumPy array
         first adiabatic index
-    AA: NumPy array, settable
+    AA: NumPy array
         Ledoux discriminant
     x: NumPy array, settable
         fractional radius co-ordinate
@@ -324,11 +324,20 @@ class GYREStellarModel(object):
     @property
     def M(self): return self.header['M']
 
+    @M.setter
+    def M(self, val): self.header['M'] = val
+
     @property
     def R(self): return self.header['R']
 
+    @R.setter
+    def R(self, val): self.header['R'] = val
+
     @property
     def L(self): return self.header['L']
+
+    @L.setter
+    def L(self, val): self.header['L'] = val
 
     @property
     def k(self): return self.data['k']
@@ -336,17 +345,32 @@ class GYREStellarModel(object):
     @property
     def r(self): return self.data['r']
 
+    @r.setter
+    def r(self, val): self.data['r'] = val
+
     @property
     def L_r(self): return self.data['L_r']
+
+    @L_r.setter
+    def L_r(self, val): self.data['L_r'] = val
 
     @property
     def P(self): return self.data['P']
 
+    @P.setter
+    def P(self, val): self.data['P'] = val
+
     @property
     def T(self): return self.data['T']
 
+    @T.setter
+    def T(self, val): self.data['T'] = val
+
     @property
     def rho(self): return self.data['rho']
+
+    @rho.setter
+    def rho(self, val): self.data['rho'] = val
 
     @property
     def nabla(self): return self.data['nabla']
@@ -356,6 +380,9 @@ class GYREStellarModel(object):
 
     @property
     def kappa(self): return self.data['kappa']
+
+    @kappa.setter
+    def kappa(self, val): self.data['kappa'] = val
 
     # Some properties have definitions that depend on the GYRE file
     # version.
@@ -398,8 +425,14 @@ class GYREStellarModel(object):
     @property
     def x(self): return self.r/self.R
 
+    @x.setter
+    def x(self, val): self.r = val*self.R
+
     @property
     def q(self): return self.m/self.M
+
+    @q.setter
+    def q(self, val): self.m = val*self.M
 
     @property
     def g(self):
