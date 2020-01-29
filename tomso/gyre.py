@@ -245,6 +245,9 @@ class GYREStellarModel(object):
         self.data = data
         self.G = G
 
+    def __len__(self):
+        return len(self.data)
+
     def to_file(self, filename):
         """Save the model to a file.
 
@@ -317,6 +320,10 @@ class GYREStellarModel(object):
             return self.header['version']
         else:
             return 1
+
+    @property
+    def n(self):
+        return len(self.data)
 
     # Various properties for easier access to the data in `header` and
     # `data`.

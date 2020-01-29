@@ -396,6 +396,9 @@ class FGONG(object):
         else:
             self.G = G
 
+    def __len__(self):
+        return len(self.var)
+
     def to_file(self, filename, fmt='%16.9E'):
         """Save the model to an FGONG file.
 
