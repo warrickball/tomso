@@ -258,7 +258,7 @@ class GYREStellarModel(object):
         """
         save_gyre(filename, self.header, self.data)
 
-    def to_fgong(self):
+    def to_fgong(self, reverse=True):
         """Convert the model to an ``FGONG`` object."""
         from .fgong import FGONG
 
@@ -277,7 +277,10 @@ class GYREStellarModel(object):
         var[:,9] = self.Gamma_1
         var[:,14] = self.AA
 
-        return FGONG(glob, var[::-1], ivers=1300, G=self.G)
+        if reverse:
+            return FGONG(glob, var[::-1], ivers=1300, G=self.G)
+        else:
+            return FGONG(glob, var, ivers=1300, G=self.G)
 
     def to_amdl(self):
         """Convert the model to an ``ADIPLSStellarModel`` object."""

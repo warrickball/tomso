@@ -806,7 +806,7 @@ class ADIPLSStellarModel(object):
         """
         save_amdl(filename, self.D, self.A, nmod=self.nmod)
 
-    def to_fgong(self):
+    def to_fgong(self, reverse=True):
         """Convert the model to an ``FGONG`` object.
 
         Note that the ADIPLS binary format only has the data necessary
@@ -815,7 +815,12 @@ class ADIPLSStellarModel(object):
         """
         from .fgong import FGONG
 
-        return FGONG(*amdl_to_fgong(self.D, self.A, G=self.G))
+        # `amdl_to_fgong` already reverses the data by default
+        if reverse:
+            return FGONG(*amdl_to_fgong(self.D, self.A, G=self.G))
+        else:
+            return FGONG(*amdl_to_fgong(self.D, self.A[::-1], G=self.G))
+
 
     # AMDL parameters that can be derived from data
     @property
