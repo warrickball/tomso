@@ -418,7 +418,7 @@ class FGONG(object):
         from .adipls import ADIPLSStellarModel
 
         return ADIPLSStellarModel(
-            *fgong_to_amdl(self.glob, self.var, G=self.G))
+            *fgong_to_amdl(self.glob, self.var, G=self.G), G=self.G)
 
     def to_gyre(self, version=None):
         """Convert the model to a ``GYREStellarModel`` object."""
