@@ -9,8 +9,8 @@ import unittest
 # Conversion to AMDL might modify the data because we mimic ADIPLS's
 # own FGONG-to-AMDL script.
 
-scalars = ['R', 'M']
-vectors = ['r', 'q', 'm', 'rho', 'P', 'Gamma_1', 'N2']
+scalars = ['R', 'M', 'G']
+vectors = ['r', 'q', 'm', 'rho', 'P', 'Gamma_1', 'N2', 'U', 'V']
 
 class TestConversionFunctions(unittest.TestCase):
     def compare_floats(self, x, y, attr='', index=0, places=12):
