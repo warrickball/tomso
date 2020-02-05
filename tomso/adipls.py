@@ -945,7 +945,10 @@ class ADIPLSStellarModel(object):
     def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
 
     @property
-    def N2(self): return self.AA*self.g/self.r
+    def N2(self):
+        val = self.AA*self.g/self.r
+        val[self.x==0] = 0
+        return val
 
     @property
     def cs2(self): return self.Gamma_1*self.P/self.rho
