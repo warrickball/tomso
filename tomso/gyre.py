@@ -70,6 +70,10 @@ def load_gyre(filename, return_object=False):
     point-wise data in a pair of NumPy record arrays.  Uses builtin
     `gzip` module to read files ending with `.gz`.
 
+    If `return_object` is `True`, instead returns a `GYREStellarModel`
+    object.  This will become default behaviour from v0.0.12.  The old
+    behaviour will be dropped completely from v0.1.0.
+
     Parameters
     ----------
     filename: str

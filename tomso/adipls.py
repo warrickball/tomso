@@ -59,7 +59,7 @@ def load_agsm(filename, return_object=False):
 
     If `return_object` is `True`, instead returns an
     `ADIPLSGrandSummary` object.  This will become default behaviour
-    from v0.0.11.  The old behaviour will be dropped completely from
+    from v0.0.12.  The old behaviour will be dropped completely from
     v0.1.0.
 
     Parameters
