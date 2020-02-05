@@ -420,6 +420,59 @@ class FGONG(object):
         return ADIPLSStellarModel(
             *fgong_to_amdl(self.glob, self.var, G=self.G))
 
+    def to_gyre(self, version=None):
+        """Convert the model to a ``GYREStellarModel`` object."""
+        from .gyre import gyre_header_dtypes, gyre_data_dtypes, GYREStellarModel
+
+        if version is None:
+            version = max([k for k in gyre_header_dtypes.keys()])
+
+        header = np.zeros(1, gyre_header_dtypes[version])
+        header['M'] = self.glob[0]
+        header['R'] = self.glob[1]
+        header['L'] = self.glob[2]
+
+        if version > 1:
+            header['version'] = version
+
+        data = np.zeros(self.nn, gyre_data_dtypes[version])
+        # data['r'] = self.var[:,0]
+        # data['T'] = self.var[:,2]
+        # data['P'] = self.var[:,3]
+        # data['rho'] = self.var[:,4]
+
+        # if np.all(np.diff(data['r']) <= 0):
+        #     return GYREStellarModel(header, data[::-1], G=self.G)
+        # else:
+        #     return GYREStellarModel(header, data, G=self.G)
+
+        g = GYREStellarModel(header[0], data, G=self.G)
+
+        g.r = self.r
+        g.m = self.m
+        g.T = self.T
+        g.P = self.P
+        g.rho = self.rho
+        g.Gamma_1 = self.Gamma_1
+        g.N2 = self.N2
+        g.kappa = self.kappa
+        g.L_r = self.L_r
+        g.data['nabla_ad'] = self.var[:,10]
+        g.data['delta'] = self.var[:,11]
+
+        # The definitions of epsilon in FGONG and GYRE formats might
+        # be different.  Compute non-adiabatic modes at your peril!
+        if version < 101:
+            g.data['eps_tot'] = self.epsilon
+        else:
+            g.data['eps'] = self.epsilon
+
+        if np.all(np.diff(g.r) <= 0):
+            g.data = g.data[::-1]
+
+        g.data['k'] = np.arange(self.nn) + 1
+        return g
+
     # FGONG parameters that can be derived from data
     @property
     def iconst(self): return len(self.glob)

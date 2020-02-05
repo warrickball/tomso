@@ -821,6 +821,49 @@ class ADIPLSStellarModel(object):
         else:
             return FGONG(*amdl_to_fgong(self.D, self.A[::-1], G=self.G))
 
+    def to_gyre(self, version=None):
+        """Convert the model to an ``GYREStellarModel`` object.
+
+        Note that the ADIPLS binary format only has the data necessary
+        to compute adiabiatic stellar oscillations, so the GYRE
+        stellar model will be missing some data (e.g. temperature,
+        luminosity).
+        """
+        from .gyre import gyre_header_dtypes, gyre_data_dtypes, GYREStellarModel
+
+        if version is None:
+            version = max([k for k in gyre_header_dtypes.keys()])
+
+        header = np.zeros(1, gyre_header_dtypes[version])
+        header['M'] = self.D[0]
+        header['R'] = self.D[1]
+        header['L'] = 42.0
+        header['version'] = version
+
+        data = np.ones(self.nn, gyre_data_dtypes[version])
+        g = GYREStellarModel(header[0], data, G=self.G)
+
+        g.r = self.r
+        g.m = self.m
+        g.P = self.P
+        g.rho = self.rho
+        g.Gamma_1 = self.Gamma_1
+        g.N2 = self.N2
+
+        # GYRE doesn't know if it's doing adiabatic or non-adiabatic
+        # modes when it reads the file, so it does some calculations
+        # expecting meaningful data.  We fudge this so we don't get
+        # FPEs.
+        g.kappa = 42.0
+        g.L_r = 42.0
+        if version < 101:
+            g.data['eps_tot'] = 42.0
+        else:
+            g.data['eps'] = 42.0
+
+        g.data['k'] = np.arange(self.nn) + 1
+        return g
+
 
     # AMDL parameters that can be derived from data
     @property

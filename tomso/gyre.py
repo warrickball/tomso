@@ -138,13 +138,17 @@ def save_gyre(filename, header, data):
     """
     with open(filename, 'wt') as f:
         header_length = len(list(header[()]))
-        if header_length == 4:
+        # if header_length == 4:
+        #     fmt = ''.join(['%6i','%26.16E'*3,'\n'])
+        # elif header_length == 5:
+        #     fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
+        # else:
+        #     raise ValueError("header should have 4 or 5 components but "
+        #                      "it appears to have %i" % header_length)
+        if not 'version' in header.dtype.names:
             fmt = ''.join(['%6i','%26.16E'*3,'\n'])
-        elif header_length == 5:
-            fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
         else:
-            raise ValueError("header should have 4 or 5 components but "
-                             "it appears to have %i" % header_length)
+            fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
 
         f.writelines([fmt % tuple(header[()])])
 
@@ -256,6 +260,7 @@ class GYREStellarModel(object):
         filename: str
             Filename to which the data is written.
         """
+        self.header['n'] = self.n
         save_gyre(filename, self.header, self.data)
 
     def to_fgong(self, reverse=True):
@@ -270,7 +275,7 @@ class GYREStellarModel(object):
 
         var = np.zeros((len(self.data), 40))
         var[:,0] = self.r
-        var[:,1] = np.log(self.q)
+        var[:,1] = self.lnq
         var[:,2] = self.T
         var[:,3] = self.P
         var[:,4] = self.rho
@@ -278,9 +283,9 @@ class GYREStellarModel(object):
         var[:,14] = self.AA
 
         if reverse:
-            return FGONG(glob, var[::-1], ivers=1300, G=self.G)
+            return FGONG(glob, var[::-1], ivers=300, G=self.G)
         else:
-            return FGONG(glob, var, ivers=1300, G=self.G)
+            return FGONG(glob, var, ivers=300, G=self.G)
 
     def to_amdl(self):
         """Convert the model to an ``ADIPLSStellarModel`` object."""
@@ -388,6 +393,9 @@ class GYREStellarModel(object):
     @property
     def N2(self): return self.data['N2']
 
+    @N2.setter
+    def N2(self, val): self.data['N2'] = val
+
     @property
     def kappa(self): return self.data['kappa']
 
@@ -410,12 +418,26 @@ class GYREStellarModel(object):
         else:
             return self.data['m']
 
+    @m.setter
+    def m(self, val):
+        if self.version in [1, 19]:
+            self.data['w'] = val/(self.M-w)
+        else:
+            self.data['m'] = val
+
     @property
     def Gamma_1(self):
         if self.version == 1:
             return self.data['c_P']/self.data['c_V']
         else:
             return self.data['Gamma_1']
+
+    @Gamma_1.setter
+    def Gamma_1(self, val):
+        if self.version == 1:
+            raise ValueError
+        else:
+            self.data['Gamma_1'] = val
 
     @property
     def eps(self):
@@ -431,7 +453,8 @@ class GYREStellarModel(object):
         else:
             return self.data['Omega']
 
-    # Some convenient quantities derived from `glob` and `var`,
+    # Some convenient quantities derived from data in `header` and
+    # `data` arrays.
     @property
     def x(self): return self.r/self.R
 
@@ -445,6 +468,12 @@ class GYREStellarModel(object):
     def q(self, val): self.m = val*self.M
 
     @property
+    def lnq(self): return np.log(self.q)
+
+    @lnq.setter
+    def lnq(self, val): self.q = np.exp(val)
+
+    @property
     def g(self):
         val = self.G*self.m/self.r**2
         val[self.r==0] = 0
@@ -453,7 +482,7 @@ class GYREStellarModel(object):
     @property
     def AA(self):
         val = self.N2*self.r/self.g
-        val[self.N2==0] = 0
+        val[self.x==0] = 0
         return val
 
     @property
