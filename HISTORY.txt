@@ -1,5 +1,6 @@
-v0.0.11, 2019-10-16  -- added classes to FGONG and ADIPLS modules as well as
-                        tests that currently run alongside old functions
+v0.0.11,  2020-02-04 -- added script to convert between stellar model types
+          2019-10-16 -- added classes to FGONG, GYRE and ADIPLS modules as well
+                        as tests that currently run alongside old functions
 v0.0.10,  2019-08-01 -- added `prune` keyword to `mesa.load_history` to force a
                         strictly increasing model number by only taking last
                         model of any given model number

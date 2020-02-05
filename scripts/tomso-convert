@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+from tomso.common import DEFAULT_G
+
+parser = ArgumentParser(description="""
+`tomso-convert` converts stellar models between different formats that
+are used for the calculation of stellar oscillations.  Possible input
+and output formats are:
+- `fgong`: FGONG files, an old standard;
+- `amdl`: ADIPLS binary model files, input for ADIPLS; or
+- `gyre`: GYRE stellar models, usually produced by MESA.
+
+Note that GYRE refers to the `gyre` format as `MESA`.
+""")
+parser.add_argument('input_format', type=str,
+                    choices={'fgong', 'amdl', 'gyre'})
+parser.add_argument('output_format', type=str,
+                    choices={'fgong', 'amdl', 'gyre'})
+parser.add_argument('input_filename', type=str)
+parser.add_argument('output_filename', type=str)
+parser.add_argument('-G', type=float, default=None,
+                    help="gravitational constant that, if given, "
+                    "will override the inferred value from the model")
+args = parser.parse_args()
+print(args)
+
+if args.input_format == args.output_format:
+    raise ValueError("input format and output format are the same\n"
+                     "did you mean to copy the file?")
+
+kwargs = {'return_object': True}
+if args.G is not None:
+    kwargs['G'] = args.G
+
+if args.input_format == 'fgong':
+    from tomso.fgong import load_fgong
+    m = load_fgong(args.input_filename, **kwargs)
+elif args.input_format == 'amdl':
+    from tomso.adipls import load_amdl
+    m = load_amdl(args.input_filename, **kwargs)
+elif args.input_format == 'gyre':
+    from tomso.gyre import load_gyre
+    m = load_gyre(args.input_filename, **kwargs)
+else:
+    raise ValueError("%s is not a valid input format" % args.input_format)
+
+if args.output_format == 'fgong':
+    m.to_fgong().to_file(args.output_filename)
+elif args.output_format == 'amdl':
+    m.to_amdl().to_file(args.output_filename)
+elif args.output_format == 'gyre':
+    m.to_gyre().to_file(args.output_filename)
+else:
+    raise ValueError("%s is not a valid output format" % args.output_format)
