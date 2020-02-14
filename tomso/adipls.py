@@ -58,9 +58,9 @@ def load_agsm(filename, return_object=False):
     """Reads an ADIPLS grand summary file and returns a structured array.
 
     If `return_object` is `True`, instead returns an
-    `ADIPLSGrandSummary` object.  This will become default behaviour
-    from v0.0.12.  The old behaviour will be dropped completely from
-    v0.1.0.
+    :py:class:`ADIPLSGrandSummary` object.  This will
+    become default behaviour from v0.0.12.  The old behaviour will be
+    dropped completely from v0.1.0.
 
     Parameters
     ----------
@@ -97,6 +97,11 @@ def load_amde(filename, nfmode=1, return_object=False):
     """Reads an ADIPLS eigenfunction file written with the specified value
     of ``nfmode`` in the input file (either 1, 2 or 3).
 
+    If `return_object` is `True`, instead returns an
+    :py:class:`ADIPLSEigenfunctions` object.  This will become default
+    behaviour from v0.0.12.  The old behaviour will be dropped
+    completely from v0.1.0.
+
     Parameters
     ----------
     filename: str
@@ -124,6 +129,7 @@ def load_amde(filename, nfmode=1, return_object=False):
         ``nfmode=1``, the radial co-ordinate is also stored in
         ``eigs[...,0]`` but it's returned anyway so that the returned
         data always has the same structure.
+
     """
 
     if nfmode == 1:
@@ -164,9 +170,9 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
     documentation`_ for details.
 
     If `return_object` is `True`, instead returns an
-    `ADIPLSStellarModel` object.  This will become default behaviour
-    from v0.0.12.  The old behaviour will be dropped completely from
-    v0.1.0.
+    :py:class:`ADIPLSStellarModel` object.  This will become default
+    behaviour from v0.0.12.  The old behaviour will be dropped
+    completely from v0.1.0.
 
     Parameters
     ----------
@@ -177,6 +183,10 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
     live_dangerously: bool, optional
         If `True`, load the file even if it looks like it might be
         too large for an AMDL file (i.e. has more than a million points).
+    G: float, optional
+        Value for the gravitational constant, in cgs units.  If not
+        given (which is the default behaviour), we use the module-wise
+        default value.
 
     Returns
     -------
@@ -223,6 +233,11 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
 def load_rkr(filename, return_object=False):
     """Reads an ADIPLS rotational kernel file.
 
+    If `return_object` is `True`, instead returns an
+    :py:class:`ADIPLSRotationKenerls` object.  This will become
+    default behaviour from v0.0.12.  The old behaviour will be dropped
+    completely from v0.1.0.
+
     Parameters
     ----------
     filename: str
@@ -251,8 +266,8 @@ def load_rkr(filename, return_object=False):
 
 def save_amdl(filename, D, A, nmod=0):
     """Writes an ADIPLS model file, given data in the same form as
-    returned by :py:meth:`~tomso.adipls.load_amdl`.  See Section 5 of
-    the `ADIPLS documentation`_ for details.
+    returned by :py:meth:`load_amdl`.  See Section 5 of the `ADIPLS
+    documentation`_ for details.
 
     Parameters
     ----------
@@ -309,7 +324,7 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
         - ``tau``: acoustic depth
 
         For example, if ``D`` and ``A`` have been returned from
-        :py:meth:`~tomso.adipls.load_amdl`, you could use
+        :py:meth:`load_amdl`, you could use
 
         >>> M, m = adipls.amdl_get(['M', 'm'], D, A)
 
@@ -326,12 +341,10 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
 
     D: 1-d array
         Global data, as defined by eq. (5.2) of the `ADIPLS
-        documentation`_ and returned by
-        :py:meth:`~tomso.adipls.load_amdl`.
+        documentation`_ and returned by :py:meth:`load_amdl`.
     A: 2-d array
         Point-wise data, as defined by eq. (5.1) of the `ADIPLS
-        documentation`_ and returned by
-        :py:meth:`~tomso.adipls.load_amdl`.
+        documentation`_ and returned by :py:meth:`load_amdl`.
 
     Returns
     -------
@@ -408,17 +421,17 @@ def kernels(cs, eig, D, A, G=DEFAULT_G, alpha=None):
         The ``cs`` array for the mode.
     eig: np.array, shape(N,7)
         Eigenfunction data for the mode, as returned by
-        :py:meth:`~tomso.adipls.load_amde`.
+        :py:meth:`load_amde`.
     D: 1-d array
         Global data, as defined by eq. (5.2) of the `ADIPLS
-        documentation`_ and returned by
-        :py:meth:`~tomso.adipls.load_amdl`.
+        documentation`_ and returned by :py:meth:`load_amdl`.
     A: 2-d array
         Point-wise data, as defined by eq. (5.1) of the `ADIPLS
-        documentation`_ and returned by
-        :py:meth:`~tomso.adipls.load_amdl`.
+        documentation`_ and returned by :py:meth:`load_amdl`.
     G: float, optional
-        The gravitational constant.
+        Value for the gravitational constant, in cgs units.  If not
+        given (which is the default behaviour), we use the module-wise
+        default value.
     alpha: float, optional
         Coefficient of the complementary function.  If ``None``, computed
         as in Michael Thompson's kernel code.
@@ -515,7 +528,7 @@ def kernels(cs, eig, D, A, G=DEFAULT_G, alpha=None):
 def fgong_to_amdl(glob, var, G=DEFAULT_G):
     """Converts FGONG data (in the form of `glob` and `var`, as returned
     by :py:meth:`~tomso.fgong.load_fgong`) into ADIPLS binary data,
-    which can be saved using :py:meth:`~tomso.adipls.save_amdl`.
+    which can be saved using :py:meth:`save_amdl`.
 
     The output should be identical (to within a few times machine
     error) to the output of ``fgong-amdl.d`` tool distributed with
@@ -529,7 +542,9 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
         The point-wise variables for the stellar model. i.e. things
         that vary through the star like temperature, density, etc.
     G: float, optional
-        Newton's gravitational constant in cgs units.
+        Value for the gravitational constant, in cgs units.  If not
+        given (which is the default behaviour), we use the module-wise
+        default value.
 
     Returns
     -------
@@ -604,7 +619,7 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
 
 def amdl_to_fgong(D, A, G=DEFAULT_G):
     """Converts ADIPLS binary data (in the form of `D` and `A`, as
-    returned by :py:meth:`~tomso.adipls.load_amdl`) into FGONG data,
+    returned by :py:meth:`load_amdl`) into FGONG data,
     which can be saved using :py:meth:`~tomso.fgong.save_fgong`.
 
     Designed to be the inverse of the ``fgong-amdl.d`` tool
@@ -626,7 +641,9 @@ def amdl_to_fgong(D, A, G=DEFAULT_G):
         Point-wise data, as defined by eq. (5.1) of the `ADIPLS
         documentation`_.
     G: float, optional
-        Newton's gravitational constant in cgs units.
+        Value for the gravitational constant, in cgs units.  If not
+        given (which is the default behaviour), we use the module-wise
+        default value.
 
     Returns
     -------
@@ -729,10 +746,9 @@ class ADIPLSStellarModel(object):
         The model number.  I'm not sure what it's used for but it
         doesn't seem to matter.
     G: float, optional
-        Value for the gravitational constant.  If not given (which is
-        the default behaviour), we use ``glob[14]`` if its close to
-        the module-wise default value.  Otherwise, we use the
-        module-wise default value.
+        Value for the gravitational constant, in cgs units.  If not
+        given (which is the default behaviour), we use the module-wise
+        default value.
 
     Attributes
     ----------
@@ -807,7 +823,7 @@ class ADIPLSStellarModel(object):
         save_amdl(filename, self.D, self.A, nmod=self.nmod)
 
     def to_fgong(self, reverse=True):
-        """Convert the model to an ``FGONG`` object.
+        """Convert the model to an :py:class:`~tomso.fgong.FGONG` object.
 
         Note that the ADIPLS binary format only has the data necessary
         to compute adiabiatic stellar oscillations, so the FGONG will
@@ -822,7 +838,8 @@ class ADIPLSStellarModel(object):
             return FGONG(*amdl_to_fgong(self.D, self.A[::-1], G=self.G))
 
     def to_gyre(self, version=None):
-        """Convert the model to an ``GYREStellarModel`` object.
+        """Convert the model to an :py:meth:`~tomso.gyre.GYREStellarModel`
+        object.
 
         Note that the ADIPLS binary format only has the data necessary
         to compute adiabiatic stellar oscillations, so the GYRE
@@ -1006,7 +1023,7 @@ class ADIPLSGrandSummary(object):
     frequencies, loaded from an ADIPLS grand summary file (often
     starting or ending with ``agsm``).  The main data is stored in the
     ``css`` attribute, which is a structured array.  This will usually
-    be provided from a file by using `load_agsm` but an object can be
+    be provided from a file by using :py:meth:`load_agsm` but an object can be
     constructed from any similarly structured array.
 
     A subset of the information in the ``css`` array is made available
@@ -1106,12 +1123,12 @@ class ADIPLSGrandSummary(object):
     def beta(self): return self.css['beta_nl']
 
     def index_ln(self, l, n):
-        """Returns the index of mode with angular degree *l* 
+        """Returns the index of mode with angular degree *l*
         and radial order *n*."""
         return np.where((self.l==l)&(self.n==n))[0][0]
 
     def index_nl(self, n, l):
-        """Returns the index of mode with radial order *n* 
+        """Returns the index of mode with radial order *n*
         and angular degree *l*."""
         return self.index_ln(l, n)
 
@@ -1119,15 +1136,14 @@ class ADIPLSGrandSummary(object):
 class ADIPLSEigenfunctions(ADIPLSGrandSummary):
     """A class that represents the information for a set of eigenfunction
     data kernels produced by ADIPLS.  This will usually be provided
-    from a file by using `load_amde` but an object can be constructed
-    from any similarly structured array.
+    from a file by using :py:meth:`load_amde` but an object can be
+    constructed from any similarly structured array.
 
     Parameters
     ----------
     css: structured NumPy array
         The ``cs`` arrays for each mode.
     eigs: 3-d NumPy array
-
         The eigenfunction arrays for each mode.  The *n*th element of
         the array has the eigenfunction data for the *n*th mode, in
         the same order as the summary data in *css*.  The number of
@@ -1141,10 +1157,21 @@ class ADIPLSEigenfunctions(ADIPLSGrandSummary):
         provided separately.  If **nfmode** is 1, it will be inferred
         from the eigenfunction data if not explicitly provided.
 
-    This class has all the attributes of ``ADIPLSGrandSummary`` as
-    well as the following extras.
+
+    This class has all the attributes of
+    :py:class:`ADIPLSGrandSummary` as well as the following extras.
+
+    Attributes
+    ----------
+    x: NumPy array
+        fractional radius co-ordinate
+    eigs: list of NumPy arrays
+        The *n*th row is the eigenfunction data for the *n*th mode, in
+        the same order as the summary data in *css*.
 
     """
+    # TODO: add some derived properties: xi_r, xi_h
+    # TODO: add access to eigenfunctions by n and l, like rotation kernels
     def __init__(self, css, eigs, nfmode=1, x=None):
         ADIPLSGrandSummary.__init__(self, css)
 
@@ -1164,8 +1191,8 @@ class ADIPLSEigenfunctions(ADIPLSGrandSummary):
 class ADIPLSRotationKernels(ADIPLSGrandSummary):
     """A class that represents the information for a set of rotational
     kernels produced by ADIPLS.  This will usually be provided from a
-    file by using `load_rkr` but an object can be constructed from any
-    similarly structured array.
+    file by using :py:meth:`load_rkr` but an object can be constructed
+    from any similarly structured array.
 
     Parameters
     ----------
@@ -1175,8 +1202,9 @@ class ADIPLSRotationKernels(ADIPLSGrandSummary):
         The kernel arrays for each mode.  Each array has two columns:
         the fractional radius :math:`x` and the kernel :math:`K(x)`.
 
-    This class has all the attributes of ``ADIPLSGrandSummary`` as
-    well as the following extras.
+
+    This class has all the attributes of
+    :py:class:`ADIPLSGrandSummary` as well as the following extras.
 
     Attributes
     ----------

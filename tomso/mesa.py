@@ -245,6 +245,28 @@ def replace_value(line, value):
 
 
 class MESALog(object):
+    """A dict-like class that contains the data for a MESA history or
+    profile.  Variables in the header or the body can be accessed by
+    the appropriate key. e.g. ``MESALog['star_age']`` returns the
+    `star_age` column.
+
+    This class also converts from (and to) logarithmic data if it is
+    (not) stored in that form. e.g. if a history contains ``log_dt``,
+    you can still access ``dt`` with ``MESALog['dt']``.
+
+    This object will normally be instantiated using
+    :py:meth:`mesa.load_history` or :py:meth:`mesa.load_profile`.
+
+    Parameters
+    ----------
+    header: structured array
+        Header data for the MESA history or profile. i.e. data for
+        which there is only one value in the file.
+    data: structured array
+        Columned data for the history or profile. i.e. data for which
+        there are multiple values (one per timestep or mesh point).
+
+    """
     def __init__(self, header, data):
         self.header = header
         self.data = data

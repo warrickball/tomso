@@ -12,6 +12,7 @@ def integrate(y, x):
     dz = (y[1:]+y[:-1])/2.*np.diff(x)
     return np.hstack((0., np.cumsum(dz)))
 
+
 def complement(y, x):
     """Complement of integral of `y` over `x`, computed using the
     trapezoidal rule.  i.e. :math:`\int _x^{x[-1]}y(x') dx'`."""

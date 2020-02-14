@@ -24,8 +24,8 @@ def load_fgong(filename, N=-1, return_comment=False,
 
     The version number `ivers` is not implemented.
 
-    If `return_object` is `True`, instead returns an `FGONG` object.
-    This will become default behaviour from v0.0.12.  The old
+    If `return_object` is `True`, instead returns an :py:class:`FGONG`
+    object.  This will become default behaviour from v0.0.12.  The old
     behaviour will be dropped completely from v0.1.0.
 
     Parameters
@@ -101,7 +101,7 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
     possible header), writes the data to a file.
 
     This function will be dropped from v0.1.0 in favour of the `to_file`
-    function of the `FGONG` object.
+    function of the :py:class:`FGONG` object.
 
     Parameters
     ----------
@@ -146,7 +146,7 @@ def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
     ``var`` arrays.
 
     This function will be dropped from v0.1.0 in favour of the
-    attributes of the `FGONG` object.
+    attributes of the :py:class:`FGONG` object.
 
     Parameters
     ----------

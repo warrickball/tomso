@@ -70,9 +70,10 @@ def load_gyre(filename, return_object=False):
     point-wise data in a pair of NumPy record arrays.  Uses builtin
     `gzip` module to read files ending with `.gz`.
 
-    If `return_object` is `True`, instead returns a `GYREStellarModel`
-    object.  This will become default behaviour from v0.0.12.  The old
-    behaviour will be dropped completely from v0.1.0.
+    If `return_object` is `True`, instead returns a
+    :py:class:`GYREStellarModel` object.  This will become default
+    behaviour from v0.0.12.  The old behaviour will be dropped
+    completely from v0.1.0.
 
     Parameters
     ----------
@@ -125,8 +126,8 @@ def load_gyre(filename, return_object=False):
 
 def save_gyre(filename, header, data):
     """Given the global data and point-wise data for a stellar model (as
-    returned by :py:meth:`~tomso.gyre.load_gyre`), saves the data to a
-    target file in the GYRE format.
+    returned by :py:meth:`load_gyre`), saves the data to a target file
+    in the GYRE format.
 
     Parameters
     ----------
@@ -187,8 +188,9 @@ class GYREStellarModel(object):
         Profile data for the stellar model. e.g. radius, pressure.
 
     G: float, optional
-        Value for the gravitational constant.  If not given (which is
-        the default behaviour), we use the module-wise default value.
+        Value for the gravitational constant, in cgs units.  If not
+        given (which is the default behaviour), we use the module-wise
+        default value.
 
     Attributes
     ----------
