@@ -225,7 +225,11 @@ def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
     Hrho = 1/(1/G1/Hp + AA/r)
     cs2 = G1*P/rho                    # square of the sound speed
     cs = np.sqrt(cs2)
-    tau = -integrate(1./cs[::-1], r[::-1])[::-1]      # acoustic depth
+    if np.all(np.diff(x) < 0):
+        tau = -integrate(1./cs, r)      # acoustic depth
+    else:
+        tau = integrate(1./cs[::-1], r[::-1])[::-1]
+        tau = np.max(tau)-tau
 
     if type(key_or_keys) == str:
         keys = [key_or_keys]
@@ -375,7 +379,8 @@ class FGONG(object):
         homology invariant *dlnP/dlnr*
     Vg: NumPy array
         homology invariant *V/Gamma_1*
-
+    tau: NumPy array
+        acoustic depth
     """
 
     def __init__(self, glob, var, ivers=300, G=None,
@@ -654,5 +659,12 @@ class FGONG(object):
     @property
     def Vg(self): return self.V/self.Gamma_1
 
+    @property
+    def tau(self):
+        if np.all(np.diff(self.x) < 0):
+            return -integrate(1./self.cs, self.r)
+        else:
+            tau = integrate(1./self.cs[::-1], self.r[::-1])[::-1]
+            return np.max(tau)-tau
+
     # - ``G1``: first adiabatic index (array)
-    # - ``tau``: acoustic depth (array)

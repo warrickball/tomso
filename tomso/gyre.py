@@ -8,7 +8,7 @@ Functions for manipulating `GYRE`_ input and output files.
 
 import numpy as np
 import warnings
-from .common import DEFAULT_G, tomso_open, load_mesa_gyre
+from .common import DEFAULT_G, tomso_open, load_mesa_gyre, integrate
 
 
 def load_summary(filename):
@@ -248,7 +248,8 @@ class GYREStellarModel(object):
         homology invariant *dlnP/dlnr*
     Vg: NumPy array
         homology invariant *V/Gamma_1*
-
+    tau: NumPy array
+        acoustic depth
     """
     def __init__(self, header, data, G=DEFAULT_G):
         self.header = header
@@ -525,6 +526,11 @@ class GYREStellarModel(object):
 
     @property
     def Vg(self): return self.V/self.Gamma_1
+
+    @property
+    def tau(self):
+        tau = integrate(1./self.cs[::-1], self.r[::-1])[::-1]
+        return np.max(tau)-tau
 
 gyre_header_dtypes = {1: [('n','int'), ('M','float'), ('R','float'),
                           ('L','float')],

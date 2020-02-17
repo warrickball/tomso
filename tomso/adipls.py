@@ -800,7 +800,8 @@ class ADIPLSStellarModel(object):
         squared adiabatic sound speed
     cs: NumPy array
         adiabatic sound speed
-
+    tau: NumPy array
+        acoustic depth
     """
     def __init__(self, D, A, nmod=0, G=DEFAULT_G):
         self.D = D
@@ -1031,7 +1032,11 @@ class ADIPLSStellarModel(object):
     @property
     def cs(self): return self.cs2**0.5
 
-    # tau
+    @property
+    def tau(self):
+        tau = integrate(1./self.cs[::-1], self.r[::-1])[::-1]
+        return np.max(tau)-tau
+
 
 class ADIPLSGrandSummary(object):
     """A class that represents the information for a set of mode

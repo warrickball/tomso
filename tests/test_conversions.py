@@ -10,7 +10,7 @@ import unittest
 # own FGONG-to-AMDL script.
 
 scalars = ['R', 'M', 'G']
-vectors = ['r', 'q', 'm', 'rho', 'P', 'Gamma_1', 'N2', 'U', 'V']
+vectors = ['r', 'q', 'm', 'rho', 'P', 'Gamma_1', 'N2', 'U', 'V', 'tau']
 
 class TestConversionFunctions(unittest.TestCase):
     def compare_floats(self, x, y, attr='', index=0, places=12):
