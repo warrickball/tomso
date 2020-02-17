@@ -77,6 +77,12 @@ class TestFGONGFunctions(unittest.TestCase):
         x_rev = fgong.fgong_get('x', glob, var, reverse=True)
         self.assertTrue(np.all(x_fwd[::-1] == x_rev))
 
+        m = fgong.load_fgong('data/modelS.fgong', return_object=True)
+        m_rev = fgong.load_fgong('data/modelS.fgong', return_object=True)
+        m_rev.var = m_rev.var[::-1]
+        for attr in ['x', 'rho', 'P', 'tau', 'cs']:
+            self.assertTrue(np.allclose(getattr(m, attr), getattr(m_rev, attr)[::-1]))
+
     def test_fgong_get_cross_check(self):
         glob, var = fgong.load_fgong('data/modelS.fgong')
         M, R, L, r, x, m, q, g, rho, P, Hp, G1, T, X, L_r, kappa, epsilon, cs2, cs, tau \
