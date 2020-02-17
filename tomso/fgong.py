@@ -421,7 +421,16 @@ class FGONG(object):
             *fgong_to_amdl(self.glob, self.var, G=self.G), G=self.G)
 
     def to_gyre(self, version=None):
-        """Convert the model to a ``GYREStellarModel`` object."""
+        """Convert the model to a ``GYREStellarModel`` object.
+
+        Parameters
+        ----------
+        version: int, optional
+            Specify GYRE format version number times 100. i.e.,
+            ``version=101`` produce a file with data version 1.01.  If
+            ``None`` (the default), the latest version available in
+            TOMSO is used.
+       """
         from .gyre import gyre_header_dtypes, gyre_data_dtypes, GYREStellarModel
 
         if version is None:

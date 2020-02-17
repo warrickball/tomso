@@ -828,6 +828,13 @@ class ADIPLSStellarModel(object):
         Note that the ADIPLS binary format only has the data necessary
         to compute adiabiatic stellar oscillations, so the FGONG will
         be missing some data (e.g. temperature, luminosity).
+
+        Parameters
+        ----------
+        reverse: bool, optional
+            If ``True`` (the default), store the FGONG data ordered
+            from the surface to the centre.  Otherwise, store the
+            FGONG data ordered from the centre to the surface.
         """
         from .fgong import FGONG
 
@@ -845,6 +852,14 @@ class ADIPLSStellarModel(object):
         to compute adiabiatic stellar oscillations, so the GYRE
         stellar model will be missing some data (e.g. temperature,
         luminosity).
+
+        Parameters
+        ----------
+        version: int, optional
+            Specify GYRE format version number times 100. i.e.,
+            ``version=101`` produce a file with data version 1.01.  If
+            ``None`` (the default), the latest version available in
+            TOMSO is used.
         """
         from .gyre import gyre_header_dtypes, gyre_data_dtypes, GYREStellarModel
 

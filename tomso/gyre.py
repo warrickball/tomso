@@ -270,7 +270,15 @@ class GYREStellarModel(object):
         save_gyre(filename, self.header, self.data)
 
     def to_fgong(self, reverse=True):
-        """Convert the model to an ``FGONG`` object."""
+        """Convert the model to an ``FGONG`` object.
+
+        Parameters
+        ----------
+        reverse: bool, optional
+            If ``True`` (the default), store the FGONG data ordered
+            from the surface to the centre.  Otherwise, store the
+            FGONG data ordered from the centre to the surface.
+        """
         from .fgong import FGONG
 
         glob = np.zeros(15)
