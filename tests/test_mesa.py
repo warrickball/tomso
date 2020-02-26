@@ -50,6 +50,26 @@ class TestMESAFunctions(unittest.TestCase):
             self.assertLessEqual(h['star_age'][i],
                                  h['star_age'][i+1])
 
+    def test_sliced_history(self):
+        i0 = 5
+        di = 5
+        h0 = mesa.load_history('data/mesa.history', return_object=True)
+
+        h1 = h0[i0:i0+di]
+        for k in ['burn_min1', 'burn_min2']:
+            self.assertEqual(h0[k], h1[k])
+
+        for i in range(0, di):
+            for k in ['model_number', 'star_age']:
+                self.assertEqual(h0[k][di+i], h1[k][i])
+
+        h1 = h0[i0]
+        for k in ['burn_min1', 'burn_min2']:
+            self.assertEqual(h0[k], h1[k])
+
+        for k in ['model_number', 'star_age']:
+            self.assertEqual(h0[k][i0], h1[k])
+
     def test_gzipped_load_history(self):
         header, history = mesa.load_history('data/mesa.history.gz')
         self.assertEqual(header['version_number'], 11701)

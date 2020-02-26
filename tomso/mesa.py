@@ -275,9 +275,9 @@ class MESALog(object):
         return len(self.data)
 
     def __getitem__(self, key):
-        if type(key) in (int, slice):
-            return self.data[key]
-        elif type(key) is str:
+        if isinstance(key, int) or isinstance(key, slice):
+            return MESALog(self.header, self.data[key])
+        elif isinstance(key, str):
             for source in [self.data, self.header]:
                 names = source.dtype.names
                 if key in names:
