@@ -275,9 +275,7 @@ class MESALog(object):
         return len(self.data)
 
     def __getitem__(self, key):
-        if isinstance(key, int) or isinstance(key, slice):
-            return MESALog(self.header, self.data[key])
-        elif isinstance(key, str):
+        if isinstance(key, str):
             for source in [self.data, self.header]:
                 names = source.dtype.names
                 if key in names:
@@ -290,3 +288,8 @@ class MESALog(object):
                     return np.log10(source[key[4:]])
                 elif key.startswith('log') and key[3:] in names:
                     return np.log10(source[key[3:]])
+                else:
+                    raise KeyError
+        else:
+            # assume we're trying to slice the data array
+            return MESALog(self.header, self.data[key])
