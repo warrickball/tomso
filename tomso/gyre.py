@@ -11,10 +11,14 @@ import warnings
 from .common import DEFAULT_G, tomso_open, load_mesa_gyre, integrate
 
 
-def load_summary(filename):
+def load_summary(filename, return_object=False):
     """Reads a GYRE summary file and returns the global data and mode data
     in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.
+
+    If `return_object` is `True`, instead returns an `GYRELog` object.
+    This will become default behaviour from v0.0.13.  The old
+    behaviour will be dropped completely from v0.1.0.
 
     Parameters
     ----------
@@ -35,13 +39,25 @@ def load_summary(filename):
 
     """
 
-    return load_mesa_gyre(filename, 'gyre')
+    header, data = load_mesa_gyre(filename, 'gyre')
+    if return_object:
+        return GYRELog(header, data)
+    else:
+        warnings.warn("From tomso 0.1.0+, `gyre.load_summary` will only "
+                      "return a `GYRELog` object: use `return_object=True` "
+                      "to mimic future behaviour",
+                      FutureWarning)
+        return header, data
 
 
-def load_mode(filename):
+def load_mode(filename, return_object=False):
     """Reads a GYRE mode file and returns the global data and mode profile
     data in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.
+
+    If `return_object` is `True`, instead returns an `GYRELog` object.
+    This will become default behaviour from v0.0.13.  The old
+    behaviour will be dropped completely from v0.1.0.
 
     Parameters
     ----------
@@ -62,7 +78,15 @@ def load_mode(filename):
 
     """
 
-    return load_mesa_gyre(filename, 'gyre')
+    header, data = load_mesa_gyre(filename, 'gyre')
+    if return_object:
+        return GYRELog(header, data)
+    else:
+        warnings.warn("From tomso 0.1.0+, `gyre.load_summary` will only "
+                      "return a `GYRELog` object: use `return_object=True` "
+                      "to mimic future behaviour",
+                      FutureWarning)
+        return header, data
 
 
 def load_gyre(filename, return_object=False):
@@ -161,6 +185,47 @@ def save_gyre(filename, header, data):
         fmt = ''.join(['%6i',' %26.16E'*N,'\n'])
         for row in data:
             f.writelines([fmt % tuple(row)])
+
+
+class GYRELog(object):
+    """A dict-like class that contains the data for a GYRE summary or mode
+    file.  Variables in the header or the body can be accessed by the
+    appropriate key, as interpreted by ``numpy.genfromtxt``, so the
+    fields ``Re(x)`` become ``Rex``. e.g. ``GYRELog['Refreq']``
+    returns the `Re(freq)` column.
+
+    This object will normally be instantiated using
+    :py:meth:`gyre.load_summary` or :py:meth:`gyre.load_mode`.
+
+    Parameters
+    ----------
+    header: structured array
+        Header data for the GYRE summary or mode file. i.e. data for
+        which there is only one value in the file.
+    data: structured array
+        Columned data for the summary or mode file. i.e. data for
+        which there are multiple values (one per timestep or mesh
+        point).
+
+    """
+    def __init__(self, header, data):
+        self.header = header
+        self.data = data
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            for source in [self.data, self.header]:
+                names = source.dtype.names
+                if key in names:
+                    return source[key]
+            else:
+                raise KeyError
+        else:
+            # assume we're trying to slice the data array
+            return GYRELog(self.header, self.data[key])
 
 
 class GYREStellarModel(object):
