@@ -288,8 +288,8 @@ class MESALog(object):
                     return np.log10(source[key[4:]])
                 elif key.startswith('log') and key[3:] in names:
                     return np.log10(source[key[3:]])
-                else:
-                    raise KeyError
+            else:
+                raise KeyError
         else:
             # assume we're trying to slice the data array
             return MESALog(self.header, self.data[key])
