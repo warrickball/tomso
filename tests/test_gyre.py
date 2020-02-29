@@ -20,6 +20,18 @@ class TestGYREFunctions(unittest.TestCase):
             self.assertEqual(row['l'], 0)
             self.assertEqual(row['n_pg'], i+8)
 
+        s = gyre.load_summary('data/gyre.summ', return_object=True)
+        self.assertAlmostEqual(s['M_star'], 1.989e33)
+        self.assertAlmostEqual(s['R_star'], 6.959906258e10)
+        for i, row in enumerate(s):
+            self.assertEqual(row['l'], 1)
+            self.assertEqual(row['n_pg'], i+19)
+
+        s = gyre.load_summary('data/gyre_noheader.summ', return_object=True)
+        for i, row in enumerate(s):
+            self.assertEqual(row['l'], 0)
+            self.assertEqual(row['n_pg'], i+8)
+
     def test_load_mode(self):
         for i in range(3):
             header, data = gyre.load_mode('data/gyre.mode_%i' % (i+1))
@@ -28,6 +40,15 @@ class TestGYREFunctions(unittest.TestCase):
             self.assertEqual(header['Imomega'], 0.0)
             self.assertEqual(header['Imfreq'], 0.0)
             for row in data:
+                self.assertEqual(row['Imxi_r'], 0.0)
+                self.assertEqual(row['Imxi_h'], 0.0)
+
+            m = gyre.load_mode('data/gyre.mode_%i' % (i+1), return_object=True)
+            self.assertEqual(m['n_pg'], i+19)
+            self.assertEqual(m['l'], 1)
+            self.assertEqual(m['Imomega'], 0.0)
+            self.assertEqual(m['Imfreq'], 0.0)
+            for row in m:
                 self.assertEqual(row['Imxi_r'], 0.0)
                 self.assertEqual(row['Imxi_h'], 0.0)
 
