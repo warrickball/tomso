@@ -23,6 +23,8 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(max(h['model_number']), 137)
         self.assertTrue(np.allclose(h['log_dt'], np.log10(h['dt'])))
 
+        self.assertRaises(KeyError, h.__getitem__, 'asdf')
+
     def test_load_pruned_history(self):
         header, history = mesa.load_history('data/mesa.history', prune=True)
         self.assertEqual(header['version_number'], 11701)
