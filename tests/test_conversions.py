@@ -9,16 +9,22 @@ import unittest
 # Conversion to AMDL might modify the data because we mimic ADIPLS's
 # own FGONG-to-AMDL script.
 
-scalars = ['R', 'M', 'G']
-vectors = ['r', 'q', 'm', 'rho', 'P', 'Gamma_1', 'N2', 'U', 'V', 'tau']
+mech_scalars = ['R', 'M', 'G']
+mech_vectors = ['r', 'q', 'm', 'rho', 'P', 'Gamma_1', 'N2', 'U', 'V', 'tau']
+
+thermo_scalars = ['L']
+thermo_vectors = ['T']
 
 class TestConversionFunctions(unittest.TestCase):
     def compare_floats(self, x, y, attr='', index=0, places=12):
         self.assertAlmostEqual(frexp(x)[0], frexp(y)[0], places=places,
                                msg='%s at k=%i' % (attr, index))
 
-    def compare_models(self, m0, m1):
+    def compare_models(self, m0, m1, thermo=False):
         self.assertEqual(len(m0), len(m1))
+
+        scalars = mech_scalars + thermo_scalars if thermo else mech_scalars
+        vectors = mech_vectors + thermo_vectors if thermo else mech_vectors
 
         for attr in scalars:
             self.compare_floats(getattr(m0, attr), getattr(m1, attr),
@@ -32,11 +38,11 @@ class TestConversionFunctions(unittest.TestCase):
 
     def test_fgong_to_fgong(self):
         f = load_fgong('data/modelS.fgong', return_object=True)
-        self.compare_models(f, f.to_gyre().to_fgong())
+        self.compare_models(f, f.to_gyre().to_fgong(), thermo=True)
 
     def test_gyre_to_gyre(self):
         g = load_gyre('data/mesa.gyre', return_object=True)
-        self.compare_models(g, g.to_fgong().to_gyre())
+        self.compare_models(g, g.to_fgong().to_gyre(), thermo=True)
 
     def test_amdl_to_amdl(self):
         a = load_amdl('data/modelS.amdl', return_object=True)
