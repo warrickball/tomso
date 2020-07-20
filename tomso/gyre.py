@@ -362,6 +362,8 @@ class GYREStellarModel(object):
         var[:,2] = self.T
         var[:,3] = self.P
         var[:,4] = self.rho
+        var[:,6] = self.L_r
+        var[:,7] = self.kappa
         var[:,9] = self.Gamma_1
         var[:,14] = self.AA
 
