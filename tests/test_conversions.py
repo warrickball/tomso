@@ -12,8 +12,8 @@ import unittest
 mech_scalars = ['R', 'M', 'G']
 mech_vectors = ['r', 'q', 'm', 'rho', 'P', 'Gamma_1', 'N2', 'U', 'V', 'tau']
 
-thermo_scalars = ['L']
-thermo_vectors = ['T']
+thermo_scalars = ['L', 'Teff']
+thermo_vectors = ['L_r', 'T']
 
 class TestConversionFunctions(unittest.TestCase):
     def compare_floats(self, x, y, attr='', index=0, places=12):
