@@ -19,6 +19,7 @@ class TestFGONGFunctions(unittest.TestCase):
         self.assertAlmostEqual(glob[2], 3.845999350e33)
 
         m = fgong.load_fgong('data/modelS.fgong', return_object=True)
+        self.assertEqual(len(m), 2482)
         self.assertEqual(glob[0], m.M)
         self.assertEqual(glob[1], m.R)
         self.assertEqual(glob[2], m.L)
