@@ -8,7 +8,8 @@ Functions for manipulating `GYRE`_ input and output files.
 
 import numpy as np
 import warnings
-from .common import DEFAULT_G, tomso_open, load_mesa_gyre, integrate
+from .common import DEFAULT_G
+from .common import tomso_open, load_mesa_gyre, integrate, get_Teff
 
 
 def load_summary(filename, return_object=False):
@@ -267,6 +268,8 @@ class GYREStellarModel(object):
         photospheric radius
     L: float, settable
         total luminosity
+    Teff: float
+        effective temperature, derived from luminosity and radius
     k: NumPy array
         mesh point number
     r: NumPy array, settable
@@ -433,6 +436,9 @@ class GYREStellarModel(object):
 
     @L.setter
     def L(self, val): self.header['L'] = val
+
+    @property
+    def Teff(self): return get_Teff(self.L, self.R)
 
     @property
     def k(self): return self.data['k']

@@ -1,6 +1,7 @@
 """Functions and constants common to multiple modules."""
 import numpy as np
 import gzip
+from .constants import sigma_SB
 
 DEFAULT_G = 6.67428e-8
 """Default value of the gravitational constant that is shared
@@ -52,7 +53,14 @@ def load_mesa_gyre(filename, mesa_or_gyre):
     else:
         raise ValueError("mesa_or_gyre must be either 'mesa' or 'gyre', not %s"
                          % mesa_or_gyre)
-            
+
     data = np.genfromtxt(lines[5:], names=True, dtype=None, encoding='utf-8')
 
     return header, data
+
+
+def get_Teff(L, R):
+    """Determine the effective temperature `Teff` for a given luminosity
+    `L` and radius `R`, both in cgs units."""
+
+    return (L/(4.*np.pi*R**2*sigma_SB))**0.25

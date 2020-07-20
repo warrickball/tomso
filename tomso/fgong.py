@@ -8,7 +8,8 @@ from a file.
 
 import numpy as np
 import warnings
-from .common import integrate, DEFAULT_G
+from .common import DEFAULT_G
+from .common import integrate, tomso_open, get_Teff
 from .adipls import fgong_to_amdl
 
 def load_fgong(filename, N=-1, return_comment=False,
@@ -327,6 +328,8 @@ class FGONG(object):
         photospheric radius
     L: float, settable
         total luminosity
+    Teff: float
+        effective temperature, derived from luminosity and radius
     r: NumPy array, settable
         radius co-ordinate
     lnq: NumPy array, settable
@@ -517,6 +520,9 @@ class FGONG(object):
 
     @L.setter
     def L(self, val): self.glob[2] = val
+
+    @property
+    def Teff(self): return get_Teff(self.L, self.R)
 
     @property
     def r(self): return self.var[:,0]
