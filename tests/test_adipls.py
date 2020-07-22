@@ -34,21 +34,23 @@ class TestADIPLSFunctions(unittest.TestCase):
         M, R, x, G1 = adipls.amdl_get(['M','R','x','G1'], D, A)
         self.assertEqual(M, D[0])
         self.assertEqual(R, D[1])
-        self.assertTrue(np.all(x==A[:,0]))
-        self.assertTrue(np.all(G1==A[:,3]))
+
+        np.testing.assert_equal(x, A[:,0])
+        np.testing.assert_equal(G1, A[:,3])
 
         cs, = adipls.amdl_get(['cs'], D, A)
         cs2 = adipls.amdl_get('cs2', D, A)
-        self.assertTrue(np.allclose(cs**2, cs2))
+        np.testing.assert_allclose(cs**2, cs2)
 
         m = adipls.load_amdl('data/mesa.amdl', return_object=True)
         self.assertEqual(m.M, m.D[0])
         self.assertEqual(m.R, m.D[1])
-        self.assertTrue(np.all(m.x==m.A[:,0]))
-        self.assertTrue(np.all(m.Gamma_1==m.A[:,3]))
-        self.assertTrue(np.all(m.G1==m.A[:,3]))
-        self.assertTrue(np.all(m.G1==m.Gamma_1))
-        self.assertTrue(np.allclose(m.cs**2, m.cs2))
+
+        np.testing.assert_equal(m.x, m.A[:,0])
+        np.testing.assert_equal(m.Gamma_1, m.A[:,3])
+        np.testing.assert_equal(m.G1, m.A[:,3])
+        np.testing.assert_equal(m.G1, m.Gamma_1)
+        np.testing.assert_allclose(m.cs**2, m.cs2)
 
     def test_amdl_get_cross_check(self):
         D, A = adipls.load_amdl('data/mesa.amdl')
@@ -56,16 +58,16 @@ class TestADIPLSFunctions(unittest.TestCase):
             = adipls.amdl_get(['M','R', 'P_c', 'rho_c', 'r', 'x', 'm',
                                 'q', 'g', 'rho', 'P', 'Hp', 'G1', 'cs2',
                                 'cs', 'tau'], D, A)
-        self.assertTrue(np.allclose(q, m/M, rtol=4*EPS))
-        self.assertTrue(np.allclose(x, r/R, rtol=4*EPS))
-        self.assertTrue(np.allclose(Hp, P/(rho*g), rtol=4*EPS, equal_nan=True))
-        self.assertTrue(np.allclose(cs2, G1*P/rho, rtol=4*EPS))
+        np.testing.assert_allclose(q, m/M, rtol=4*EPS)
+        np.testing.assert_allclose(x, r/R, rtol=4*EPS)
+        np.testing.assert_allclose(Hp, P/(rho*g), rtol=4*EPS, equal_nan=True)
+        np.testing.assert_allclose(cs2, G1*P/rho, rtol=4*EPS)
 
         m = adipls.load_amdl('data/mesa.amdl', return_object=True)
-        self.assertTrue(np.allclose(m.q, m.m/m.M, rtol=4*EPS))
-        self.assertTrue(np.allclose(m.x, m.r/m.R, rtol=4*EPS))
-        self.assertTrue(np.allclose(m.Hp, m.P/(m.rho*m.g), rtol=4*EPS, equal_nan=True))
-        self.assertTrue(np.allclose(m.cs2, m.Gamma_1*m.P/m.rho, rtol=4*EPS))
+        np.testing.assert_allclose(m.q, m.m/m.M, rtol=4*EPS)
+        np.testing.assert_allclose(m.x, m.r/m.R, rtol=4*EPS)
+        np.testing.assert_allclose(m.Hp, m.P/(m.rho*m.g), rtol=4*EPS, equal_nan=True)
+        np.testing.assert_allclose(m.cs2, m.Gamma_1*m.P/m.rho, rtol=4*EPS)
 
     def test_load_modelS_agsm(self):
         css = adipls.load_agsm('data/modelS.agsm')
@@ -80,8 +82,8 @@ class TestADIPLSFunctions(unittest.TestCase):
 
         self.assertAlmostEqual(agsm.M, 1.989e33)
         self.assertAlmostEqual(agsm.R, 69599062580.0)
-        self.assertTrue(np.allclose(agsm.nu_V, 1/agsm.Pi_V))
-        self.assertTrue(np.allclose(agsm.nu_E, 1/agsm.Pi_E))
+        np.testing.assert_allclose(agsm.nu_V, 1/agsm.Pi_V)
+        np.testing.assert_allclose(agsm.nu_E, 1/agsm.Pi_E)
 
         for i in range(len(agsm.css)):
             self.assertEqual(i, agsm.index_ln(agsm.l[i], agsm.n[i]))
@@ -93,27 +95,27 @@ class TestADIPLSFunctions(unittest.TestCase):
         css3, eigs3, x3 = adipls.load_amde('data/modelS_nfmode3.amde', nfmode=3)
 
         for cs1, cs2, cs3 in zip(css1, css2, css3):
-            self.assertTrue(np.all(cs1==cs2))
-            self.assertTrue(np.all(cs1==cs3))
+            np.testing.assert_equal(cs1, cs2)
+            np.testing.assert_equal(cs1, cs3)
             self.assertAlmostEqual(cs1['M'], 1.989e33)
             self.assertAlmostEqual(cs1['R'], 69599062580.0)
 
         for eig1, eig2, eig3 in zip(eigs1, eigs2, eigs3):
-            self.assertTrue(np.all(eig1[:,1:3] == eig2))
-            self.assertTrue(np.all(eig1[:,5:] == eig3))
-            self.assertTrue(np.all(eig1[:,0] == x1))
-            self.assertTrue(np.all(eig1[:,0] == x2))
-            self.assertTrue(np.all(eig1[:,0] == x3))
+            np.testing.assert_equal(eig1[:,1:3], eig2)
+            np.testing.assert_equal(eig1[:,5:], eig3)
+            np.testing.assert_equal(eig1[:,0], x1)
+            np.testing.assert_equal(eig1[:,0], x2)
+            np.testing.assert_equal(eig1[:,0], x3)
 
         amde1 = adipls.load_amde('data/modelS_nfmode1.amde', return_object=True)
         amde2 = adipls.load_amde('data/modelS_nfmode2.amde', return_object=True, nfmode=2)
         amde3 = adipls.load_amde('data/modelS_nfmode3.amde', return_object=True, nfmode=3)
 
-        self.assertTrue(np.all(amde1.eigs[:,:,1:3]==amde2.eigs))
-        self.assertTrue(np.all(amde1.x==amde2.x))
-        self.assertTrue(np.all(amde1.x==amde3.x))
-        self.assertTrue(np.all(amde1.css==amde2.css))
-        self.assertTrue(np.all(amde1.css==amde3.css))
+        np.testing.assert_equal(amde1.eigs[:,:,1:3], amde2.eigs)
+        np.testing.assert_equal(amde1.x, amde2.x)
+        np.testing.assert_equal(amde1.x, amde3.x)
+        np.testing.assert_equal(amde1.css, amde2.css)
+        np.testing.assert_equal(amde1.css, amde3.css)
 
     def test_load_amde_nfmode_value_error(self):
         self.assertRaises(ValueError, adipls.load_amde, 'data/modelS_nfmode1.amde', nfmode=4)
@@ -138,42 +140,42 @@ class TestADIPLSFunctions(unittest.TestCase):
             self.assertAlmostEqual(cs['M'], 1.989e33)
             self.assertAlmostEqual(cs['R'], 69599062580.0)
 
-        self.assertTrue(np.all(rkr.K[0]==rkr.K_ln(rkr.l[0], rkr.n[0])))
-        self.assertTrue(np.all(rkr.K[0]==rkr.K_nl(rkr.n[0], rkr.l[0])))
+        np.testing.assert_equal(rkr.K[0], rkr.K_ln(rkr.l[0], rkr.n[0]))
+        np.testing.assert_equal(rkr.K[0], rkr.K_nl(rkr.n[0], rkr.l[0]))
 
     def test_save_mesa_amdl(self):
         D1, A1, nmod1 = adipls.load_amdl('data/mesa.amdl', return_nmod=True)
         adipls.save_amdl(tmpfile, D1, A1, nmod=nmod1)
         D2, A2, nmod2 = adipls.load_amdl(tmpfile, return_nmod=True)
-        self.assertTrue(np.all(nmod1 == nmod2))
-        self.assertTrue(np.all(len(A1) == len(A2)))
-        self.assertTrue(np.all(D1 == D2))
-        self.assertTrue(np.all(A1 == A2))
+        np.testing.assert_equal(nmod1, nmod2)
+        np.testing.assert_equal(len(A1), len(A2))
+        np.testing.assert_equal(D1, D2)
+        np.testing.assert_equal(A1, A2)
 
         a1 = adipls.load_amdl('data/mesa.amdl', return_object=True)
         a1.to_file(tmpfile)
         a2 = adipls.load_amdl(tmpfile, return_object=True)
-        self.assertTrue(np.all(a1.nmod == a2.nmod))
-        self.assertTrue(np.all(a1.nn == a2.nn))
-        self.assertTrue(np.all(a1.D == a2.D))
-        self.assertTrue(np.all(a1.A == a2.A))
+        np.testing.assert_equal(a1.nmod, a2.nmod)
+        np.testing.assert_equal(a1.nn, a2.nn)
+        np.testing.assert_equal(a1.D, a2.D)
+        np.testing.assert_equal(a1.A, a2.A)
 
     def test_save_modelS_amdl(self):
         D1, A1, nmod1 = adipls.load_amdl('data/modelS.amdl', return_nmod=True)
         adipls.save_amdl(tmpfile, D1, A1, nmod=nmod1)
         D2, A2, nmod2 = adipls.load_amdl(tmpfile, return_nmod=True)
-        self.assertTrue(np.all(nmod1 == nmod2))
-        self.assertTrue(np.all(len(A1) == len(A2)))
-        self.assertTrue(np.all(D1 == D2))
-        self.assertTrue(np.all(A1 == A2))
+        np.testing.assert_equal(nmod1, nmod2)
+        np.testing.assert_equal(len(A1), len(A2))
+        np.testing.assert_equal(D1, D2)
+        np.testing.assert_equal(A1, A2)
 
         a1 = adipls.load_amdl('data/modelS.amdl', return_object=True)
         a1.to_file(tmpfile)
         a2 = adipls.load_amdl(tmpfile, return_object=True)
-        self.assertTrue(np.all(a1.nmod == a2.nmod))
-        self.assertTrue(np.all(a1.nn == a2.nn))
-        self.assertTrue(np.all(a1.D == a1.D))
-        self.assertTrue(np.all(a1.A == a1.A))
+        np.testing.assert_equal(a1.nmod, a2.nmod)
+        np.testing.assert_equal(a1.nn, a2.nn)
+        np.testing.assert_equal(a1.D, a1.D)
+        np.testing.assert_equal(a1.A, a1.A)
 
     def test_fgong_to_amdl_modelS(self):
         D1, A1 = adipls.load_amdl('data/modelS.amdl')
@@ -283,14 +285,14 @@ class TestADIPLSFunctions(unittest.TestCase):
         css_agsm = adipls.load_agsm('data/modelS.agsm')
         css_amde = adipls.load_amde('data/modelS_nfmode1.amde')[0]
         css_rkr = adipls.load_rkr('data/modelS.rkr')[0]
-        self.assertTrue(np.all(css_agsm == css_amde))
-        self.assertTrue(np.all(css_agsm == css_rkr))
+        np.testing.assert_equal(css_agsm, css_amde)
+        np.testing.assert_equal(css_agsm, css_rkr)
 
         agsm = adipls.load_agsm('data/modelS.agsm', return_object=True)
         # amde = adipls.load_amde('data/modelS_nfmode1.amde', return_object=True)
         rkr = adipls.load_rkr('data/modelS.rkr', return_object=True)
         # self.assertTrue(np.all(css_agsm == css_amde))
-        self.assertTrue(np.all(agsm.css == rkr.css))
+        np.testing.assert_equal(agsm.css, rkr.css)
 
 if __name__ == '__main__':
     unittest.main()

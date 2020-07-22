@@ -1,3 +1,4 @@
+import numpy as np
 from tomso.adipls import load_amdl
 from tomso.fgong import load_fgong
 from tomso.gyre import load_gyre
@@ -16,10 +17,6 @@ thermo_scalars = ['L', 'Teff']
 thermo_vectors = ['L_r', 'T']
 
 class TestConversionFunctions(unittest.TestCase):
-    def compare_floats(self, x, y, attr='', index=0, places=12):
-        self.assertAlmostEqual(frexp(x)[0], frexp(y)[0], places=places,
-                               msg='%s at k=%i' % (attr, index))
-
     def compare_models(self, m0, m1, thermo=False):
         self.assertEqual(len(m0), len(m1))
 
@@ -27,14 +24,12 @@ class TestConversionFunctions(unittest.TestCase):
         vectors = mech_vectors + thermo_vectors if thermo else mech_vectors
 
         for attr in scalars:
-            self.compare_floats(getattr(m0, attr), getattr(m1, attr),
-                                attr=attr)
+            np.testing.assert_allclose(getattr(m0, attr), getattr(m1, attr),
+                                       rtol=1e-12)
 
         for attr in vectors:
-            x0 = getattr(m0, attr)
-            x1 = getattr(m1, attr)
-            for i in range(len(m0)):
-                self.compare_floats(x0[i], x1[i], attr=attr, index=i)
+            np.testing.assert_allclose(getattr(m0, attr), getattr(m1, attr),
+                                       rtol=1e-12)
 
     def test_fgong_to_fgong(self):
         f = load_fgong('data/modelS.fgong', return_object=True)

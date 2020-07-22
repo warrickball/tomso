@@ -21,7 +21,8 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(h['burn_min2'], 1000.0)
         self.assertEqual(h['model_number'][-1], 125)
         self.assertEqual(max(h['model_number']), 137)
-        self.assertTrue(np.allclose(h['log_dt'], np.log10(h['dt'])))
+
+        np.testing.assert_allclose(h['log_dt'], np.log10(h['dt']))
 
         self.assertRaises(KeyError, h.__getitem__, 'asdf')
 
@@ -33,11 +34,10 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(history['model_number'][-1], 125)
         self.assertEqual(max(history['model_number']), 125)
 
-        for i, row in enumerate(history[:-1]):
-            self.assertLessEqual(history['model_number'][i],
-                                 history['model_number'][i+1])
-            self.assertLessEqual(history['star_age'][i],
-                                 history['star_age'][i+1])
+        np.testing.assert_array_less(
+            history['model_number'][:-1], history['model_number'][1:])
+        np.testing.assert_array_less(
+            history['star_age'][:-1], history['star_age'][1:])
 
         h = mesa.load_history('data/mesa.history', prune=True, return_object=True)
         self.assertEqual(h['version_number'], 11701)
@@ -46,18 +46,15 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(h['model_number'][-1], 125)
         self.assertEqual(max(h['model_number']), 125)
 
-        for i, row in enumerate(h[:-1]):
-            self.assertLessEqual(h['model_number'][i],
-                                 h['model_number'][i+1])
-            self.assertLessEqual(h['star_age'][i],
-                                 h['star_age'][i+1])
+        np.testing.assert_array_less(h['model_number'][:-1], h['model_number'][1:])
+        np.testing.assert_array_less(h['star_age'][:-1], h['star_age'][1:])
 
     def test_sliced_history(self):
         i0 = 5
         di = 5
         h0 = mesa.load_history('data/mesa.history', return_object=True)
-
         h1 = h0[i0:i0+di]
+
         for k in ['burn_min1', 'burn_min2']:
             self.assertEqual(h0[k], h1[k])
 
@@ -94,8 +91,7 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['initial_mass'], 0.9995)
         self.assertAlmostEqual(header['initial_z'], 0.02)
 
-        for i in range(len(profile)):
-            self.assertEqual(profile['zone'][i], i+1)
+        np.testing.assert_equal(profile['zone'], np.arange(len(profile['zone']))+1)
 
         p = mesa.load_profile('data/mesa.profile', return_object=True)
         self.assertEqual(p['model_number'], 95)
@@ -103,8 +99,7 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(p['initial_mass'], 0.9995)
         self.assertAlmostEqual(p['initial_z'], 0.02)
 
-        for i in range(len(profile)):
-            self.assertEqual(p['zone'][i], i+1)
+        np.testing.assert_equal(p['zone'], np.arange(len(p['zone']))+1)
 
     def test_load_gzipped_profile(self):
         header, profile = mesa.load_profile('data/mesa.profile.gz')
@@ -113,8 +108,7 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(header['initial_mass'], 0.9995)
         self.assertAlmostEqual(header['initial_z'], 0.02)
 
-        for i in range(len(profile)):
-            self.assertEqual(profile['zone'][i], i+1)
+        np.testing.assert_equal(profile['zone'], np.arange(len(profile['zone']))+1)
 
         p = mesa.load_profile('data/mesa.profile.gz', return_object=True)
         self.assertEqual(p['model_number'], 95)
@@ -122,8 +116,7 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(p['initial_mass'], 0.9995)
         self.assertAlmostEqual(p['initial_z'], 0.02)
 
-        for i in range(len(profile)):
-            self.assertEqual(p['zone'][i], i+1)
+        np.testing.assert_equal(p['zone'], np.arange(len(p['zone']))+1)
 
     def test_load_sample(self):
         sample = mesa.load_sample('data/mesa.sample')
@@ -135,9 +128,9 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(sample['FeH_sigma'], 0.05)
         for ell in range(4):
             table = sample['l%i' % ell]  # for brevity
-            self.assertTrue(np.allclose(table['sigma'], 0.3))
-            self.assertTrue(np.allclose(table['chi2term'],
-                                        (table['corr']-table['obs'])**2/table['sigma']**2))
+            np.testing.assert_allclose(table['sigma'], 0.3)
+            np.testing.assert_allclose(
+                table['chi2term'], (table['corr']-table['obs'])**2/table['sigma']**2)
 
             # for sigma in table['err']:
             #     self.assertAlmostEqual(sigma, 0.3)
@@ -152,9 +145,10 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(sample['FeH_sigma'], 0.05)
         for ell in range(4):
             table = sample['l%i' % ell]  # for brevity
-            self.assertTrue(np.allclose(table['sigma'], 0.3))
-            self.assertTrue(np.allclose(table['chi2term'],
-                                        (table['corr']-table['obs'])**2/table['sigma']**2))
+            np.testing.assert_allclose(table['sigma'], 0.3)
+            np.testing.assert_allclose(
+                table['chi2term'], (table['corr']-table['obs'])**2/table['sigma']**2)
+
             # for sigma in sample['l%i' % ell]['err']:
             #     self.assertAlmostEqual(sigma, 0.3)
 

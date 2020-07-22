@@ -4,7 +4,6 @@ import unittest
 
 tmpfile = 'data/tmpfile'
 
-
 class TestGYREFunctions(unittest.TestCase):
 
     def test_load_summary(self):
@@ -39,18 +38,18 @@ class TestGYREFunctions(unittest.TestCase):
             self.assertEqual(header['l'], 1)
             self.assertEqual(header['Imomega'], 0.0)
             self.assertEqual(header['Imfreq'], 0.0)
-            for row in data:
-                self.assertEqual(row['Imxi_r'], 0.0)
-                self.assertEqual(row['Imxi_h'], 0.0)
+
+            np.testing.assert_equal(data['Imxi_r'], 0.0)
+            np.testing.assert_equal(data['Imxi_h'], 0.0)
 
             m = gyre.load_mode('data/gyre.mode_%i' % (i+1), return_object=True)
             self.assertEqual(m['n_pg'], i+19)
             self.assertEqual(m['l'], 1)
             self.assertEqual(m['Imomega'], 0.0)
             self.assertEqual(m['Imfreq'], 0.0)
-            for row in m:
-                self.assertEqual(row['Imxi_r'], 0.0)
-                self.assertEqual(row['Imxi_h'], 0.0)
+
+            np.testing.assert_equal(m['Imxi_r'], 0.0)
+            np.testing.assert_equal(m['Imxi_h'], 0.0)
 
     def test_load_gyre(self):
         header, data = gyre.load_gyre('data/mesa.gyre')
@@ -74,39 +73,39 @@ class TestGYREFunctions(unittest.TestCase):
             header1, data1 = gyre.load_gyre(filename)
             gyre.save_gyre(tmpfile, header1, data1)
             header2, data2 = gyre.load_gyre(tmpfile)
-            self.assertEqual(header1, header2)
-            for row1, row2 in zip(data1, data2):
-                self.assertEqual(row1, row2)
+
+            np.testing.assert_equal(header1, header2)
+            np.testing.assert_equal(data1, data2)
 
             m1 = gyre.load_gyre('data/mesa.gyre', return_object=True)
             m1.to_file(tmpfile)
             m2 = gyre.load_gyre(tmpfile, return_object=True)
-            self.assertEqual(m1.header, m2.header)
-            for row1, row2 in zip(m1.data, m2.data):
-                self.assertEqual(row1, row2)
 
-            self.assertTrue(np.allclose(m1.r, m2.x*m2.R))
-            self.assertTrue(np.allclose(m1.cs2, m2.Gamma_1*m2.P/m2.rho))
-            self.assertTrue(np.allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:]))
+            np.testing.assert_equal(m1.header, m2.header)
+            np.testing.assert_equal(m1.data, m2.data)
+
+            np.testing.assert_allclose(m1.r, m2.x*m2.R)
+            np.testing.assert_allclose(m1.cs2, m2.Gamma_1*m2.P/m2.rho)
+            np.testing.assert_allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:])
 
     def test_save_gyre(self):
         header1, data1 = gyre.load_gyre('data/mesa.gyre')
         gyre.save_gyre(tmpfile, header1, data1)
         header2, data2 = gyre.load_gyre(tmpfile)
-        self.assertEqual(header1, header2)
-        for row1, row2 in zip(data1, data2):
-            self.assertEqual(row1, row2)
+
+        np.testing.assert_equal(header1, header2)
+        np.testing.assert_equal(data1, data2)
 
         m1 = gyre.load_gyre('data/mesa.gyre', return_object=True)
         m1.to_file(tmpfile)
         m2 = gyre.load_gyre(tmpfile, return_object=True)
-        self.assertEqual(m1.header, m2.header)
-        for row1, row2 in zip(m1.data, m2.data):
-            self.assertEqual(row1, row2)
 
-        self.assertTrue(np.allclose(m1.r, m2.x*m2.R))
-        self.assertTrue(np.allclose(m1.cs2, m2.Gamma_1*m2.P/m2.rho))
-        self.assertTrue(np.allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:]))
+        np.testing.assert_equal(m1.header, m2.header)
+        np.testing.assert_equal(m1.data, m2.data)
+
+        np.testing.assert_allclose(m1.r, m2.x*m2.R)
+        np.testing.assert_allclose(m1.cs2, m2.Gamma_1*m2.P/m2.rho)
+        np.testing.assert_allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:])
 
 
 if __name__ == '__main__':

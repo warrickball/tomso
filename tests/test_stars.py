@@ -8,11 +8,11 @@ class TestStarsFunctions(unittest.TestCase):
     def test_load_out(self):
         summaries, profiles = stars.load_out('data/stars.out')
 
-        self.assertTrue(np.all(np.abs(profiles[0]['H1']-0.7) < 1e-9))
-        self.assertTrue(np.all(np.abs(profiles[0]['He4']-0.28) < 1e-9))
+        np.testing.assert_allclose(profiles[0]['H1'], 0.7, atol=1e-9)
+        np.testing.assert_allclose(profiles[0]['He4'], 0.28, atol=1e-9)
 
         for profile in profiles:
-            self.assertTrue(np.all(profile['k']), np.arange(1,200)[::-1])
+            np.testing.assert_equal(profile['k'], np.arange(1,200)[::-1])
 
         self.assertAlmostEqual(summaries[0]['dt'], 6308.266)
 
