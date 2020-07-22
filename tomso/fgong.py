@@ -53,10 +53,11 @@ def load_fgong(filename, N=-1, return_comment=False,
         ``return_comment=True``.
 
     """
-    with open(filename, 'r') as f:
-        comment = [f.readline() for i in range(4)]
-        nn, iconst, ivar, ivers = [int(i) for i in f.readline().split()]
-        lines = f.readlines()
+    with tomso_open(filename, 'rb') as f:
+        comment = [f.readline().decode('utf-8') for i in range(4)]
+        nn, iconst, ivar, ivers = [int(i) for i in f.readline().decode('utf-8').split()]
+        # lines = f.readlines()
+        lines = [line.decode('utf-8') for line in f.readlines()]
 
     tmp = []
 

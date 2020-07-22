@@ -3,6 +3,7 @@ import numpy as np
 import unittest
 
 tmpfile = 'data/tmpfile'
+remote_url = 'https://raw.githubusercontent.com/warrickball/tomso/master/tests/'
 EPS = np.finfo(float).eps
 
 class TestFGONGFunctions(unittest.TestCase):
@@ -26,6 +27,14 @@ class TestFGONGFunctions(unittest.TestCase):
         np.testing.assert_equal(m.m, np.exp(var[:,1])*glob[0])
         np.testing.assert_equal(m.x, var[:,0]/glob[1])
         np.testing.assert_equal(m.G1, m.Gamma_1)
+
+        r = fgong.load_fgong(remote_url + 'data/modelS.fgong', return_object=True)
+
+        for line1, line2 in zip(m.description, r.description):
+            self.assertEqual(line1, line2)
+
+        np.testing.assert_equal(m.glob, r.glob)
+        np.testing.assert_equal(m.var, r.var)
 
     def test_save_fgong(self):
         glob1, var1, comment1 = fgong.load_fgong('data/modelS.fgong', return_comment=True)

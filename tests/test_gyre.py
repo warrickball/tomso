@@ -3,6 +3,7 @@ import numpy as np
 import unittest
 
 tmpfile = 'data/tmpfile'
+remote_url = 'https://raw.githubusercontent.com/warrickball/tomso/master/tests/'
 
 class TestGYREFunctions(unittest.TestCase):
 
@@ -26,10 +27,18 @@ class TestGYREFunctions(unittest.TestCase):
             self.assertEqual(row['l'], 1)
             self.assertEqual(row['n_pg'], i+19)
 
+        r = gyre.load_summary(remote_url + 'data/gyre.summ', return_object=True)
+        np.testing.assert_equal(s.header, r.header)
+        np.testing.assert_equal(s.data, r.data)
+
         s = gyre.load_summary('data/gyre_noheader.summ', return_object=True)
         for i, row in enumerate(s):
             self.assertEqual(row['l'], 0)
             self.assertEqual(row['n_pg'], i+8)
+
+        r = gyre.load_summary(remote_url + 'data/gyre_noheader.summ', return_object=True)
+        np.testing.assert_equal(s.header, r.header)
+        np.testing.assert_equal(s.data, r.data)
 
     def test_load_mode(self):
         for i in range(3):
@@ -65,6 +74,10 @@ class TestGYREFunctions(unittest.TestCase):
         self.assertAlmostEqual(m.R, 6.2045507132959908E+10)
         self.assertAlmostEqual(m.L, 3.3408563666602257E+33)
         self.assertEqual(m.version, 101)
+
+        r = gyre.load_gyre(remote_url + 'data/mesa.gyre', return_object=True)
+        np.testing.assert_equal(m.header, r.header)
+        np.testing.assert_equal(m.data, r.data)
 
     def test_load_spb_mesa_versions(self):
         filenames = ['data/spb.mesa.78677cc', 'data/spb.mesa.813eed2',

@@ -3,7 +3,7 @@ import numpy as np
 import unittest
 
 tmpfile = 'data/tmpfile'
-
+remote_url = 'https://raw.githubusercontent.com/warrickball/tomso/master/tests/'
 
 class TestMESAFunctions(unittest.TestCase):
 
@@ -25,6 +25,10 @@ class TestMESAFunctions(unittest.TestCase):
         np.testing.assert_allclose(h['log_dt'], np.log10(h['dt']))
 
         self.assertRaises(KeyError, h.__getitem__, 'asdf')
+
+        r = mesa.load_history(remote_url + 'data/mesa.history', return_object=True)
+        np.testing.assert_equal(h.header, r.header)
+        np.testing.assert_equal(h.data, r.data)
 
     def test_load_pruned_history(self):
         header, history = mesa.load_history('data/mesa.history', prune=True)

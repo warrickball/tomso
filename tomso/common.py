@@ -23,10 +23,14 @@ def complement(y, x):
 
 def tomso_open(filename, *args, **kwargs):
     """Wrapper function to open files ending with `.gz` with built-in
-    `gzip` module, otherwise use normal open.  Takes the same
-    arguments as `open` and `gzip.open` and returns a file object.
-    """
-    if filename.lower().endswith('.gz'):
+    `gzip` module or paths starting with `http` using
+    `urllib.request.urlopen`, otherwise use normal open.  `.gz` and
+    normal modes take the same arguments as `open` and `gzip.open` and
+    return a file object."""
+    if filename.startswith('http'):
+        from urllib.request import urlopen
+        return urlopen(filename)
+    elif filename.lower().endswith('.gz'):
         return gzip.open(filename, *args, **kwargs)
     else:
         return open(filename, *args, **kwargs)
