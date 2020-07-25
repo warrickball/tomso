@@ -152,10 +152,6 @@ def load_sample(filename):
     table_dtype = [('n', int), ('chi2term', float), ('freq', float), ('corr', float),
                    ('obs', float), ('sigma', float), ('logE', float)]
     d = {'l%i' % ell: np.zeros(0, dtype=table_dtype) for ell in range(4)}
-    # d = {'l0': np.zeros(0, dtype=table_dtype),
-    #      'l1': np.zeros(0, dtype=table_dtype),
-    #      'l2': np.zeros(0, dtype=table_dtype),
-    #      'l3': np.zeros(0, dtype=table_dtype)}
     ell = 0
 
     for line in lines:
@@ -168,17 +164,8 @@ def load_sample(filename):
             row = np.array(tuple([int(line[0])] + list(map(float, line[1:]))),
                            dtype=table_dtype)
             d['l%i' % ell] = np.append(d['l%i' % ell], row)
-            # d['l%i' % ell]['n'].append(int(line[0]))
-            # d['l%i' % ell]['chi2'].append(float(line[1]))
-            # d['l%i' % ell]['mdl'].append(float(line[2]))
-            # d['l%i' % ell]['cor'].append(float(line[3]))
-            # d['l%i' % ell]['obs'].append(float(line[4]))
-            # d['l%i' % ell]['err'].append(float(line[5]))
-            # d['l%i' % ell]['logE'].append(float(line[6]))
         else:
             key = ''.join([word + ' ' for word in line[:-1]])[:-1]
-            # if key == 'mass/Msun':
-            #     key = 'initial mass'
 
             value = float(line[-1].lower().replace('d', 'e'))
             d[key] = value
