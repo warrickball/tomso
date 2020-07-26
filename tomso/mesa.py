@@ -9,7 +9,7 @@ import warnings
 from tomso.common import tomso_open, load_mesa_gyre
 
 
-def load_history(filename, prune=False, return_object=False):
+def load_history(filename, prune=False, return_object=True):
     """Reads a MESA history file and returns the global data and history
     data in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.
@@ -60,7 +60,7 @@ def load_history(filename, prune=False, return_object=False):
         return header, data
 
 
-def load_profile(filename, return_object=False):
+def load_profile(filename, return_object=True):
     """Reads a MESA profile and returns the global data and profile
     data in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.

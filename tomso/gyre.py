@@ -12,7 +12,7 @@ from .common import DEFAULT_G
 from .common import tomso_open, load_mesa_gyre, integrate, get_Teff
 
 
-def load_summary(filename, return_object=False):
+def load_summary(filename, return_object=True):
     """Reads a GYRE summary file and returns the global data and mode data
     in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.
@@ -51,7 +51,7 @@ def load_summary(filename, return_object=False):
         return header, data
 
 
-def load_mode(filename, return_object=False):
+def load_mode(filename, return_object=True):
     """Reads a GYRE mode file and returns the global data and mode profile
     data in two structured arrays.  Uses builtin `gzip` module to read
     files ending with `.gz`.
@@ -90,7 +90,7 @@ def load_mode(filename, return_object=False):
         return header, data
 
 
-def load_gyre(filename, return_object=False):
+def load_gyre(filename, return_object=True):
     """Reads a GYRE stellar model file and returns the global data and
     point-wise data in a pair of NumPy record arrays.  Uses builtin
     `gzip` module to read files ending with `.gz`.

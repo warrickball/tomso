@@ -8,14 +8,14 @@ remote_url = 'https://raw.githubusercontent.com/warrickball/tomso/master/tests/'
 class TestGYREFunctions(unittest.TestCase):
 
     def test_load_summary(self):
-        header, data = gyre.load_summary('data/gyre.summ')
+        header, data = gyre.load_summary('data/gyre.summ', return_object=False)
         self.assertAlmostEqual(header['M_star'], 1.989e33)
         self.assertAlmostEqual(header['R_star'], 6.959906258e10)
         for i, row in enumerate(data):
             self.assertEqual(row['l'], 1)
             self.assertEqual(row['n_pg'], i+19)
 
-        header, data = gyre.load_summary('data/gyre_noheader.summ')
+        header, data = gyre.load_summary('data/gyre_noheader.summ', return_object=False)
         for i, row in enumerate(data):
             self.assertEqual(row['l'], 0)
             self.assertEqual(row['n_pg'], i+8)
@@ -42,7 +42,7 @@ class TestGYREFunctions(unittest.TestCase):
 
     def test_load_mode(self):
         for i in range(3):
-            header, data = gyre.load_mode('data/gyre.mode_%i' % (i+1))
+            header, data = gyre.load_mode('data/gyre.mode_%i' % (i+1), return_object=False)
             self.assertEqual(header['n_pg'], i+19)
             self.assertEqual(header['l'], 1)
             self.assertEqual(header['Imomega'], 0.0)
@@ -61,7 +61,7 @@ class TestGYREFunctions(unittest.TestCase):
             np.testing.assert_equal(m['Imxi_h'], 0.0)
 
     def test_load_gyre(self):
-        header, data = gyre.load_gyre('data/mesa.gyre')
+        header, data = gyre.load_gyre('data/mesa.gyre', return_object=False)
         self.assertEqual(header['n'], 601)
         self.assertAlmostEqual(header['M'], 1.9882053999999999E+33)
         self.assertAlmostEqual(header['R'], 6.2045507132959908E+10)
@@ -83,9 +83,9 @@ class TestGYREFunctions(unittest.TestCase):
         filenames = ['data/spb.mesa.78677cc', 'data/spb.mesa.813eed2',
                      'data/spb.mesa.adc6989']
         for filename in filenames:
-            header1, data1 = gyre.load_gyre(filename)
+            header1, data1 = gyre.load_gyre(filename, return_object=False)
             gyre.save_gyre(tmpfile, header1, data1)
-            header2, data2 = gyre.load_gyre(tmpfile)
+            header2, data2 = gyre.load_gyre(tmpfile, return_object=False)
 
             np.testing.assert_equal(header1, header2)
             np.testing.assert_equal(data1, data2)
@@ -102,9 +102,9 @@ class TestGYREFunctions(unittest.TestCase):
             np.testing.assert_allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:])
 
     def test_save_gyre(self):
-        header1, data1 = gyre.load_gyre('data/mesa.gyre')
+        header1, data1 = gyre.load_gyre('data/mesa.gyre', return_object=False)
         gyre.save_gyre(tmpfile, header1, data1)
-        header2, data2 = gyre.load_gyre(tmpfile)
+        header2, data2 = gyre.load_gyre(tmpfile, return_object=False)
 
         np.testing.assert_equal(header1, header2)
         np.testing.assert_equal(data1, data2)

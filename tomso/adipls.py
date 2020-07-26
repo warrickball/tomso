@@ -54,7 +54,7 @@ def load_pointwise_data(filename, ncols):
     return np.squeeze(css), np.squeeze(data)
 
 
-def load_agsm(filename, return_object=False):
+def load_agsm(filename, return_object=True):
     """Reads an ADIPLS grand summary file and returns a structured array.
 
     If `return_object` is `True`, instead returns an
@@ -87,13 +87,13 @@ def load_agsm(filename, return_object=False):
         return ADIPLSGrandSummary(np.squeeze(css))
     else:
         warnings.warn("From tomso 0.1.0+, `adipls.load_agsm` will only "
-                      "return an `FGONG` object: use `return_object=True` "
-                      "to mimic future behaviour",
+                      "return an `ADIPLSGrandSummary` object: use "
+                      "`return_object=True` to mimic future behaviour",
                       FutureWarning)
         return np.squeeze(css)
 
 
-def load_amde(filename, nfmode=1, return_object=False):
+def load_amde(filename, nfmode=1, return_object=True):
     """Reads an ADIPLS eigenfunction file written with the specified value
     of ``nfmode`` in the input file (either 1, 2 or 3).
 
@@ -158,14 +158,14 @@ def load_amde(filename, nfmode=1, return_object=False):
     if return_object:
         return ADIPLSEigenfunctions(np.squeeze(css), np.squeeze(data), x=x, nfmode=nfmode)
     else:
-        warnings.warn("From tomso 0.1.0+, `adipls.load_agsm` will only "
-                      "return an `FGONG` object: use `return_object=True` "
-                      "to mimic future behaviour",
+        warnings.warn("From tomso 0.1.0+, `adipls.load_amde` will only "
+                      "return an `ADIPLSEigenfunctions` object: use "
+                      "`return_object=True` to mimic future behaviour",
                       FutureWarning)
         return np.squeeze(css), np.squeeze(data), x
 
 def load_amdl(filename, return_nmod=False, live_dangerously=False,
-              return_object=False, G=DEFAULT_G):
+              return_object=True, G=DEFAULT_G):
     """Reads an ADIPLS model file.  See Section 5 of the `ADIPLS
     documentation`_ for details.
 
@@ -230,7 +230,7 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
             return D, A
 
 
-def load_rkr(filename, return_object=False):
+def load_rkr(filename, return_object=True):
     """Reads an ADIPLS rotational kernel file.
 
     If `return_object` is `True`, instead returns an
@@ -556,7 +556,7 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
         documentation`_.
 
     """
-    warnings.warn("From tomso 0.1.0+, FGONG should be converted to "
+    warnings.warn("From tomso 0.1.0+, FGONG must be converted to "
                   "AMDL by loading an `FGONG` object and using its "
                   "`to_amdl` function.  To mimic the future behaviour, "
                   "load an FGONG object by using `fgong.load_fgong` "

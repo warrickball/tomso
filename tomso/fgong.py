@@ -13,7 +13,7 @@ from .common import integrate, tomso_open, get_Teff
 from .adipls import fgong_to_amdl
 
 def load_fgong(filename, N=-1, return_comment=False,
-               return_object=False, G=None):
+               return_object=True, G=None):
     """Given an FGONG file, returns NumPy arrays `glob` and `var` that
     correspond to the scalar and point-wise variables, as specified
     in the `FGONG format`_.

@@ -9,7 +9,7 @@ EPS = np.finfo(float).eps
 class TestFGONGFunctions(unittest.TestCase):
 
     def test_load_fgong(self):
-        glob, var, comment = fgong.load_fgong('data/modelS.fgong', return_comment=True)
+        glob, var, comment = fgong.load_fgong('data/modelS.fgong', return_comment=True, return_object=False)
         self.assertEqual(comment[0][:6], 'L5BI.D')
         self.assertEqual(len(glob), 15)
         self.assertEqual(len(var), 2482)
@@ -37,9 +37,9 @@ class TestFGONGFunctions(unittest.TestCase):
         np.testing.assert_equal(m.var, r.var)
 
     def test_save_fgong(self):
-        glob1, var1, comment1 = fgong.load_fgong('data/modelS.fgong', return_comment=True)
+        glob1, var1, comment1 = fgong.load_fgong('data/modelS.fgong', return_comment=True, return_object=False)
         fgong.save_fgong(tmpfile, glob1, var1, comment=comment1, fmt='%16.9E')
-        glob2, var2, comment2 = fgong.load_fgong(tmpfile, return_comment=True)
+        glob2, var2, comment2 = fgong.load_fgong(tmpfile, return_comment=True, return_object=False)
         for i in range(len(glob1)):
             self.assertAlmostEqual(glob1[i], glob2[i])
 
@@ -65,7 +65,7 @@ class TestFGONGFunctions(unittest.TestCase):
                 self.assertAlmostEqual(m1.var[i,j], m2.var[i,j])
 
     def test_fgong_get(self):
-        glob, var = fgong.load_fgong('data/modelS.fgong')
+        glob, var = fgong.load_fgong('data/modelS.fgong', return_object=False)
         x, r, R, M = fgong.fgong_get(['x','r','R','M'], glob, var)
         np.testing.assert_equal(x, r/R)
         self.assertAlmostEqual(M, 1.989e33)
@@ -82,7 +82,7 @@ class TestFGONGFunctions(unittest.TestCase):
         np.testing.assert_allclose(m.cs**2, m.cs2)
 
     def test_fgong_get_reverse(self):
-        glob, var = fgong.load_fgong('data/modelS.fgong')
+        glob, var = fgong.load_fgong('data/modelS.fgong', return_object=False)
         x_fwd, = fgong.fgong_get(['x'], glob, var)
         x_rev = fgong.fgong_get('x', glob, var, reverse=True)
         np.testing.assert_equal(x_fwd[::-1], x_rev)
@@ -94,7 +94,7 @@ class TestFGONGFunctions(unittest.TestCase):
             np.testing.assert_allclose(getattr(m, attr), getattr(m_rev, attr)[::-1])
 
     def test_fgong_get_cross_check(self):
-        glob, var = fgong.load_fgong('data/modelS.fgong')
+        glob, var = fgong.load_fgong('data/modelS.fgong', return_object=False)
         M, R, L, r, x, m, q, g, rho, P, Hp, G1, T, X, L_r, kappa, epsilon, cs2, cs, tau \
             = fgong.fgong_get(['M','R', 'L', 'r', 'x', 'm', 'q', 'g',
                                'rho', 'P', 'Hp', 'G1', 'T', 'X', 'L_r',
