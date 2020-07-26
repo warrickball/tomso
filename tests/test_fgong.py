@@ -40,29 +40,22 @@ class TestFGONGFunctions(unittest.TestCase):
         glob1, var1, comment1 = fgong.load_fgong('data/modelS.fgong', return_comment=True, return_object=False)
         fgong.save_fgong(tmpfile, glob1, var1, comment=comment1, fmt='%16.9E')
         glob2, var2, comment2 = fgong.load_fgong(tmpfile, return_comment=True, return_object=False)
-        for i in range(len(glob1)):
-            self.assertAlmostEqual(glob1[i], glob2[i])
 
         for line1, line2 in zip(comment1, comment2):
             self.assertEqual(line1, line2)
 
-        for i in range(len(var1)):
-            for j in range(len(var1[i])):
-                self.assertAlmostEqual(var1[i,j], var2[i,j])
+        np.testing.assert_allclose(glob1, glob2)
+        np.testing.assert_allclose(var1, var2)
 
         m1 = fgong.load_fgong('data/modelS.fgong', return_object=True)
         m1.to_file(tmpfile, fmt='%16.9E')
         m2 = fgong.load_fgong(tmpfile, return_object=True)
 
-        for i in range(m1.iconst):
-            self.assertAlmostEqual(m1.glob[i], m2.glob[i])
-
         for line1, line2 in zip(m1.description, m2.description):
             self.assertEqual(line1, line2)
 
-        for i in range(m1.nn):
-            for j in range(m1.ivar):
-                self.assertAlmostEqual(m1.var[i,j], m2.var[i,j])
+        np.testing.assert_allclose(m1.glob, m2.glob)
+        np.testing.assert_allclose(m1.var, m2.var)
 
     def test_fgong_get(self):
         glob, var = fgong.load_fgong('data/modelS.fgong', return_object=False)

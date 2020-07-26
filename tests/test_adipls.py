@@ -183,12 +183,8 @@ class TestADIPLSFunctions(unittest.TestCase):
         glob, var = fgong.load_fgong('data/modelS.fgong', return_object=False)
         D2, A2 = adipls.fgong_to_amdl(glob, var, G=6.67232e-8)
 
-        for (x,y) in zip(D1, D2):
-            self.assertAlmostEqual(x,y)
-
-        for i in range(len(A1)):
-            for (x,y) in zip(A1[i], A2[i]):
-                self.assertAlmostEqual(x,y)
+        np.testing.assert_allclose(D1, D2)
+        np.testing.assert_allclose(A1, A2)
 
         a1 = adipls.load_amdl('data/modelS.amdl', return_object=True,
                               G=6.67232e-8)
@@ -196,24 +192,16 @@ class TestADIPLSFunctions(unittest.TestCase):
                               G=6.67232e-8)
         a2 = m2.to_amdl()
 
-        for (x,y) in zip(a1.D, a2.D):
-            self.assertAlmostEqual(x,y)
-
-        for i in range(a1.nn):
-            for (x,y) in zip(a1.A[i], a2.A[i]):
-                self.assertAlmostEqual(x,y)
+        np.testing.assert_allclose(a1.D, a2.D)
+        np.testing.assert_allclose(a1.A, a2.A)
 
     def test_fgong_to_amdl_mesa(self):
         D1, A1 = adipls.load_amdl('data/mesa.amdl', return_object=False)
         glob, var = fgong.load_fgong('data/mesa.fgong', return_object=False)
         D2, A2 = adipls.fgong_to_amdl(glob, var, G=6.67428e-8)
 
-        for (x,y) in zip(D1, D2):
-            self.assertAlmostEqual(x,y)
-
-        for i in range(len(A1)):
-            for (x,y) in zip(A1[i], A2[i]):
-                self.assertAlmostEqual(x,y)
+        np.testing.assert_allclose(D1, D2)
+        np.testing.assert_allclose(A1, A2)
 
         a1 = adipls.load_amdl('data/mesa.amdl', return_object=True,
                               G=6.67428e-8)
@@ -221,25 +209,18 @@ class TestADIPLSFunctions(unittest.TestCase):
                              G=6.67428e-8)
         a2 = f.to_amdl()
 
-        for (x,y) in zip(a1.D, a2.D):
-            self.assertAlmostEqual(x,y)
-
-        for i in range(len(a1.A)):
-            for (x,y) in zip(a1.A[i], a2.A[i]):
-                self.assertAlmostEqual(x,y)
+        np.testing.assert_allclose(a1.D, a2.D)
+        np.testing.assert_allclose(a1.A, a2.A)
 
     def test_amdl_to_fgong_modelS(self):
+        I = [0,3,4,9,14] # only these columns can be restored from AMDL format
+
         D, A = adipls.load_amdl('data/modelS.amdl', return_object=False)
         glob1, var1 = fgong.load_fgong('data/modelS.fgong', return_object=False)
         glob2, var2 = adipls.amdl_to_fgong(D, A, G=6.67232e-8)
 
-        for i in [0, 1]:
-            self.assertAlmostEqual(glob1[i], glob2[i])
-
-        for i in range(len(var1)-1):
-            self.assertAlmostEqual(np.exp(var2[i,1]-var1[i,1]), 1.)
-            for j in [0,3,4,9,14]:
-                self.assertAlmostEqual(var2[i,j]/var1[i,j], 1.)
+        np.testing.assert_allclose(glob1[:2], glob2[:2])
+        np.testing.assert_allclose(var1[:-1,I], var2[:-1,I])
 
         m1 = fgong.load_fgong('data/modelS.fgong', return_object=True,
                               G=6.67232e-8)
@@ -247,26 +228,18 @@ class TestADIPLSFunctions(unittest.TestCase):
                               G=6.67232e-8)
         m2 = a2.to_fgong()
 
-        for i in [0, 1]:
-            self.assertAlmostEqual(m1.glob[i], m2.glob[i])
-
-        for i in range(len(var1)-1):
-            self.assertAlmostEqual(np.exp(m2.var[i,1]-m1.var[i,1]), 1.)
-            for j in [0,3,4,9,14]:
-                self.assertAlmostEqual(m2.var[i,j]/m1.var[i,j], 1.)
+        np.testing.assert_allclose(m1.glob[:2], m2.glob[:2])
+        np.testing.assert_allclose(m1.var[:-1,I], m2.var[:-1,I])
 
     def test_amdl_to_fgong_mesa(self):
+        I = [0,3,4,9,14] # only these columns can be restored from AMDL format
+
         D, A = adipls.load_amdl('data/mesa.amdl', return_object=False)
         glob1, var1 = fgong.load_fgong('data/mesa.fgong', return_object=False)
         glob2, var2 = adipls.amdl_to_fgong(D, A, G=6.67428e-8)
 
-        for i in [0, 1]:
-            self.assertAlmostEqual(glob1[i], glob2[i])
-
-        for i in range(len(var1)-1):
-            self.assertAlmostEqual(np.exp(var2[i,1]-var1[i,1]), 1.)
-            for j in [0,3,4,9,14]:
-                self.assertAlmostEqual(var2[i,j]/var1[i,j], 1.)
+        np.testing.assert_allclose(glob1[:2], glob2[:2])
+        np.testing.assert_allclose(var1[:,I], var2[:,I])
 
         m1 = fgong.load_fgong('data/mesa.fgong', return_object=True,
                               G=6.67428e-8)
@@ -274,13 +247,8 @@ class TestADIPLSFunctions(unittest.TestCase):
                               G=6.67428e-8)
         m2 = a2.to_fgong()
 
-        for i in [0, 1]:
-            self.assertAlmostEqual(m1.glob[i], m2.glob[i])
-
-        for i in range(len(var1)-1):
-            self.assertAlmostEqual(np.exp(m2.var[i,1]-m1.var[i,1]), 1.)
-            for j in [0,3,4,9,14]:
-                self.assertAlmostEqual(m2.var[i,j]/m1.var[i,j], 1.)
+        np.testing.assert_allclose(m1.glob[:2], m2.glob[:2])
+        np.testing.assert_allclose(m1.var[:,I], m2.var[:,I])
 
     def test_cross_check_css(self):
         css_agsm = adipls.load_agsm('data/modelS.agsm', return_object=False)
