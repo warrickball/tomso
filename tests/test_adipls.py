@@ -269,7 +269,7 @@ class TestADIPLSFunctions(unittest.TestCase):
                 self.assertAlmostEqual(var2[i,j]/var1[i,j], 1.)
 
         m1 = fgong.load_fgong('data/mesa.fgong', return_object=True,
-                              G=6.67428-8)
+                              G=6.67428e-8)
         a2 = adipls.load_amdl('data/mesa.amdl', return_object=True,
                               G=6.67428e-8)
         m2 = a2.to_fgong()
