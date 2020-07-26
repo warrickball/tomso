@@ -282,16 +282,16 @@ class TestADIPLSFunctions(unittest.TestCase):
                 self.assertAlmostEqual(m2.var[i,j]/m1.var[i,j], 1.)
 
     def test_cross_check_css(self):
-        css_agsm = adipls.load_agsm('data/modelS.agsm')
-        css_amde = adipls.load_amde('data/modelS_nfmode1.amde')[0]
-        css_rkr = adipls.load_rkr('data/modelS.rkr')[0]
+        css_agsm = adipls.load_agsm('data/modelS.agsm', return_object=False)
+        css_amde = adipls.load_amde('data/modelS_nfmode1.amde', return_object=False)[0]
+        css_rkr = adipls.load_rkr('data/modelS.rkr', return_object=False)[0]
         np.testing.assert_equal(css_agsm, css_amde)
         np.testing.assert_equal(css_agsm, css_rkr)
 
         agsm = adipls.load_agsm('data/modelS.agsm', return_object=True)
-        # amde = adipls.load_amde('data/modelS_nfmode1.amde', return_object=True)
+        amde = adipls.load_amde('data/modelS_nfmode1.amde', return_object=True)
         rkr = adipls.load_rkr('data/modelS.rkr', return_object=True)
-        # self.assertTrue(np.all(css_agsm == css_amde))
+        np.testing.assert_equal(agsm.css, amde.css)
         np.testing.assert_equal(agsm.css, rkr.css)
 
 if __name__ == '__main__':
