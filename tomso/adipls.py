@@ -992,7 +992,7 @@ class ADIPLSStellarModel(object):
     @property
     def lnq(self): return np.log(self.q)
 
-    @q.setter
+    @lnq.setter
     def lnq(self, val): self.q = np.exp(val)
 
     @property
