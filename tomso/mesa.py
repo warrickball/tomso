@@ -6,7 +6,7 @@ Functions for manipulating `MESA`_ input and output files.
 
 import numpy as np
 import warnings
-from tomso.common import tomso_open, load_mesa_gyre
+from tomso.utils import tomso_open, load_mesa_gyre
 
 
 def load_history(filename, prune=False, return_object=True):

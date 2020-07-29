@@ -8,8 +8,8 @@ Functions for manipulating `GYRE`_ input and output files.
 
 import numpy as np
 import warnings
-from .common import DEFAULT_G
-from .common import tomso_open, load_mesa_gyre, integrate, get_Teff
+from .utils import DEFAULT_G
+from .utils import tomso_open, load_mesa_gyre, integrate, get_Teff
 
 
 def load_summary(filename, return_object=True):

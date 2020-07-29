@@ -1,4 +1,4 @@
-"""Functions and constants common to multiple modules."""
+"""Utility functions used by other modules."""
 import numpy as np
 import gzip
 from .constants import sigma_SB

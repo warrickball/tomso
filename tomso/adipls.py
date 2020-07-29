@@ -9,7 +9,7 @@ various scalar results from the frequency calculation.
 """
 import numpy as np
 import warnings
-from .common import integrate, DEFAULT_G
+from .utils import integrate, DEFAULT_G
 
 def read_one_cs(f):
     """Utility function to parse one ``cs`` array from a binary file

@@ -2,7 +2,7 @@ __version__ = "0.0.12"
 
 __all__ = [
     'adipls',
-    'common',
+    'utils',
     'constants',
     'gyre',
     'fgong',

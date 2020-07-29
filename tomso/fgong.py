@@ -8,8 +8,8 @@ from a file.
 
 import numpy as np
 import warnings
-from .common import DEFAULT_G
-from .common import integrate, tomso_open, get_Teff
+from .utils import DEFAULT_G
+from .utils import integrate, tomso_open, get_Teff
 from .adipls import fgong_to_amdl
 
 def load_fgong(filename, N=-1, return_comment=False,
