@@ -11,7 +11,8 @@ import unittest
 # own FGONG-to-AMDL script.
 
 mech_scalars = ['R', 'M', 'G']
-mech_vectors = ['r', 'q', 'm', 'rho', 'P', 'Gamma_1', 'N2', 'U', 'V', 'tau']
+mech_vectors = ['r', 'q', 'lnq', 'm', 'rho', 'P', 'Gamma_1', 'N2',
+                'U', 'V', 'tau']
 
 thermo_scalars = ['L', 'Teff']
 thermo_vectors = ['L_r', 'T']
@@ -25,11 +26,11 @@ class TestConversionFunctions(unittest.TestCase):
 
         for attr in scalars:
             np.testing.assert_allclose(getattr(m0, attr), getattr(m1, attr),
-                                       rtol=1e-12)
+                                       rtol=1e-14, atol=1e-14, err_msg=attr)
 
         for attr in vectors:
             np.testing.assert_allclose(getattr(m0, attr), getattr(m1, attr),
-                                       rtol=1e-12)
+                                       rtol=1e-14, atol=1e-14, err_msg=attr)
 
     def test_fgong_to_fgong(self):
         f = load_fgong('data/modelS.fgong', return_object=True)
