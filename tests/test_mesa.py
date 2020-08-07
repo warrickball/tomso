@@ -136,8 +136,43 @@ class TestMESAFunctions(unittest.TestCase):
             np.testing.assert_allclose(
                 table['chi2term'], (table['corr']-table['obs'])**2/table['sigma']**2)
 
-            # for sigma in table['err']:
-            #     self.assertAlmostEqual(sigma, 0.3)
+    def test_load_astero_sample(self):
+        sample = mesa.load_astero_sample('data/mesa.sample')
+        self.assertAlmostEqual(sample['mass/Msun'], 0.9995)
+        self.assertAlmostEqual(sample['csound_rms'], 0.0)
+        self.assertAlmostEqual(sample['Teff_sigma'], 65.0)
+        self.assertAlmostEqual(sample['logL_sigma'], 0.05)
+        self.assertAlmostEqual(sample['logg_sigma'], 0.06)
+        self.assertAlmostEqual(sample['FeH_sigma'], 0.05)
+
+        np.testing.assert_allclose(sample['sigma'], 0.3)
+        np.testing.assert_allclose(
+            sample['chi2term'],
+            (sample['corr']-sample['obs'])**2/sample['sigma']**2)
+
+    def test_load_astero_samples(self):
+        samples = mesa.load_astero_samples(['data/mesa.sample'])
+        self.assertAlmostEqual(samples['mass/Msun'][0], 0.9995)
+        self.assertAlmostEqual(samples['csound_rms'][0], 0.0)
+        self.assertAlmostEqual(samples['Teff_sigma'][0], 65.0)
+        self.assertAlmostEqual(samples['logL_sigma'][0], 0.05)
+        self.assertAlmostEqual(samples['logg_sigma'][0], 0.06)
+        self.assertAlmostEqual(samples['FeH_sigma'][0], 0.05)
+
+        np.testing.assert_allclose(samples['sigma'][0], 0.3)
+        np.testing.assert_allclose(
+            samples['chi2term'][0],
+            (samples['corr'][0]-samples['obs'][0])**2/samples['sigma'][0]**2)
+
+        self.assertAlmostEqual(samples[0]['mass/Msun'], 0.9995)
+        self.assertAlmostEqual(samples[0]['csound_rms'], 0.0)
+        self.assertAlmostEqual(samples[0]['Teff_sigma'], 65.0)
+        self.assertAlmostEqual(samples[0]['logL_sigma'], 0.05)
+        self.assertAlmostEqual(samples[0]['logg_sigma'], 0.06)
+        self.assertAlmostEqual(samples[0]['FeH_sigma'], 0.05)
+
+        np.testing.assert_allclose(samples[0]['sigma'], 0.3)
+        np.testing.assert_allclose(samples[:1]['sigma'][0], 0.3)
 
     def test_load_gzipped_sample(self):
         sample = mesa.load_sample('data/mesa.sample.gz')

@@ -1,3 +1,4 @@
+          2020-08-07 -- add new functions for loading MESA/astero samples
           2020-07-29 -- rename `common` to `utils`
           2020-07-26 -- where implemented, functions return objects by default
           2020-07-22 -- tomso_open now handles URLs

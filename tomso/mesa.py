@@ -170,7 +170,51 @@ def load_sample(filename):
             value = float(line[-1].lower().replace('d', 'e'))
             d[key] = value
 
+    warnings.warn("From tomso 0.1.0+, `mesa.load_sample` will be dropped "
+                  "in favour of the object-oriented "
+                  "`mesa.load_astero_sample` function.",
+                  FutureWarning)
+
     return d
+
+
+def load_astero_sample(filename):
+    """Reads a MESA sample file that describes a model from one of the
+    optimization routines in the `astero` module, and returns a
+    `:py:class:MESAAsteroSample` object.
+
+    Parameters
+    ----------
+    filename: str
+        Filename of the file containing the result.
+
+    Returns
+    -------
+    sample: `:py:class:MESAAsteroSample`
+        A dictionary-like object containing all the results.
+
+    """
+    return MESAAsteroSample(load_sample(filename))
+
+
+def load_astero_samples(filenames):
+    """Reads a list of MESA sample files that describe models from one of
+    the optimization routines in the `astero` module, and returns a
+    `:py:class:MESAAsteroSamples` object.
+
+    Parameters
+    ----------
+    filename: str
+        Filename of the file containing the result.
+
+    Returns
+    -------
+    samples: `:py:class:MESAAsteroSamples`
+        A list-like object containing all the results as
+        `:py:class:MESAAsteroSample` objects.
+
+    """
+    return MESAAsteroSamples([load_astero_sample(filename) for filename in filenames])
 
 
 # update_inlist, string_where and replace_value all ported from
@@ -280,3 +324,35 @@ class MESALog(object):
         else:
             # assume we're trying to slice the data array
             return MESALog(self.header, self.data[key])
+
+
+class MESAAsteroSample(object):
+    """A dict-like class that contains the data for a single sample from
+    MESA's astero module, usually created using
+    :py:meth:`mesa.load_astero_sample`."""
+    def __init__(self, data_dict):
+        self.data_dict = data_dict
+
+    def __getitem__(self, key):
+        if key == 'l':
+            return np.hstack([self.data_dict['l%i' % i]['n']*0 + i for i in range(4)])
+        elif key in ['n', 'chi2term', 'freq', 'corr', 'obs', 'sigma', 'logE']:
+            return np.hstack([self.data_dict['l%i' % i][key] for i in range(4)])
+        else:
+            return self.data_dict[key]
+
+
+class MESAAsteroSamples(object):
+    """A class that contains a list of :py:class:`mesa.MESAAsteroSample`
+    objects and provides a more convenient interface to retrieving
+    arrays of data for all the samples at once."""
+    def __init__(self, samples):
+        self.samples = samples
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.samples[key]
+        elif isinstance(key, slice):
+            return MESAAsteroSamples(self.samples[key])
+        else:
+            return np.array([sample[key] for sample in self.samples])
