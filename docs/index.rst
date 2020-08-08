@@ -16,7 +16,7 @@ specific stellar evolution, oscillation code or file format.
 The code is intended to be the minimum necessary to usefully
 manipulate input and output data.  The only current requirement is
 *NumPy*.  It is also *very unstable*.  Expect the API to change
-drastically or completely without warning!  The FGONG and ADIPLS
+drastically or completely without warning!  Many
 modules are currently undergoing a shift to object-oriented
 interfaces.  The old methods will be dropped completely from v0.1.0.
 
@@ -47,14 +47,14 @@ As a simple real-world example, to convert an FGONG file to an ADIPLS
 binary stellar model file, I would use::
 
   from tomso import fgong
-  m = fgong.load_fgong('model.fgong', return_object=True)
+  m = fgong.load_fgong('model.fgong', G=6.67232e-8)
   a = m.to_amdl()
   a.to_file('model.amdl')
 
 or, in two lines,::
 
   from tomso import fgong
-  fgong.load_fgong('model.fgong', return_object=True).to_amdl().to_file('model.amdl')
+  fgong.load_fgong('model.fgong', G=6.67232e-8).to_amdl().to_file('model.amdl')
 
 The APIs below give a complete list of available functions.
 

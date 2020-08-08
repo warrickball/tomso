@@ -1,4 +1,4 @@
-Utils
+utils
 =====
 .. automodule:: tomso.utils
    :members:
