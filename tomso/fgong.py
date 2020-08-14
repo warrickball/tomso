@@ -54,7 +54,7 @@ def load_fgong(filename, N=-1, return_comment=False,
 
     """
     with tomso_open(filename, 'rb') as f:
-        comment = [f.readline().decode('utf-8') for i in range(4)]
+        comment = [f.readline().decode('utf-8').strip() for i in range(4)]
         nn, iconst, ivar, ivers = [int(i) for i in f.readline().decode('utf-8').split()]
         # lines = f.readlines()
         lines = [line.decode('utf-8') for line in f.readlines()]
@@ -97,7 +97,7 @@ def load_fgong(filename, N=-1, return_comment=False,
 
 
 def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
-               comment=['\n','\n','\n','\n']):
+               comment=['','','','']):
     """Given data for an FGONG file in the format returned by
     :py:meth:`~tomso.fgong.load_fgong` (i.e. two NumPy arrays and a
     possible header), writes the data to a file.
@@ -126,21 +126,21 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
     iconst = len(glob)
 
     with open(filename, 'wt') as f:
-        f.writelines(comment)
+        f.write('\n'.join(comment) + '\n')
 
-        line = '%10i'*4 % (nn, iconst, ivar, ivers)
-        f.writelines([line + '\n'])
+        line = '%10i'*4 % (nn, iconst, ivar, ivers) + '\n'
+        f.write(line)
 
         for i in range(0, iconst, 5):
             N = np.mod(i+4, 5)+1  # number of floats in this row
-            line = fmt*N % tuple(glob[i:i+5])
-            f.writelines([line + '\n'])
+            line = fmt*N % tuple(glob[i:i+5]) + '\n'
+            f.write(line)
 
         for row in var:
             for i in range(0, ivar, 5):
                 N = np.mod(i+4, 5)+1  # number of floats in this row
-                line = fmt*N % tuple(row[i:i+5])
-                f.writelines([line + '\n'])
+                line = fmt*N % tuple(row[i:i+5]) + '\n'
+                f.write(line)
 
 
 def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
@@ -407,6 +407,9 @@ class FGONG(object):
 
     def __len__(self):
         return len(self.var)
+
+    def __repr__(self):
+        return('FGONG(\nglob=\n%s,\nvar=\n%s,\ndescription=\n%s' % (self.glob, self.var, '\n'.join(self.description)))
 
     def to_file(self, filename, fmt='%16.9E'):
         """Save the model to an FGONG file.
