@@ -95,13 +95,13 @@ class TestFGONGFunctions(unittest.TestCase):
                            glob, var)
         np.testing.assert_allclose(q, m/M, rtol=4*EPS)
         np.testing.assert_allclose(x, r/R, rtol=4*EPS)
-        np.testing.assert_allclose(Hp, P/(rho*g), rtol=4*EPS, equal_nan=True)
+        np.testing.assert_allclose(Hp[:-1], (P/rho/g)[:-1], rtol=4*EPS)
         np.testing.assert_allclose(cs2, G1*P/rho, rtol=4*EPS)
 
         m = fgong.load_fgong('data/modelS.fgong', return_object=True)
         np.testing.assert_allclose(m.q, m.m/m.M, rtol=4*EPS)
         np.testing.assert_allclose(m.x, m.r/m.R, rtol=4*EPS)
-        np.testing.assert_allclose(m.Hp, m.P/(m.rho*m.g), rtol=4*EPS, equal_nan=True)
+        np.testing.assert_allclose(m.Hp[:-1], (m.P/m.rho/m.g)[:-1], rtol=4*EPS)
         np.testing.assert_allclose(m.cs2, m.Gamma_1*m.P/m.rho, rtol=4*EPS)
 
 if __name__ == '__main__':
