@@ -388,7 +388,7 @@ class FGONG(object):
     """
 
     def __init__(self, glob, var, ivers=300, G=None,
-                 description=['\n', '\n', '\n', '\n']):
+                 description=['', '', '', '']):
         self.ivers = ivers
         self.glob = glob
         self.var = var
