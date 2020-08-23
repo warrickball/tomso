@@ -9,7 +9,8 @@ Functions for manipulating `GYRE`_ input and output files.
 import numpy as np
 import warnings
 from .utils import DEFAULT_G
-from .utils import tomso_open, load_mesa_gyre, integrate, get_Teff
+from .utils import tomso_open, load_mesa_gyre
+from .utils import integrate, regularize, get_Teff
 
 
 def load_summary(filename, return_object=True):
@@ -556,27 +557,26 @@ class GYREStellarModel(object):
     def q(self, val): self.m = val*self.M
 
     @property
+    @regularize(y0=-np.inf, x0=1e-308)
     def lnq(self): return np.log(self.q)
 
     @lnq.setter
     def lnq(self, val): self.q = np.exp(val)
 
     @property
-    def g(self):
-        val = self.G*self.m/self.r**2
-        val[self.r==0] = 0
-        return val
+    @regularize()
+    def g(self): return self.G*self.m/self.r**2
 
     @property
-    def AA(self):
-        val = self.N2*self.r/self.g
-        val[self.x==0] = 0
-        return val
+    @regularize()
+    def AA(self): return self.N2*self.r/self.g
 
     @property
+    @regularize(y0=np.inf)
     def Hp(self): return self.P/(self.rho*self.g)
 
     @property
+    @regularize(y0=np.inf)
     def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
 
     @property
@@ -586,16 +586,12 @@ class GYREStellarModel(object):
     def cs(self): return self.cs2**0.5
 
     @property
-    def U(self):
-        val = 4.*np.pi*self.rho*self.r**3/self.m
-        val[self.r==0] = 3
-        return val
+    @regularize(y0=3.0)
+    def U(self): return 4.*np.pi*self.rho*self.r**3/self.m
 
     @property
-    def V(self):
-        val = self.G*self.m*self.rho/self.P/self.r
-        val[self.r==0] = 0
-        return val
+    @regularize()
+    def V(self): return self.G*self.m*self.rho/self.P/self.r
 
     @property
     def Vg(self): return self.V/self.Gamma_1

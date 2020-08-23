@@ -9,7 +9,8 @@ various scalar results from the frequency calculation.
 """
 import numpy as np
 import warnings
-from .utils import integrate, DEFAULT_G
+from .utils import DEFAULT_G
+from .utils import integrate, regularize
 
 def read_one_cs(f):
     """Utility function to parse one ``cs`` array from a binary file
@@ -990,6 +991,7 @@ class ADIPLSStellarModel(object):
     def m(self, val): self.q = val/self.M
 
     @property
+    @regularize(y0=-np.inf, x0=1e-308)
     def lnq(self): return np.log(self.q)
 
     @lnq.setter
@@ -1012,19 +1014,20 @@ class ADIPLSStellarModel(object):
         return val
 
     @property
+    @regularize()
     def g(self): return self.G*self.m/self.r**2
 
     @property
+    @regularize(y0=np.inf)
     def Hp(self): return self.P/(self.rho*self.g)
 
     @property
+    @regularize(y0=np.inf)
     def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
 
     @property
-    def N2(self):
-        val = self.AA*self.g/self.r
-        val[self.x==0] = 0
-        return val
+    @regularize()
+    def N2(self): return self.AA*self.g/self.r
 
     @property
     def cs2(self): return self.Gamma_1*self.P/self.rho

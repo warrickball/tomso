@@ -9,7 +9,7 @@ from a file.
 import numpy as np
 import warnings
 from .utils import DEFAULT_G
-from .utils import integrate, tomso_open, get_Teff
+from .utils import integrate, tomso_open, get_Teff, regularize
 from .adipls import fgong_to_amdl
 
 def load_fgong(filename, N=-1, return_comment=False,
@@ -637,16 +637,16 @@ class FGONG(object):
     def g(self): return self.G*self.m/self.r**2
 
     @property
+    @regularize(y0=np.inf)
     def Hp(self): return self.P/(self.rho*self.g)
 
     @property
+    @regularize(y0=np.inf)
     def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
 
     @property
-    def N2(self):
-        val = self.AA*self.g/self.r
-        val[self.x==0] = 0
-        return val
+    @regularize()
+    def N2(self): return self.AA*self.g/self.r
 
     @property
     def cs2(self): return self.Gamma_1*self.P/self.rho
@@ -655,16 +655,12 @@ class FGONG(object):
     def cs(self): return self.cs2**0.5
 
     @property
-    def U(self):
-        val = 4.*np.pi*self.rho*self.r**3/self.m
-        val[self.x==0] = 3
-        return val
+    @regularize(y0=3)
+    def U(self): return 4.*np.pi*self.rho*self.r**3/self.m
 
     @property
-    def V(self):
-        val = self.G*self.m*self.rho/self.P/self.r
-        val[self.x==0] = 0
-        return val
+    @regularize()
+    def V(self): return self.G*self.m*self.rho/self.P/self.r
 
     @property
     def Vg(self): return self.V/self.Gamma_1

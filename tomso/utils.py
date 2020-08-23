@@ -21,6 +21,20 @@ def complement(y, x):
     return z[-1] - z
 
 
+def regularize(y0=0.0, x0=1e-12):
+    def regularizer(f):
+        def regularized_f(s):
+            with np.errstate(divide='ignore', invalid='ignore'):
+                y = f(s)
+
+            y[s.x < x0] = y0
+            return y
+
+        return regularized_f
+
+    return regularizer
+
+
 def tomso_open(filename, *args, **kwargs):
     """Wrapper function to open files ending with `.gz` with built-in
     `gzip` module or paths starting with `http` using
