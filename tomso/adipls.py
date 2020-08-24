@@ -10,7 +10,7 @@ various scalar results from the frequency calculation.
 import numpy as np
 import warnings
 from .utils import DEFAULT_G
-from .utils import integrate, regularize
+from .utils import integrate, complement, regularize
 
 def read_one_cs(f):
     """Utility function to parse one ``cs`` array from a binary file
@@ -445,16 +445,6 @@ def kernels(cs, eig, D, A, G=DEFAULT_G, alpha=None):
         The density structure kernel.
 
     """
-
-    def integrate(yy, xx):
-        """\int _x[0] ^x y(x) dx"""
-        dz = (yy[1:]+yy[:-1])/2.*np.diff(xx)
-        return np.hstack((0., np.cumsum(dz)))
-
-    def complement(yy, xx):
-        """\int _x ^x[-1] y(x) dx"""
-        zz = integrate(yy, xx)
-        return zz[-1] - zz
 
     ell = cs['ell']
     M, R, P_c, rho_c = D[:4]                # mass and radius from FGONG
