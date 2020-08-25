@@ -803,6 +803,9 @@ class ADIPLSStellarModel(object):
     def __len__(self):
         return len(self.A)
 
+    def __repr__(self):
+        return('ADIPLSStellarModel(\nD=\n%s,\nA=\n%s,\nG=%s,\nnmod=%s\n)' % (self.D, self.A, self.G, self.nmod))
+
     def to_file(self, filename):
         """Save the model to an ADIPLS binary stellar model file (usually
         either starting or ending with `amdl`).
