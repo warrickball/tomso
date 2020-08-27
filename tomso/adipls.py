@@ -11,6 +11,8 @@ import numpy as np
 import warnings
 from .utils import DEFAULT_G
 from .utils import integrate, complement, regularize
+from .utils import BaseStellarModel
+
 
 def read_one_cs(f):
     """Utility function to parse one ``cs`` array from a binary file
@@ -708,7 +710,7 @@ for i in range(len(cs_dtypes), 50):
 cs_floats = [(k, 'float') for (k,v) in cs_dtypes]
 
 
-class ADIPLSStellarModel(object):
+class ADIPLSStellarModel(BaseStellarModel):
     """A class that contains and allows one to manipulate the data in a
     stellar model stored in ADIPLS's internal binary model format.
     See Section 5 of the `ADIPLS documentation`_ for details.
@@ -1010,25 +1012,7 @@ class ADIPLSStellarModel(object):
 
     @property
     @regularize()
-    def g(self): return self.G*self.m/self.r**2
-
-    @property
-    @regularize(y0=np.inf)
-    def Hp(self): return self.P/(self.rho*self.g)
-
-    @property
-    @regularize(y0=np.inf)
-    def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
-
-    @property
-    @regularize()
     def N2(self): return self.AA*self.g/self.r
-
-    @property
-    def cs2(self): return self.Gamma_1*self.P/self.rho
-
-    @property
-    def cs(self): return self.cs2**0.5
 
     @property
     def tau(self):

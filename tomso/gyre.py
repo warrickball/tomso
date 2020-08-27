@@ -11,6 +11,7 @@ import warnings
 from .utils import DEFAULT_G
 from .utils import tomso_open, load_mesa_gyre
 from .utils import integrate, regularize, get_Teff
+from .utils import BaseStellarModel
 
 
 def load_summary(filename, return_object=True):
@@ -230,7 +231,7 @@ class GYRELog(object):
             return GYRELog(self.header, self.data[key])
 
 
-class GYREStellarModel(object):
+class GYREStellarModel(BaseStellarModel):
     """A class that contains and allows one to manipulate the data stored
     a plain-text GYRE Stellar Model.
 
@@ -565,25 +566,7 @@ class GYREStellarModel(object):
 
     @property
     @regularize()
-    def g(self): return self.G*self.m/self.r**2
-
-    @property
-    @regularize()
     def AA(self): return self.N2*self.r/self.g
-
-    @property
-    @regularize(y0=np.inf)
-    def Hp(self): return self.P/(self.rho*self.g)
-
-    @property
-    @regularize(y0=np.inf)
-    def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
-
-    @property
-    def cs2(self): return self.Gamma_1*self.P/self.rho
-
-    @property
-    def cs(self): return self.cs2**0.5
 
     @property
     @regularize(y0=3.0)

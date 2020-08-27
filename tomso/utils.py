@@ -82,3 +82,25 @@ def get_Teff(L, R):
     `L` and radius `R`, both in cgs units."""
 
     return (L/(4.*np.pi*R**2*sigma_SB))**0.25
+
+
+class BaseStellarModel(object):
+    """Base stellar model class that defines properties that are
+    computed the same way in all stellar model formats."""
+    @property
+    @regularize()
+    def g(self): return self.G*self.m/self.r**2
+
+    @property
+    @regularize(y0=np.inf)
+    def Hp(self): return self.P/(self.rho*self.g)
+
+    @property
+    @regularize(y0=np.inf)
+    def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
+
+    @property
+    def cs2(self): return self.Gamma_1*self.P/self.rho
+
+    @property
+    def cs(self): return self.cs2**0.5

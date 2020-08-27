@@ -8,9 +8,11 @@ from a file.
 
 import numpy as np
 import warnings
+from .adipls import fgong_to_amdl
 from .utils import DEFAULT_G
 from .utils import integrate, tomso_open, get_Teff, regularize
-from .adipls import fgong_to_amdl
+from .utils import BaseStellarModel
+
 
 def load_fgong(filename, fmt='ivers', return_comment=False,
                return_object=True, G=None):
@@ -324,7 +326,7 @@ def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
         return output
 
 
-class FGONG(object):
+class FGONG(BaseStellarModel):
     """A class that contains and allows one to manipulate the data in a
     stellar model stored in the `FGONG format`_.
 
@@ -681,25 +683,8 @@ class FGONG(object):
     def m(self, val): self.q = val/self.M
 
     @property
-    def g(self): return self.G*self.m/self.r**2
-
-    @property
-    @regularize(y0=np.inf)
-    def Hp(self): return self.P/(self.rho*self.g)
-
-    @property
-    @regularize(y0=np.inf)
-    def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
-
-    @property
     @regularize()
     def N2(self): return self.AA*self.g/self.r
-
-    @property
-    def cs2(self): return self.Gamma_1*self.P/self.rho
-
-    @property
-    def cs(self): return self.cs2**0.5
 
     @property
     @regularize(y0=3)
