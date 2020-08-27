@@ -38,7 +38,7 @@ class TestFGONGFunctions(unittest.TestCase):
 
     def test_save_fgong(self):
         glob1, var1, comment1 = fgong.load_fgong('data/modelS.fgong', return_comment=True, return_object=False)
-        fgong.save_fgong(tmpfile, glob1, var1, comment=comment1, fmt='%16.9E')
+        fgong.save_fgong(tmpfile, glob1, var1, comment=comment1, float_formatter='ivers')
         glob2, var2, comment2 = fgong.load_fgong(tmpfile, return_comment=True, return_object=False)
 
         for line1, line2 in zip(comment1, comment2):
@@ -48,7 +48,7 @@ class TestFGONGFunctions(unittest.TestCase):
         np.testing.assert_allclose(var1, var2)
 
         m1 = fgong.load_fgong('data/modelS.fgong', return_object=True)
-        m1.to_file(tmpfile, fmt='%16.9E')
+        m1.to_file(tmpfile, float_formatter='ivers')
         m2 = fgong.load_fgong(tmpfile, return_object=True)
 
         for line1, line2 in zip(m1.description, m2.description):

@@ -817,7 +817,7 @@ class ADIPLSStellarModel(object):
         """
         save_amdl(filename, self.D, self.A, nmod=self.nmod)
 
-    def to_fgong(self, reverse=True):
+    def to_fgong(self, reverse=True, ivers=1300):
         """Convert the model to an :py:class:`~tomso.fgong.FGONG` object.
 
         Note that the ADIPLS binary format only has the data necessary
@@ -835,9 +835,11 @@ class ADIPLSStellarModel(object):
 
         # `amdl_to_fgong` already reverses the data by default
         if reverse:
-            return FGONG(*amdl_to_fgong(self.D, self.A, G=self.G))
+            return FGONG(*amdl_to_fgong(self.D, self.A, G=self.G),
+                         ivers=ivers)
         else:
-            return FGONG(*amdl_to_fgong(self.D, self.A[::-1], G=self.G))
+            return FGONG(*amdl_to_fgong(self.D, self.A[::-1], G=self.G),
+                         ivers=ivers)
 
     def to_gyre(self, version=None):
         """Convert the model to an :py:meth:`~tomso.gyre.GYREStellarModel`

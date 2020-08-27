@@ -12,7 +12,7 @@ from .utils import DEFAULT_G
 from .utils import integrate, tomso_open, get_Teff, regularize
 from .adipls import fgong_to_amdl
 
-def load_fgong(filename, N=-1, return_comment=False,
+def load_fgong(filename, fmt='ivers', return_comment=False,
                return_object=True, G=None):
     """Given an FGONG file, returns NumPy arrays `glob` and `var` that
     correspond to the scalar and point-wise variables, as specified
@@ -23,7 +23,8 @@ def load_fgong(filename, N=-1, return_comment=False,
     Also returns the first four lines of the file as a `comment`, if
     desired.
 
-    The version number `ivers` is not implemented.
+    The version number `ivers` is used to infer the format of floats
+    if `fmt='ivers'`.
 
     If `return_object` is `True`, instead returns an :py:class:`FGONG`
     object.  This will become default behaviour from v0.0.12.  The old
@@ -33,9 +34,11 @@ def load_fgong(filename, N=-1, return_comment=False,
     ----------
     filename: str
         Name of the FGONG file to read.
-    N: integer, optional
-        Number of characters in each float.  If negative, the function
-        tries to guess the size of each float. (default: -1)
+    fmt: str, optional
+        Format string for floats in `glob` and `var`.  If `'ivers'`,
+        uses `%16.9E' if the file's `ivers < 1000` or `%26.18E3` if
+        `ivers >= 1000`.  If `'auto'`, tries to guess the size of each
+        float. (default: 'ivers')
     return_comment: bool, optional
         If ``True``, return the first four lines of the FGONG file.
         These are comments that are not used in any calculations.
@@ -57,12 +60,21 @@ def load_fgong(filename, N=-1, return_comment=False,
         comment = [f.readline().decode('utf-8').strip() for i in range(4)]
         nn, iconst, ivar, ivers = [int(i) for i in f.readline().decode('utf-8').split()]
         # lines = f.readlines()
-        lines = [line.decode('utf-8') for line in f.readlines()]
+        lines = [line.decode('utf-8').lower().replace('d', 'e')
+                 for line in f.readlines()]
 
     tmp = []
 
+    if fmt == 'ivers':
+        if ivers < 1000:
+            N = 16
+        else:
+            N = 27
     # try to guess the length of each float in the data
-    if N < 0: N = len(lines[0])//5
+    elif fmt == 'auto':
+        N = len(lines[0])//5
+    else:
+        N = len(fmt % -1.111)
 
     for line in lines:
         for i in range(len(line)//N):
@@ -96,8 +108,8 @@ def load_fgong(filename, N=-1, return_comment=False,
             return glob, var
 
 
-def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
-               comment=['','','','']):
+def save_fgong(filename, glob, var, ivers=1300, comment=['','','',''],
+               float_formatter='ivers'):
     """Given data for an FGONG file in the format returned by
     :py:meth:`~tomso.fgong.load_fgong` (i.e. two NumPy arrays and a
     possible header), writes the data to a file.
@@ -125,22 +137,56 @@ def save_fgong(filename, glob, var, fmt='%16.9E', ivers=0,
     nn, ivar = var.shape
     iconst = len(glob)
 
+    if float_formatter == 'ivers':
+        if ivers < 1000:
+            def ff(x):
+                if not np.isfinite(x):
+                    return '%16s' % x
+
+                s = np.format_float_scientific(x, precision=9, unique=False, exp_digits=2, sign=True)
+                if s[0] == '+':
+                    s = ' ' + s[1:]
+
+                return s
+        else:
+            def ff(x):
+                if not np.isfinite(x):
+                    return '%27s' % x
+
+                s = np.format_float_scientific(x, precision=18, unique=False, exp_digits=3, sign=True)
+                if s[0] == '+':
+                    s = ' ' + s[1:]
+
+                return ' ' + s
+    else:
+        try:
+            float_formatter % 1.111
+            ff = lambda x: float_formatter % x
+        except TypeError:
+            ff = float_formatter
+
     with open(filename, 'wt') as f:
         f.write('\n'.join(comment) + '\n')
 
         line = '%10i'*4 % (nn, iconst, ivar, ivers) + '\n'
         f.write(line)
 
-        for i in range(0, iconst, 5):
-            N = np.mod(i+4, 5)+1  # number of floats in this row
-            line = fmt*N % tuple(glob[i:i+5]) + '\n'
-            f.write(line)
+        for i, val in enumerate(glob):
+            f.write(ff(val))
+            if i % 5 == 4:
+                f.write('\n')
+
+        if i % 5 != 4:
+            f.write('\n')
 
         for row in var:
-            for i in range(0, ivar, 5):
-                N = np.mod(i+4, 5)+1  # number of floats in this row
-                line = fmt*N % tuple(row[i:i+5]) + '\n'
-                f.write(line)
+            for i, val in enumerate(row):
+                f.write(ff(val))
+                if i % 5 == 4:
+                    f.write('\n')
+
+        if i % 5 != 4:
+            f.write('\n')
 
 
 def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
@@ -411,7 +457,7 @@ class FGONG(object):
     def __repr__(self):
         return('FGONG(\nglob=\n%s,\nvar=\n%s,\ndescription=\n%s' % (self.glob, self.var, '\n'.join(self.description)))
 
-    def to_file(self, filename, fmt='%16.9E'):
+    def to_file(self, filename, float_formatter='ivers'):
         """Save the model to an FGONG file.
 
         Parameters
@@ -422,8 +468,9 @@ class FGONG(object):
             Format string for floating point numbers in the **glob**
             and **var** arrays.
         """
-        save_fgong(filename, self.glob, self.var, fmt=fmt,
-                   ivers=self.ivers, comment=self.description)
+        save_fgong(filename, self.glob, self.var,
+                   ivers=self.ivers, comment=self.description,
+                   float_formatter=float_formatter)
 
     def to_amdl(self):
         """Convert the model to an ``ADIPLSStellarModel`` object."""

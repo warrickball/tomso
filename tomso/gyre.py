@@ -339,7 +339,7 @@ class GYREStellarModel(object):
         self.header['n'] = self.n
         save_gyre(filename, self.header, self.data)
 
-    def to_fgong(self, reverse=True):
+    def to_fgong(self, reverse=True, ivers=1300):
         """Convert the model to an ``FGONG`` object.
 
         Parameters
@@ -369,9 +369,9 @@ class GYREStellarModel(object):
         var[:,14] = self.AA
 
         if reverse:
-            return FGONG(glob, var[::-1], ivers=300, G=self.G)
+            return FGONG(glob, var[::-1], ivers=ivers, G=self.G)
         else:
-            return FGONG(glob, var, ivers=300, G=self.G)
+            return FGONG(glob, var, ivers=ivers, G=self.G)
 
     def to_amdl(self):
         """Convert the model to an ``ADIPLSStellarModel`` object."""
