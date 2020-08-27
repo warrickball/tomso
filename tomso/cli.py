@@ -59,6 +59,18 @@ def convert(args):
 def plot(args):
     import matplotlib.pyplot as pl
 
+    if args.plotter == 'plot':
+        plotter = pl.plot
+    elif args.plotter == 'semilogx':
+        plotter = pl.semilogx
+    elif args.plotter == 'semilogy':
+        plotter = pl.semilogy
+    elif args.plotter == 'loglog':
+        plotter = pl.loglog
+    else:
+        raise ValueError("invalid choice for --plotter "
+                         "(but this should've been caught by argparse)")
+
     for filename in args.filenames:
         format = (guess_format(filename)
                   if args.format == 'guess' else args.format)
@@ -82,17 +94,23 @@ def plot(args):
 
         data = loader(filename)
 
-        if use_keys:
-            x = data[args.x]
-            y = data[args.y]
-        else:
-            x = getattr(data, args.x)
-            y = getattr(data, args.y)
+        for ky in args.y:
+            if use_keys:
+                x = data[args.x]
+                y = data[ky]
+            else:
+                x = getattr(data, args.x)
+                y = getattr(data, ky)
 
-        pl.plot(x*args.scale_x, y*args.scale_y, args.style)
+            if len(args.filenames) > 1:
+                label = ' '.join([filename, ky])
+            else:
+                label = ky
+
+            plotter(x*args.scale_x, y*args.scale_y, args.style,
+                    label=label)
 
     for k in args.axvline:
-        print(k)
         try:
             if use_keys:
                 pl.axvline(data[k])
@@ -102,7 +120,6 @@ def plot(args):
             pl.axvline(float(k))
 
     for k in args.axhline:
-        print(k)
         try:
             if use_keys:
                 pl.axhline(data[k])
@@ -126,7 +143,7 @@ def plot(args):
     if args.ylabel:
         pl.ylabel(' '.join(args.ylabel))
     else:
-        pl.ylabel(args.y)
+        pl.ylabel(args.y[0])
 
     if args.legend:
         if args.legend[0] == 'auto':
