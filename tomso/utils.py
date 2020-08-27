@@ -104,3 +104,16 @@ class BaseStellarModel(object):
 
     @property
     def cs(self): return self.cs2**0.5
+
+    @property
+    def N(self):
+        y = np.full(len(self.x), 0.)
+        y[self.N2>0] = self.N2[self.N2>0]**0.5
+        return y
+
+    @property
+    @regularize(y0=np.inf)
+    def S2_1(self): return 2.*self.cs2/self.r**2
+
+    @property
+    def S_1(self): return self.S2_1**0.5
