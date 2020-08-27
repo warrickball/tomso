@@ -13,7 +13,8 @@ setup(
     download_url = 'https://github.com/warrickball/tomso/archive/v0.0.12.tar.gz',
     install_requires=['numpy'],
     keywords = [],
-    scripts = ['scripts/tomso-convert'],
+    scripts = ['scripts/tomso-convert',
+               'scripts/tomso'],
     license = 'MIT',
     classifiers=[
         "License :: OSI Approved :: MIT License",
