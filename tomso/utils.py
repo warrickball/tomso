@@ -92,12 +92,22 @@ class BaseStellarModel(object):
     def g(self): return self.G*self.m/self.r**2
 
     @property
-    @regularize(y0=np.inf)
-    def Hp(self): return self.P/(self.rho*self.g)
+    def dP_dr(self): return -self.rho*self.g
 
     @property
     @regularize(y0=np.inf)
-    def Hrho(self): return 1/(1/self.Gamma_1/self.Hp + self.AA/self.r)
+    def Hp(self): return -self.P/self.dP_dr
+
+    @property
+    @regularize()
+    def drho_dr(self): return -self.rho*(1/self.Gamma_1/self.Hp + self.AA/self.r)
+
+    @property
+    @regularize(y0=np.inf)
+    def Hrho(self): return -self.rho/self.drho_dr
+
+    @property
+    def n_eff(self): return 1/(self.Hrho/self.Hp-1)
 
     @property
     def cs2(self): return self.Gamma_1*self.P/self.rho
