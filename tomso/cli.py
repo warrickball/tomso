@@ -3,6 +3,112 @@
 """Functions for the command line interface, driven
 by the `tomso` script."""
 
+from argparse import ArgumentParser
+
+def get_parser():
+    parser = ArgumentParser()
+    subparsers = parser.add_subparsers()
+
+    # convert
+    convert_parser = subparsers.add_parser('convert')
+    convert_parser.add_argument(
+        '-f', '--from', type=str, default='guess', dest='from_format',
+        choices={'guess', 'fgong', 'amdl', 'gyre'})
+    convert_parser.add_argument(
+        '-t', '--to', type=str, default='guess', dest='to_format',
+        choices={'guess', 'fgong', 'amdl', 'gyre'})
+    convert_parser.add_argument('input_file', type=str)
+    convert_parser.add_argument('-o', '--output-file', type=str)
+    convert_parser.add_argument(
+        '-G', type=float, default=None,
+        help="gravitational constant that, if given, "
+        "will override the inferred value from the model")
+    convert_parser.add_argument(
+        '--ivers', type=int, default=1300,
+        help="value of `ivers` for output FGONG files "
+        "(default=1300)")
+    convert_parser.set_defaults(func=convert)
+
+    # plot
+    plot_parser = subparsers.add_parser('plot')
+    plot_parser.add_argument('filenames', type=str, nargs='+')
+    plot_parser.add_argument(
+        '-F', '--format', type=str, default='guess',
+        choices={'guess', 'history', 'profile', 'summary',
+                 'mode', 'fgong', 'gyre', 'amdl'})
+    plot_parser.add_argument('-x', type=str, default=None)
+    plot_parser.add_argument('-y', type=str, nargs='+', default=[''])
+    plot_parser.add_argument(
+        '--xlabel', type=str, nargs='+', default=None)
+    plot_parser.add_argument(
+        '--ylabel', type=str, nargs='+', default=None,
+        help="Overrides the axis label with the given string.  "
+        "Accepts spaces. i.e. 'effective temperature' is OK.  "
+        "Default is to use the first argument of -x/-y.")
+    plot_parser.add_argument(
+        '--prune', action='store_true',
+        help="Make the model number monotonic by only using "
+        "the last model of with any given model number and "
+        "restrict models to those with model number less "
+        "than that of the last model. "
+        "Useful for removing apparent reversals in "
+        "time or model number because of backups and "
+        "retries, and for models that finished with fewer "
+        "models following a restart.")
+    plot_parser.add_argument(
+        '--legend', type=str, nargs='+', default=None,
+        help="If 'auto', add a legend using the filenames as "
+        "keys.  Otherwise, use the arguments as a list of keys "
+        "(default is no legend).")
+    plot_parser.add_argument(
+        '-s', '--style', type=str, default='-',
+        help="point style, passed to plot function (default='-')")
+    plot_parser.add_argument(
+        '--scale-x', type=float, default=1.0,
+        help="multiply variables on x-axis by this much (default=1)")
+    plot_parser.add_argument(
+        '--scale-y', type=float, default=1.0,
+        help="multiply variables on y-axis by this much (default=1)")
+    plot_parser.add_argument(
+        '-a', '--axis', type=float, nargs=4, default=None)
+    plot_parser.add_argument(
+        '--flip-x', action='store_true', help="reverse the x-axis")
+    plot_parser.add_argument(
+        '--flip-y', action='store_true', help="reverse the y-axis")
+    plot_parser.add_argument(
+        '--axvline', type=str, nargs='+', default=[],
+        help="plot a vertical line at this value (can be header key)")
+    plot_parser.add_argument(
+        '--axhline', type=str, nargs='+', default=[],
+        help="plot a vertical line at this value (can be header key)")
+    plot_parser.add_argument(
+        '--plotter', type=str, default='plot',
+        choices=['plot', 'semilogx', 'semilogy', 'loglog'],
+        help="use 'matplotlib.pyplot.plotter' to plot (default='plot')")
+    plot_parser.add_argument(
+        '--title', type=str, nargs='+', default=[''],
+        help="Adds the given title to the plot.  Accepts spaces. "
+        "i.e. 'my plot' is OK.  Default is no title.")
+    plot_parser.add_argument(
+        '--style-file', type=str, default=None,
+        help="Specifies a matplotlib style file to load.")
+    plot_parser.add_argument(
+        '--rcParams', type=str, nargs='+', default=[],
+        help="Any parameters in `matplotlib.pyplot.rcParams`, "
+        "provided in the form `key` `value`. "
+        "e.g. --rcParams text.usetex True figure.dpi 300")
+    plot_parser.add_argument(
+        '-v', '--verbose', action='store_true',
+        help="Print diagnostic information as plot is made.")
+    plot_parser.add_argument(
+        '-G', type=float, default=None,
+        help="gravitational constant that, if given, will override "
+        "the inferred value from a stellar model")
+    plot_parser.set_defaults(func=plot)
+
+    return parser
+
+
 def starts_or_ends_with(s, w):
     lower = s.split('/')[-1].lower()
     return lower.startswith(w) or lower.endswith(w)
