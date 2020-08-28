@@ -74,15 +74,15 @@ class TestADIPLSFunctions(unittest.TestCase):
         css = adipls.load_agsm('data/modelS.agsm', return_object=False)
         for cs in css:
             self.assertAlmostEqual(cs['M'], 1.989e33)
-            self.assertAlmostEqual(cs['R'], 69599062580.0)
+            self.assertAlmostEqual(cs['R'], 6.959894677e10)
 
         agsm = adipls.load_agsm('data/modelS.agsm', return_object=True)
         for cs in agsm.css:
             self.assertAlmostEqual(cs['M'], 1.989e33)
-            self.assertAlmostEqual(cs['R'], 69599062580.0)
+            self.assertAlmostEqual(cs['R'], 6.959894677e10)
 
         self.assertAlmostEqual(agsm.M, 1.989e33)
-        self.assertAlmostEqual(agsm.R, 69599062580.0)
+        self.assertAlmostEqual(agsm.R, 6.959894677e10)
         np.testing.assert_allclose(agsm.nu_V, 1/agsm.Pi_V)
         np.testing.assert_allclose(agsm.nu_E, 1/agsm.Pi_E)
 
@@ -99,7 +99,7 @@ class TestADIPLSFunctions(unittest.TestCase):
             np.testing.assert_equal(cs1, cs2)
             np.testing.assert_equal(cs1, cs3)
             self.assertAlmostEqual(cs1['M'], 1.989e33)
-            self.assertAlmostEqual(cs1['R'], 69599062580.0)
+            self.assertAlmostEqual(cs1['R'], 6.959894677e10)
 
         for eig1, eig2, eig3 in zip(eigs1, eigs2, eigs3):
             np.testing.assert_equal(eig1[:,1:3], eig2)
@@ -126,20 +126,20 @@ class TestADIPLSFunctions(unittest.TestCase):
         self.assertEqual(nmod, 1)
         self.assertEqual(len(A), 2482)
         self.assertAlmostEqual(D[0], 1.989e33)
-        self.assertAlmostEqual(D[1], 69599062580.0)
+        self.assertAlmostEqual(D[1], 6.959894677e10)
 
     def test_load_modelS_rkr(self):
         css, rkrs = adipls.load_rkr('data/modelS.rkr', return_object=False)
 
         for cs in css:
             self.assertAlmostEqual(cs['M'], 1.989e33)
-            self.assertAlmostEqual(cs['R'], 69599062580.0)
+            self.assertAlmostEqual(cs['R'], 6.959894677e10)
 
         rkr = adipls.load_rkr('data/modelS.rkr', return_object=True)
 
         for cs in rkr.css:
             self.assertAlmostEqual(cs['M'], 1.989e33)
-            self.assertAlmostEqual(cs['R'], 69599062580.0)
+            self.assertAlmostEqual(cs['R'], 6.959894677e10)
 
         np.testing.assert_equal(rkr.K[0], rkr.K_ln(rkr.l[0], rkr.n[0]))
         np.testing.assert_equal(rkr.K[0], rkr.K_nl(rkr.n[0], rkr.l[0]))

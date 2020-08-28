@@ -13,11 +13,11 @@ class TestFGONGFunctions(unittest.TestCase):
         self.assertEqual(comment[0][:6], 'L5BI.D')
         self.assertEqual(len(glob), 15)
         self.assertEqual(len(var), 2482)
-        self.assertEqual(len(var[0]), 30)
+        self.assertEqual(len(var[0]), 25)
 
         self.assertAlmostEqual(glob[0], 1.989e33)
-        self.assertAlmostEqual(glob[1], 6.959906258e10)
-        self.assertAlmostEqual(glob[2], 3.845999350e33)
+        self.assertAlmostEqual(glob[1], 6.959894677e10)
+        self.assertAlmostEqual(glob[2], 3.845997429e33)
 
         m = fgong.load_fgong('data/modelS.fgong', return_object=True)
         self.assertEqual(len(m), 2482)
@@ -62,7 +62,7 @@ class TestFGONGFunctions(unittest.TestCase):
         x, r, R, M = fgong.fgong_get(['x','r','R','M'], glob, var)
         np.testing.assert_equal(x, r/R)
         self.assertAlmostEqual(M, 1.989e33)
-        self.assertAlmostEqual(R, 6.959906258e10)
+        self.assertAlmostEqual(R, 6.959894677e10)
 
         cs, = fgong.fgong_get(['cs'], glob, var)
         cs2 = fgong.fgong_get('cs2', glob, var)
@@ -71,7 +71,7 @@ class TestFGONGFunctions(unittest.TestCase):
         m = fgong.load_fgong('data/modelS.fgong', return_object=True)
         np.testing.assert_equal(m.x, m.r/m.R)
         self.assertAlmostEqual(m.M, 1.989e33)
-        self.assertAlmostEqual(m.R, 6.959906258e10)
+        self.assertAlmostEqual(m.R, 6.959894677e10)
         np.testing.assert_allclose(m.cs**2, m.cs2)
 
     def test_fgong_get_reverse(self):
