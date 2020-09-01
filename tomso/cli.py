@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
-"""Functions for the command line interface, driven
-by the `tomso` script."""
+"""Functions for the command line interface, driven by the `tomso`
+script.  You probably want to use the functions in other modules
+directly."""
 
 from argparse import ArgumentParser
 
 def get_parser():
+    """Returns the ``argparse.ArgumentParser`` used by the `tomso`
+    command-line script."""
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
 
@@ -110,12 +113,17 @@ def get_parser():
 
 
 def starts_or_ends_with(s, w):
+    """Returns ``True`` if string `s` starts or ends with string `w`, case
+    insensitively."""
     lower = s.split('/')[-1].lower()
     return lower.startswith(w) or lower.endswith(w)
 
 
 def guess_format(filename):
-    """Try to guess the file format based on its name."""
+    """Try to guess the format of `filename` by testing if it starts or
+    ends with `'fgong'`, `'amdl'`, `'gyre'`, `'history'`, `'profile'`,
+    `'mode'` or `'summary'`.  Exits at first match so
+    `profile1.data.FGONG` returns `fgong`, not `profile`."""
     for format in ['fgong', 'amdl', 'gyre',
                    'history', 'profile', 'mode', 'summary']:
         if starts_or_ends_with(filename, format):
@@ -125,6 +133,7 @@ def guess_format(filename):
 
 
 def convert(args):
+    """Convert function for `tomso` command-line script."""
     from_format = (guess_format(args.input_file)
                    if args.from_format == 'guess'
                    else args.from_format)
@@ -163,6 +172,7 @@ def convert(args):
 
 
 def plot(args):
+    """Plot function for `tomso` command-line script."""
     import matplotlib.pyplot as pl
 
     if args.plotter == 'plot':
