@@ -226,23 +226,24 @@ def plot(args):
             plotter(x*args.scale_x, y*args.scale_y, args.style,
                     label=label)
 
+    axline_kwargs = {'ls': '--', 'c': 'k'}
     for k in args.axvline:
         try:
             if use_keys:
-                pl.axvline(data[k])
+                pl.axvline(data[k], **axline_kwargs)
             else:
-                pl.axvline(getattr(data, k))
+                pl.axvline(getattr(data, k), **axline_kwargs)
         except (KeyError, AttributeError):
-            pl.axvline(float(k))
+            pl.axvline(float(k), **axline_kwargs)
 
     for k in args.axhline:
         try:
             if use_keys:
-                pl.axhline(data[k])
+                pl.axhline(data[k], **axline_kwargs)
             else:
-                pl.axhline(getattr(data, k))
+                pl.axhline(getattr(data, k), **axline_kwargs)
         except (KeyError, AttributeError):
-            pl.axhline(float(k))
+            pl.axhline(float(k), **axline_kwargs)
 
     a = list(pl.axis()) if args.axis is None else args.axis
     if args.flip_x:
