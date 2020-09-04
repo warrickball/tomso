@@ -806,7 +806,8 @@ class ADIPLSStellarModel(BaseStellarModel):
         return len(self.A)
 
     def __repr__(self):
-        return('ADIPLSStellarModel(\nD=\n%s,\nA=\n%s,\nG=%s,\nnmod=%s\n)' % (self.D, self.A, self.G, self.nmod))
+        with np.printoptions(threshold=10):
+            return('ADIPLSStellarModel(\nD=\n%s,\nA=\n%s,\nG=%s,\nnmod=%s\n)' % (self.D, self.A, self.G, self.nmod))
 
     def to_file(self, filename):
         """Save the model to an ADIPLS binary stellar model file (usually

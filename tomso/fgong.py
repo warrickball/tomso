@@ -457,7 +457,8 @@ class FGONG(BaseStellarModel):
         return len(self.var)
 
     def __repr__(self):
-        return('FGONG(\nglob=\n%s,\nvar=\n%s,\ndescription=\n%s' % (self.glob, self.var, '\n'.join(self.description)))
+        with np.printoptions(threshold=10):
+            return('FGONG(\nglob=\n%s,\nvar=\n%s,\ndescription=\n%s)' % (self.glob, self.var, '\n'.join(self.description)))
 
     def to_file(self, filename, float_formatter='ivers'):
         """Save the model to an FGONG file.

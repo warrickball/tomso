@@ -330,8 +330,8 @@ class GYREStellarModel(BaseStellarModel):
         return len(self.data)
 
     def __repr__(self):
-        floats = self.data.view(float).reshape((len(self), -1))[:,1:]
-        return('GYREStellarModel(\nheader=\n%s,\ndata=\n%s\n)' % (list(self.header.tolist()), floats))
+        with np.printoptions(threshold=10):
+            return('GYREStellarModel(\nheader=\n%s,\ndata=\n%s\n)' % (self.header, self.data))
 
     def to_file(self, filename):
         """Save the model to a file.
