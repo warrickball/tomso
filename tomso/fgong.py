@@ -9,7 +9,7 @@ from a file.
 import numpy as np
 import warnings
 from .adipls import fgong_to_amdl
-from .utils import DEFAULT_G
+from .constants import G_DEFAULT
 from .utils import integrate, tomso_open, get_Teff, regularize
 from .utils import BaseStellarModel
 
@@ -191,7 +191,7 @@ def save_fgong(filename, glob, var, ivers=1300, comment=['','','',''],
             f.write('\n')
 
 
-def fgong_get(key_or_keys, glob, var, reverse=False, G=DEFAULT_G):
+def fgong_get(key_or_keys, glob, var, reverse=False, G=G_DEFAULT):
     """Retrieves physical properties of a FGONG model from the ``glob`` and
     ``var`` arrays.
 
@@ -445,11 +445,11 @@ class FGONG(BaseStellarModel):
         # if G is None, use glob[14] if it exists and looks like a
         # reasonable value of G
         if G is None:
-            if len(glob) >= 14 and np.isclose(glob[14], DEFAULT_G,
+            if len(glob) >= 14 and np.isclose(glob[14], G_DEFAULT,
                                               rtol=1e-3, atol=0.01e-8):
                 self.G = glob[14]
             else:
-                self.G = DEFAULT_G
+                self.G = G_DEFAULT
         else:
             self.G = G
 

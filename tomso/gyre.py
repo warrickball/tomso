@@ -8,7 +8,7 @@ Functions for manipulating `GYRE`_ input and output files.
 
 import numpy as np
 import warnings
-from .utils import DEFAULT_G
+from .constants import G_DEFAULT
 from .utils import tomso_open, load_mesa_gyre
 from .utils import integrate, regularize, get_Teff
 from .utils import BaseStellarModel
@@ -321,7 +321,7 @@ class GYREStellarModel(BaseStellarModel):
     tau: NumPy array
         acoustic depth
     """
-    def __init__(self, header, data, G=DEFAULT_G):
+    def __init__(self, header, data, G=G_DEFAULT):
         self.header = header
         self.data = data
         self.G = G

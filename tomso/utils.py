@@ -3,10 +3,6 @@ import numpy as np
 import gzip
 from .constants import sigma_SB
 
-DEFAULT_G = 6.67428e-8
-"""Default value of the gravitational constant that is shared
-by all modules."""
-
 def integrate(y, x):
     """Integral of `y` over `x`, computed using the trapezoidal rule. 
     i.e. :math:`\\int _{x[0]} ^x y(x') dx'`."""

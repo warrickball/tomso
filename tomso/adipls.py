@@ -9,7 +9,7 @@ various scalar results from the frequency calculation.
 """
 import numpy as np
 import warnings
-from .utils import DEFAULT_G
+from .constants import G_DEFAULT
 from .utils import integrate, complement, regularize
 from .utils import BaseStellarModel
 
@@ -168,7 +168,7 @@ def load_amde(filename, nfmode=1, return_object=True):
         return np.squeeze(css), np.squeeze(data), x
 
 def load_amdl(filename, return_nmod=False, live_dangerously=False,
-              return_object=True, G=DEFAULT_G):
+              return_object=True, G=G_DEFAULT):
     """Reads an ADIPLS model file.  See Section 5 of the `ADIPLS
     documentation`_ for details.
 
@@ -298,7 +298,7 @@ def save_amdl(filename, D, A, nmod=0):
         length.tofile(f)
 
 
-def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
+def amdl_get(key_or_keys, D, A, G=G_DEFAULT):
     """Retrieves physical properties of an AMDL model from the ``D`` and
     ``A`` arrays.
 
@@ -412,7 +412,7 @@ def amdl_get(key_or_keys, D, A, G=DEFAULT_G):
         return output
 
 
-def kernels(cs, eig, D, A, G=DEFAULT_G, alpha=None):
+def kernels(cs, eig, D, A, G=G_DEFAULT, alpha=None):
     """Returns the density and squared sound speed kernels.  I have tried
     to make this as notationally similar to Gough & Thompson (1991) as
     possible.  The kernels are normalized to have unit integrals over
@@ -518,7 +518,7 @@ def kernels(cs, eig, D, A, G=DEFAULT_G, alpha=None):
     return K_cs2, K_rho
 
 
-def fgong_to_amdl(glob, var, G=DEFAULT_G):
+def fgong_to_amdl(glob, var, G=G_DEFAULT):
     """Converts FGONG data (in the form of `glob` and `var`, as returned
     by :py:meth:`~tomso.fgong.load_fgong`) into ADIPLS binary data,
     which can be saved using :py:meth:`save_amdl`.
@@ -610,7 +610,7 @@ def fgong_to_amdl(glob, var, G=DEFAULT_G):
     return D, A
 
 
-def amdl_to_fgong(D, A, G=DEFAULT_G):
+def amdl_to_fgong(D, A, G=G_DEFAULT):
     """Converts ADIPLS binary data (in the form of `D` and `A`, as
     returned by :py:meth:`load_amdl`) into FGONG data,
     which can be saved using :py:meth:`~tomso.fgong.save_fgong`.
@@ -796,7 +796,7 @@ class ADIPLSStellarModel(BaseStellarModel):
     tau: NumPy array
         acoustic depth
     """
-    def __init__(self, D, A, nmod=0, G=DEFAULT_G):
+    def __init__(self, D, A, nmod=0, G=G_DEFAULT):
         self.D = D
         self.A = A
         self.nmod = nmod
