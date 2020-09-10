@@ -221,7 +221,10 @@ def plot(args):
         elif format == 'amdl':
             from .adipls import load_amdl as loader
 
-        data = loader(filename)
+        if format in ['history', 'profile'] and args.prune:
+            data = loader(filename, prune=True)
+        else:
+            data = loader(filename)
 
         for ky in args.y:
             if use_keys:
