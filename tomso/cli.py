@@ -36,7 +36,8 @@ def get_parser():
         '-t', '--to', type=str, default='guess', dest='to_format',
         choices={'guess', 'fgong', 'amdl', 'gyre'})
     convert_parser.add_argument('input_file', type=str)
-    convert_parser.add_argument('-o', '--output-file', type=str)
+    convert_parser.add_argument('-o', '--output-file', type=str,
+                                required=True)
     convert_parser.add_argument(
         '-G', type=float, default=None,
         help="gravitational constant that, if given, "
