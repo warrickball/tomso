@@ -110,7 +110,7 @@ def get_parser():
         help="Adds the given title to the plot.  Accepts spaces. "
         "i.e. 'my plot' is OK.  Default is no title.")
     plot_parser.add_argument(
-        '--style-file', type=str, default=None,
+        '-S', '--style-file', type=str, default=None,
         help="Specifies a matplotlib style file to load.")
     plot_parser.add_argument(
         '-G', type=float, default=None,
@@ -209,6 +209,9 @@ def convert(args):
 def plot(args):
     """Plot function for `tomso` command-line script."""
     import matplotlib.pyplot as pl
+
+    if args.style_file:
+        pl.style.use(args.style_file)
 
     if args.plotter == 'plot':
         plotter = pl.plot
