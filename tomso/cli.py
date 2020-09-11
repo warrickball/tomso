@@ -113,14 +113,6 @@ def get_parser():
         '--style-file', type=str, default=None,
         help="Specifies a matplotlib style file to load.")
     plot_parser.add_argument(
-        '--rcParams', type=str, nargs='+', default=[],
-        help="Any parameters in `matplotlib.pyplot.rcParams`, "
-        "provided in the form `key` `value`. "
-        "e.g. --rcParams text.usetex True figure.dpi 300")
-    plot_parser.add_argument(
-        '-v', '--verbose', action='store_true',
-        help="Print diagnostic information as plot is made.")
-    plot_parser.add_argument(
         '-G', type=float, default=None,
         help="gravitational constant that, if given, will override "
         "the inferred value from a stellar model")
