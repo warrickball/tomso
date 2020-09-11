@@ -253,6 +253,8 @@ def plot(args):
 
         if format in ['history', 'profile'] and args.prune:
             data = loader(filename, prune=True)
+        elif format in ['fgong', 'gyre', 'amdl'] and args.G:
+            data = loader(filename, G=args.G)
         else:
             data = loader(filename)
 
