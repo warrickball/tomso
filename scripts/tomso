@@ -5,4 +5,7 @@ from tomso import cli
 
 parser = cli.get_parser()
 args = parser.parse_args()
-args.func(args)
+try:
+    args.func(args)
+except AttributeError:
+    parser.print_usage()
