@@ -10,10 +10,11 @@ def get_parser():
     """Returns the ``argparse.ArgumentParser`` used by the `tomso`
     command-line script."""
     parser = ArgumentParser()
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(metavar='command')
 
     # info
-    info_parser = subparsers.add_parser('info')
+    info_parser = subparsers.add_parser('info',
+        help="show basic information about a tomso-compatible file(s)")
     info_parser.add_argument('filenames', type=str, nargs='+')
     info_parser.add_argument(
         '-F', '--format', type=str, default='guess',
@@ -26,7 +27,8 @@ def get_parser():
     info_parser.set_defaults(func=info)
 
     # convert
-    convert_parser = subparsers.add_parser('convert')
+    convert_parser = subparsers.add_parser('convert',
+        help="convert a stellar model from one format to another")
     convert_parser.add_argument(
         '-f', '--from', type=str, default='guess', dest='from_format',
         choices={'guess', 'fgong', 'amdl', 'gyre'})
@@ -46,7 +48,8 @@ def get_parser():
     convert_parser.set_defaults(func=convert)
 
     # plot
-    plot_parser = subparsers.add_parser('plot')
+    plot_parser = subparsers.add_parser('plot',
+        help="create quick-look plots from tomso-compatible file(s)")
     plot_parser.add_argument('filenames', type=str, nargs='+')
     plot_parser.add_argument(
         '-F', '--format', type=str, default='guess',
