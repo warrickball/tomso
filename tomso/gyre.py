@@ -225,7 +225,7 @@ class GYRELog(object):
                 if key in names:
                     return source[key]
             else:
-                raise KeyError
+                raise KeyError(key)
         else:
             # assume we're trying to slice the data array
             return GYRELog(self.header, self.data[key])
