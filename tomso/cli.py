@@ -12,6 +12,19 @@ def get_parser():
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
 
+    # info
+    info_parser = subparsers.add_parser('info')
+    info_parser.add_argument('filenames', type=str, nargs='+')
+    info_parser.add_argument(
+        '-F', '--format', type=str, default='guess',
+        choices={'guess', 'history', 'profile', 'summary',
+                 'mode', 'fgong', 'gyre', 'amdl'})
+    info_parser.add_argument(
+        '-G', type=float, default=None,
+        help="gravitational constant that, if given, will override "
+        "the inferred value from a stellar model")
+    info_parser.set_defaults(func=info)
+
     # convert
     convert_parser = subparsers.add_parser('convert')
     convert_parser.add_argument(
@@ -109,19 +122,6 @@ def get_parser():
         "the inferred value from a stellar model")
     plot_parser.set_defaults(func=plot)
 
-    # info
-    info_parser = subparsers.add_parser('info')
-    info_parser.add_argument('filenames', type=str, nargs='+')
-    info_parser.add_argument(
-        '-F', '--format', type=str, default='guess',
-        choices={'guess', 'history', 'profile', 'summary',
-                 'mode', 'fgong', 'gyre', 'amdl'})
-    info_parser.add_argument(
-        '-G', type=float, default=None,
-        help="gravitational constant that, if given, will override "
-        "the inferred value from a stellar model")
-    info_parser.set_defaults(func=info)
-
     return parser
 
 
@@ -143,6 +143,32 @@ def guess_format(filename):
             return format
     else:
         raise ValueError("couldn't guess format of %s" % filename)
+
+
+def info(args):
+    """Info function for `tomso` command-line script."""
+
+    for filename in args.filenames:
+        format = (guess_format(filename)
+                  if args.format == 'guess' else args.format)
+
+
+        if format == 'history':
+            from .mesa import load_history as loader
+        elif format == 'profile':
+            from .mesa import load_profile as loader
+        elif format == 'summary':
+            from .gyre import load_summary as loader
+        elif format == 'mode':
+            from .gyre import load_mode as loader
+        elif format == 'fgong':
+            from .fgong import load_fgong as loader
+        elif format == 'gyre':
+            from .gyre import load_gyre as loader
+        elif format == 'amdl':
+            from .adipls import load_amdl as loader
+
+        print(loader(filename))
 
 
 def convert(args):
@@ -287,29 +313,3 @@ def plot(args):
     pl.title(' '.join(args.title))
 
     pl.show()
-
-
-def info(args):
-    """Info function for `tomso` command-line script."""
-
-    for filename in args.filenames:
-        format = (guess_format(filename)
-                  if args.format == 'guess' else args.format)
-
-
-        if format == 'history':
-            from .mesa import load_history as loader
-        elif format == 'profile':
-            from .mesa import load_profile as loader
-        elif format == 'summary':
-            from .gyre import load_summary as loader
-        elif format == 'mode':
-            from .gyre import load_mode as loader
-        elif format == 'fgong':
-            from .fgong import load_fgong as loader
-        elif format == 'gyre':
-            from .gyre import load_gyre as loader
-        elif format == 'amdl':
-            from .adipls import load_amdl as loader
-
-        print(loader(filename))
