@@ -448,12 +448,12 @@ def kernels(cs, eig, D, A, G=G_DEFAULT, alpha=None):
 
     """
 
-    ell = cs['ell']
+    l = cs['l']
     M, R, P_c, rho_c = D[:4]                # mass and radius from FGONG
     y = eig.T
     sigma2 = cs['sigma2']
     omega = np.sqrt(sigma2*G*M/R**3)        # convert to angular frequency
-    L2 = ell*(ell+1)
+    L2 = l*(l+1)
 
     x = A[:,0]
     r = x*R                                 # radial co-ordinate
@@ -474,13 +474,13 @@ def kernels(cs, eig, D, A, G=G_DEFAULT, alpha=None):
 
     xi_r = y[1]*R
 
-    if ell == 0:
+    if l == 0:
         xi_h = 0.*xi_r  # radial modes have zero horizontal component
         chi = Vg/x*(y[1]-sigma2/A1/x*y[2])
         dxi_r_dr = chi - 2.*y[1]/x
         dPhi_dr = -4.*np.pi*G*rho*xi_r
         Phi = -complement(dPhi_dr, r)  # but actually you don't even need it
-    elif ell > 0:
+    elif l > 0:
         xi_h = y[2]*R/L2
         eta = L2*A1/sigma2
         chi = Vg/x*(y[1]-y[2]/eta-y[3])
@@ -488,7 +488,7 @@ def kernels(cs, eig, D, A, G=G_DEFAULT, alpha=None):
         dPhi_dr = -g/x*(y[3] + y[4]) - y[3]*R*(4.*np.pi*G*rho - 2.*g/r)
         Phi = -g*R*y[3]
     else:
-        raise ValueError('ell must be non-negative')
+        raise ValueError('l must be non-negative')
 
     chi[x==0] = 0.
     dxi_r_dr[x==0] = 0.
@@ -694,7 +694,7 @@ cs_dtypes = [('xmod','float'), ('M','float'), ('R','float'),
              ('A_2(x_s)','float'), ('A_5(x_s)','float'),
              ('x_1','float'), ('sigma2_Omega','float'),
              ('x_f','float'), ('fctsbc','int'), ('fcttbc','int'),
-             ('lambda','float'), ('ell','int'), ('enn','int'),
+             ('lambda','float'), ('l','int'), ('n','int'),
              ('sigma2','float'), ('sigma2_c','float'),
              ('y_1,max','float'), ('x_max', 'float'), ('E','float'),
              ('Pi_E','float'), ('Pi_V','float'), ('nu_V','float'),
@@ -702,7 +702,7 @@ cs_dtypes = [('xmod','float'), ('M','float'), ('R','float'),
              ('y_1(x_s)','float'), ('y_2(x_s)','float'),
              ('y_3(x_s)','float'), ('y_4(x_s)','float'),
              ('z_1,max','float'), ('xhat_max','float'),
-             ('beta_nl','float'), ('nu_Ri','float'), ('emm','int')]
+             ('beta_nl','float'), ('nu_Ri','float'), ('m','int')]
 
 for i in range(len(cs_dtypes), 50):
     cs_dtypes.append(('col%i' % i, 'float'))
@@ -1087,10 +1087,10 @@ class ADIPLSGrandSummary(object):
     def R(self): return self.css[0]['R']
 
     @property
-    def l(self): return self.css['ell']
+    def l(self): return self.css['l']
 
     @property
-    def n(self): return self.css['enn']
+    def n(self): return self.css['n']
 
     @property
     def sigma2(self): return self.css['sigma2']
