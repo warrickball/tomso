@@ -26,6 +26,14 @@ Lsun = 3.828e33
 Teff_sun = (Lsun/(4.*np.pi*Rsun**2*sigma_SB))**0.25
 """Solar effective temperature in K (IAU B3)."""
 
+# solar nu_max from text (not abstract) of Kiefer et al. (2019) [1]
+# agrees with 3078 +/- 13 uHz by Lund et al. (2017) [2]
+# solar Dnu from Lund et al. (2017) [2]
+# [1] https://ui.adsabs.harvard.edu/abs/2018SoPh..293..151K
+# [2] https://ui.adsabs.harvard.edu/abs/2017ApJ...835..172L
+nu_max_sun = 3079.76 # +/- 0.17 uHz
+Dnu_sun = 134.91 # +/- 0.02 uHz
+
 # G (uncertainty)
 G_CODATA_2018 = 6.67430e-8 # (15) # MESA since r12934
 G_CODATA_2014 = 6.67408e-8 # (31)
