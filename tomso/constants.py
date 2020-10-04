@@ -26,7 +26,7 @@ Lsun = 3.828e33
 Teff_sun = (Lsun/(4.*np.pi*Rsun**2*sigma_SB))**0.25
 """Solar effective temperature in K (IAU B3)."""
 
-# G
+# G (uncertainty)
 G_CODATA_2018 = 6.67430e-8 # (15) # MESA since r12934
 G_CODATA_2014 = 6.67408e-8 # (31)
 G_CODATA_2010 = 6.67384e-8 # (80)
@@ -37,3 +37,5 @@ G_CODATA_1986 = 6.67259e-8 # (85)
 G_CODATA_1973 = 6.6720e-8  # (41)
 G_MODEL_S = 6.67232e-8
 G_DEFAULT = G_CODATA_2018
+
+Msun = GMsun/G_DEFAULT
