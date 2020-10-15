@@ -163,6 +163,8 @@ def info(args):
             from .gyre import load_gyre as loader
         elif format == 'amdl':
             from .adipls import load_amdl as loader
+        else:
+            raise ValueError('format %s not implemented' % format)
 
         print(loader(filename))
 
@@ -245,6 +247,8 @@ def plot(args):
             from .gyre import load_gyre as loader
         elif format == 'amdl':
             from .adipls import load_amdl as loader
+        else:
+            raise ValueError('format %s not implemented' % format)
 
         if format in ['history', 'profile'] and args.prune:
             data = loader(filename, prune=True)
