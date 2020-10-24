@@ -2,6 +2,8 @@
 import numpy as np
 import gzip
 from .constants import sigma_SB
+from .constants import GMsun, Rsun, Dnu_sun        # adiabatic
+from .constants import Lsun, nu_max_sun, Teff_sun  # full
 
 def integrate(y, x):
     """Integral of `y` over `x`, computed using the trapezoidal rule. 
@@ -80,9 +82,26 @@ def get_Teff(L, R):
     return (L/(4.*np.pi*R**2*sigma_SB))**0.25
 
 
-class BaseStellarModel(object):
-    """Base stellar model class that defines properties that are
-    computed the same way in all stellar model formats."""
+class AdiabaticStellarModel(object):
+    """Base stellar model class that defines properties that are computed
+    the same way in all stellar model formats for which only adiabatic
+    frequencies can be calculated."""
+    def __str__(self):
+        return '\n'.join([
+            '%s' % type(self),
+            'M    %9.3e g      %7.3f Msun' % (self.M, self.G*self.M/GMsun),
+            'R    %9.3e cm    %8.3f Rsun' % (self.R, self.R/Rsun),
+            'Dnu  %9.1f uHz    %7.3f Dnu_sun' % (self.Dnu, self.Dnu_factor)
+        ])
+
+
+    @property
+    def Dnu_factor(self):
+        return self.G*self.M/GMsun/self.R**3*Rsun**3
+
+    @property
+    def Dnu(self): return self.Dnu_factor*Dnu_sun
+
     @property
     @regularize()
     def g(self): return self.G*self.m/self.r**2
@@ -123,3 +142,26 @@ class BaseStellarModel(object):
 
     @property
     def S_1(self): return self.S2_1**0.5
+
+
+class FullStellarModel(AdiabaticStellarModel):
+    """Base stellar model class that defines properties that are computed
+    the same way in all stellar model formats for which both adiabatic
+    and non-adiabatic frequencies can be calculated."""
+    def __str__(self):
+        return super(FullStellarModel, self).__str__() + '\n' + \
+            '\n'.join([
+                'L    %9.3e erg/s %8.3f Lsun' % (self.L, self.L/Lsun),
+                'Teff   %7i K      %7.3f Teff_sun' % (self.Teff, self.Teff/Teff_sun),
+                'nu_max %7i uHz    %7.3f nu_max_sun' % (self.nu_max, self.nu_max_factor)])
+
+    @property
+    def Teff(self): return get_Teff(self.L, self.R)
+
+    @property
+    def nu_max_factor(self):
+        return self.G*self.M/GMsun/(self.R/Rsun)**2/(self.Teff/Teff_sun)**0.5
+
+    @property
+    def nu_max(self):
+        return self.nu_max_factor*nu_max_sun

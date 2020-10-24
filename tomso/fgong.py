@@ -10,8 +10,8 @@ import numpy as np
 import warnings
 from .adipls import fgong_to_amdl
 from .constants import G_DEFAULT
-from .utils import integrate, tomso_open, get_Teff, regularize
-from .utils import BaseStellarModel
+from .utils import integrate, tomso_open, regularize
+from .utils import FullStellarModel
 
 
 def load_fgong(filename, fmt='ivers', return_comment=False,
@@ -326,7 +326,7 @@ def fgong_get(key_or_keys, glob, var, reverse=False, G=G_DEFAULT):
         return output
 
 
-class FGONG(BaseStellarModel):
+class FGONG(FullStellarModel):
     """A class that contains and allows one to manipulate the data in a
     stellar model stored in the `FGONG format`_.
 
@@ -574,9 +574,6 @@ class FGONG(BaseStellarModel):
 
     @L.setter
     def L(self, val): self.glob[2] = val
-
-    @property
-    def Teff(self): return get_Teff(self.L, self.R)
 
     @property
     def r(self): return self.var[:,0]

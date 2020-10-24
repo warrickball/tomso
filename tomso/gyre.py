@@ -10,8 +10,8 @@ import numpy as np
 import warnings
 from .constants import G_DEFAULT
 from .utils import tomso_open, load_mesa_gyre
-from .utils import integrate, regularize, get_Teff
-from .utils import BaseStellarModel
+from .utils import integrate, regularize
+from .utils import FullStellarModel
 
 
 def load_summary(filename, return_object=True):
@@ -231,7 +231,7 @@ class GYRELog(object):
             return GYRELog(self.header, self.data[key])
 
 
-class GYREStellarModel(BaseStellarModel):
+class GYREStellarModel(FullStellarModel):
     """A class that contains and allows one to manipulate the data stored
     a plain-text GYRE Stellar Model.
 
@@ -444,9 +444,6 @@ class GYREStellarModel(BaseStellarModel):
 
     @L.setter
     def L(self, val): self.header['L'] = val
-
-    @property
-    def Teff(self): return get_Teff(self.L, self.R)
 
     @property
     def k(self): return self.data['k']

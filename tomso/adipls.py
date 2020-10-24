@@ -11,7 +11,7 @@ import numpy as np
 import warnings
 from .constants import G_DEFAULT
 from .utils import integrate, complement, regularize
-from .utils import BaseStellarModel
+from .utils import AdiabaticStellarModel
 
 
 def read_one_cs(f):
@@ -710,7 +710,7 @@ for i in range(len(cs_dtypes), 50):
 cs_floats = [(k, 'float') for (k,v) in cs_dtypes]
 
 
-class ADIPLSStellarModel(BaseStellarModel):
+class ADIPLSStellarModel(AdiabaticStellarModel):
     """A class that contains and allows one to manipulate the data in a
     stellar model stored in ADIPLS's internal binary model format.
     See Section 5 of the `ADIPLS documentation`_ for details.
