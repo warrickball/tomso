@@ -305,6 +305,26 @@ class MESALog(object):
     def __len__(self):
         return len(self.data)
 
+    def __str__(self):
+        s = ['%s\n' % type(self)]
+        s.append('Header:\n')
+        for name in self.header.dtype.names:
+            s.append('%26s = %s\n' % (name, self.header[name]))
+
+        s.append('Column names:\n')
+        N = max([len(name) for name in self.data.dtype.names])+1
+        cols = 80//N
+        for i, name in enumerate(self.data.dtype.names):
+            s.append(name.rjust(N))
+            if (i+1)%cols==0:
+                s.append('\n')
+
+        return ''.join(s)
+
+    def __repr__(self):
+        with np.printoptions(threshold=10):
+            return('MESALog(\nheader=\n%s,\ndata=\n%s)' % (self.header, self.data))
+
     def __getitem__(self, key):
         if isinstance(key, str):
             for source in [self.data, self.header]:
