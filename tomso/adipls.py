@@ -1181,6 +1181,7 @@ class ADIPLSEigenfunctions(ADIPLSGrandSummary):
     def __init__(self, css, eigs, nfmode=1, x=None):
         ADIPLSGrandSummary.__init__(self, css)
 
+        self.nfmode = nfmode
         if nfmode == 1:
             if x is None:
                 self.x = eigs[0,:,0]
