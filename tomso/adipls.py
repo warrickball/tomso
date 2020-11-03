@@ -1039,6 +1039,8 @@ class ADIPLSGrandSummary(object):
 
     Attributes
     ----------
+    G: float
+        gravitational constant
     M: float
         total mass
     R: float
