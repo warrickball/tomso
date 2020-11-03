@@ -1081,6 +1081,9 @@ class ADIPLSGrandSummary(object):
         self.css = css
 
     @property
+    def G(self): return self.R**3/self.M/self.sigma2[0]*(2.*np.pi/self.Pi_E[0])**2
+
+    @property
     def M(self): return self.css[0]['M']
 
     @property
