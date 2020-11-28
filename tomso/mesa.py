@@ -346,20 +346,35 @@ class MESALog(object):
             return MESALog(self.header, self.data[key])
 
 
-class MESAAsteroSample(object):
+class MESAAsteroSample(dict):
     """A dict-like class that contains the data for a single sample from
     MESA's astero module, usually created using
-    :py:meth:`mesa.load_astero_sample`."""
+    :py:meth:`mesa.load_astero_sample`.
+
+    The frequency tables are access by the keys ``l0``, ``l1``, ``l2``
+    and ``l3``, which return NumPy record arrays with columns ``n``,
+    ``chi2term``, ``freq``, ``corr``, ``obs``, ``sigma`` and ``logE``
+    that correspond to the data in MESA's ``astero`` sample files.
+    The frequency data can also be accessed by the column names, in
+    which case the data for all angular degrees is
+    stacked. e.g. ``sample['freq']`` returns a stack of the
+    uncorrected model frequencies for angular degrees 0, 1, 2 and 3.
+
+    The remaining data is accessed by keys that correspond to each row
+    of the sample data. e.g. ``model number``, ``age``, etc.
+
+    """
     def __init__(self, data_dict):
-        self.data_dict = data_dict
+        super(MESAAsteroSample, self).__init__(**data_dict)
 
     def __getitem__(self, key):
+        get = super(MESAAsteroSample, self).__getitem__
         if key == 'l':
-            return np.hstack([self.data_dict['l%i' % i]['n']*0 + i for i in range(4)])
+            return np.hstack([get('l%i' % i)['n']*0 + i for i in range(4)])
         elif key in ['n', 'chi2term', 'freq', 'corr', 'obs', 'sigma', 'logE']:
-            return np.hstack([self.data_dict['l%i' % i][key] for i in range(4)])
+            return np.hstack([get('l%i' % i)[key] for i in range(4)])
         else:
-            return self.data_dict[key]
+            return get(key)
 
 
 class MESAAsteroSamples(object):
