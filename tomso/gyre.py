@@ -376,6 +376,10 @@ class GYREStellarModel(FullStellarModel):
             If ``True`` (the default), store the FGONG data ordered
             from the surface to the centre.  Otherwise, store the
             FGONG data ordered from the centre to the surface.
+        ivers: int, optional
+            The integer indicating the version number of the file.
+            (default=1300)
+
         """
         from .fgong import FGONG
 
