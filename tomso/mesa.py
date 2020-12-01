@@ -347,7 +347,7 @@ class MESALog(object):
 
 
 class MESAAsteroSample(dict):
-    """A dict-like class that contains the data for a single sample from
+    """A dict-like object that contains the data for a single sample from
     MESA's astero module, usually created using
     :py:meth:`mesa.load_astero_sample`.
 
@@ -377,17 +377,22 @@ class MESAAsteroSample(dict):
             return get(key)
 
 
-class MESAAsteroSamples(object):
-    """A class that contains a list of :py:class:`mesa.MESAAsteroSample`
-    objects and provides a more convenient interface for retrieving
-    arrays of data for all the samples at once."""
+class MESAAsteroSamples(list):
+    """A list-like object that contains a list of
+    :py:class:`mesa.MESAAsteroSample` objects.  It basically behaves
+    like a list except that if you ask for a valid key from the
+    samples in the list, it returns an array with the value of that
+    key in all the samples. e.g. ``samples['model_number']`` will
+    return an array containing the ``model_number`` of each sample.
+    """
     def __init__(self, samples):
-        self.samples = samples
+        super(MESAAsteroSamples, self).__init__(samples)
 
     def __getitem__(self, key):
+        get = super(MESAAsteroSamples, self).__getitem__
         if isinstance(key, int):
-            return self.samples[key]
+            return get(key)
         elif isinstance(key, slice):
-            return MESAAsteroSamples(self.samples[key])
+            return MESAAsteroSamples(get(key))
         else:
-            return np.array([sample[key] for sample in self.samples])
+            return np.array([sample[key] for sample in self])
