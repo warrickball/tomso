@@ -1082,6 +1082,9 @@ class ADIPLSGrandSummary(object):
     def __init__(self, css):
         self.css = css
 
+    def __len__(self):
+        return len(self.css)
+
     def __str__(self):
         return '\n'.join([
             '%s' % type(self),
