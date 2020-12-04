@@ -845,7 +845,7 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
                          ivers=ivers)
 
     def to_gyre(self, version=None):
-        """Convert the model to an :py:meth:`~tomso.gyre.GYREStellarModel`
+        """Convert the model to an :py:class:`~tomso.gyre.GYREStellarModel`
         object.
 
         Note that the ADIPLS binary format only has the data necessary
