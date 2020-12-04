@@ -14,7 +14,10 @@ def get_parser():
 
     # info
     info_parser = subparsers.add_parser('info',
-        help="show basic information about a tomso-compatible file(s)")
+        help="show basic information about tomso-compatible files",
+        description="Show basic information about tomso-compatible "
+        "files.  Really just calls `print` on the object after "
+        "loading it.")
     info_parser.add_argument('filenames', type=str, nargs='+')
     info_parser.add_argument(
         '-F', '--format', type=str, default='guess',
@@ -28,7 +31,9 @@ def get_parser():
 
     # convert
     convert_parser = subparsers.add_parser('convert',
-        help="convert a stellar model from one format to another")
+        help="convert a stellar model from one format to another",
+        description="Convert a stellar model from one format to "
+        "another.")
     convert_parser.add_argument(
         '-f', '--from', type=str, default='guess', dest='from_format',
         choices={'guess', 'fgong', 'amdl', 'gyre'})
@@ -50,7 +55,14 @@ def get_parser():
 
     # plot
     plot_parser = subparsers.add_parser('plot',
-        help="create quick-look plots from tomso-compatible file(s)")
+        help="create quick-look plots from tomso-compatible files",
+        description="Create quick-look plots from tomso-compatible "
+        "files.  Many plotting options are passed to the relevant "
+        "matplotlib function (e.g. axvline, xlabel).  Where multiple "
+        "arguments are given (e.g. for y values), the script tries "
+        "to loop over them sensibly but if you're trying to make "
+        "something complicated, you're probably better off using "
+        "tomso's modules in your own script.")
     plot_parser.add_argument('filenames', type=str, nargs='+')
     plot_parser.add_argument(
         '-F', '--format', type=str, default='guess',
