@@ -117,6 +117,8 @@ class TestADIPLSFunctions(unittest.TestCase):
         np.testing.assert_equal(amde1.x, amde3.x)
         np.testing.assert_equal(amde1.css, amde2.css)
         np.testing.assert_equal(amde1.css, amde3.css)
+        np.testing.assert_equal(amde1.eigs[0], amde1.eig_ln(amde1.l[0], amde1.n[0]))
+        np.testing.assert_equal(amde1.eigs[0], amde1.eig_nl(amde1.n[0], amde1.l[0]))
 
     def test_load_amde_nfmode_value_error(self):
         self.assertRaises(ValueError, adipls.load_amde, 'data/modelS_nfmode1.amde', nfmode=4)

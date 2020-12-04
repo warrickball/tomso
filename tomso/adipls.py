@@ -1217,6 +1217,14 @@ class ADIPLSEigenfunctions(ADIPLSGrandSummary):
         with np.printoptions(threshold=10):
             return('ADIPLSEigenfunctions(nfmode=%i,\ncss=\n%s,\neigs=\n%s)' % (self.nfmode, self.css, self.eigs))
 
+    def eig_ln(self, l, n):
+        "Load eigenfunction by *l* and *n*."
+        return self.eigs[(self.l==l)&(self.n==n)][0]
+
+    def eig_nl(self, n, l):
+        "Load eigenfunction by *n* and *l*."
+        return self.eig_ln(l, n)
+
 
 class ADIPLSRotationKernels(ADIPLSGrandSummary):
     """A class that represents the information for a set of rotational
