@@ -1082,6 +1082,17 @@ class ADIPLSGrandSummary(object):
     def __init__(self, css):
         self.css = css
 
+    def __str__(self):
+        return '\n'.join([
+            '%s' % type(self),
+            'G    %11.6g cm³/g/s²' % self.G,
+            'M    %9.3e g    %7.3f Msun' % (self.M, self.M/1.98841e33),
+            'R    %9.3e cm   %7.3f Rsun' % (self.R, self.R/695.7e8)])
+
+    def __repr__(self):
+        with np.printoptions(threshold=10):
+            return('ADIPLSGrandSummary(\ncss=\n%s)' % self.css)
+
     @property
     def G(self): return self.R**3/self.M/self.sigma2[0]*(2.*np.pi/self.Pi_E[0])**2
 
@@ -1196,6 +1207,13 @@ class ADIPLSEigenfunctions(ADIPLSGrandSummary):
 
         self.eigs = eigs
 
+    def __str__(self):
+        return super(ADIPLSEigenfunctions, self).__str__()
+
+    def __repr__(self):
+        with np.printoptions(threshold=10):
+            return('ADIPLSEigenfunctions(nfmode=%i,\ncss=\n%s,\neigs=\n%s)' % (self.nfmode, self.css, self.eigs))
+
 
 class ADIPLSRotationKernels(ADIPLSGrandSummary):
     """A class that represents the information for a set of rotational
@@ -1230,6 +1248,13 @@ class ADIPLSRotationKernels(ADIPLSGrandSummary):
         ADIPLSGrandSummary.__init__(self, css)
         self.x = rkr[0,:,0]
         self.K = rkr[:,:,1]
+
+    def __str__(self):
+        return super(ADIPLSRotationKernels, self).__str__()
+
+    def __repr__(self):
+        with np.printoptions(threshold=10):
+            return('ADIPLSRotationKernels(\ncss=\n%s,\nx=%s,\nK=\n%s)' % (self.css, self.x, self.K))
 
     def K_ln(self, l, n):
         "Load kernels by *l* and *n*."
