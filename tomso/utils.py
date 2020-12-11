@@ -8,7 +8,7 @@ from .constants import Lsun, nu_max_sun, Teff_sun  # full
 def integrate(y, x):
     """Integral of `y` over `x`, computed using the trapezoidal rule. 
     i.e. :math:`\\int _{x[0]} ^x y(x') dx'`."""
-    dz = (y[1:]+y[:-1])/2.*np.diff(x)
+    dz = 0.5*(y[1:]+y[:-1])*np.diff(x)
     return np.hstack((0., np.cumsum(dz)))
 
 
