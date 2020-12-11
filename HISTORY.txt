@@ -1,3 +1,16 @@
+v0.0.12,  2020-12-11 -- overhauled docs
+          2020-12-01 -- rewrite MESA astero sample functions as extensions of
+                        dict and list
+          2020-10-24 -- refactor BaseStellarModel into AdiabaticStellarModel
+                        and FullStellarModel
+          2020-09-29 -- rename `enn` and `ell` to `n` and `l` in ADIPLS
+          2020-09-04 -- added `info` function to script
+          2020-08-27 -- FGONG adheres more closely to formats impled by ivers
+                     -- refactored common stellar models to extend new class
+                        BaseStellarModel
+          2020-08-23 -- add `regularize` decorator to suppress warnings at
+                     -- centres of stellar models
+          2020-08-14 -- started implementing __repr__ and __str__
           2020-08-07 -- add new functions for loading MESA/astero samples
           2020-07-29 -- rename `common` to `utils`
           2020-07-26 -- where implemented, functions return objects by default
