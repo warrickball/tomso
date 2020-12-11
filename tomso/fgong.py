@@ -16,7 +16,7 @@ from .utils import FullStellarModel
 
 def load_fgong(filename, fmt='ivers', return_comment=False,
                return_object=True, G=None):
-    """Given an FGONG file, returns NumPy arrays `glob` and `var` that
+    """Given an FGONG file, returns NumPy arrays ``glob`` and ``var`` that
     correspond to the scalar and point-wise variables, as specified
     in the `FGONG format`_.
 
@@ -25,11 +25,11 @@ def load_fgong(filename, fmt='ivers', return_comment=False,
     Also returns the first four lines of the file as a `comment`, if
     desired.
 
-    The version number `ivers` is used to infer the format of floats
-    if `fmt='ivers'`.
+    The version number ``ivers`` is used to infer the format of floats
+    if ``fmt='ivers'``.
 
     If `return_object` is `True`, instead returns an :py:class:`FGONG`
-    object.  This will become default behaviour from v0.0.12.  The old
+    object.  This is the default behaviour as of v0.0.12.  The old
     behaviour will be dropped completely from v0.1.0.
 
     Parameters
@@ -37,9 +37,9 @@ def load_fgong(filename, fmt='ivers', return_comment=False,
     filename: str
         Name of the FGONG file to read.
     fmt: str, optional
-        Format string for floats in `glob` and `var`.  If `'ivers'`,
-        uses `%16.9E' if the file's `ivers < 1000` or `%26.18E3` if
-        `ivers >= 1000`.  If `'auto'`, tries to guess the size of each
+        Format string for floats in `glob` and `var`.  If ``'ivers'``,
+        uses ``%16.9E`` if the file's ``ivers < 1000`` or ``%26.18E3` if
+        ``ivers >= 1000``.  If ``'auto'``, tries to guess the size of each
         float. (default: 'ivers')
     return_comment: bool, optional
         If ``True``, return the first four lines of the FGONG file.
@@ -130,7 +130,7 @@ def save_fgong(filename, glob, var, ivers=1300, comment=['','','',''],
         that vary through the star like temperature, density, etc.
     ivers: int, optional
         The integer indicating the version number of the file.
-        (default=0)
+        (default=1300)
     comment: list of strs, optional
         The first four lines of the FGONG file, which usually contain
         notes about the stellar model.
@@ -356,8 +356,8 @@ class FGONG(FullStellarModel):
     G: float, optional
         Value for the gravitational constant.  If not given (which is
         the default behaviour), we use ``glob[14]`` if it exists and
-        is close to the module-wise default value.  Otherwise, we use
-        the module-wise default value.
+        is close to the module-wide default value.  Otherwise, we use
+        the module-wide default value.
     description: list of 4 strs, optional
         The first four lines of the FGONG file, which usually contain
         notes about the stellar model.

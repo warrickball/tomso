@@ -36,7 +36,9 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.doctest',
               'sphinx.ext.coverage',
               'sphinx.ext.imgmath',
-              'sphinx.ext.viewcode']
+              'sphinx.ext.viewcode',
+              'sphinxarg.ext',
+              'matplotlib.sphinxext.plot_directive']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -118,6 +120,10 @@ html_sidebars = {
     ]
 }
 
+html_theme_options = {
+    'fixed_sidebar': True,
+    'caption_font_size': '20px'
+}
 
 # -- Options for HTMLHelp output ------------------------------------------
 

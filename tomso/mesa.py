@@ -15,7 +15,7 @@ def load_history(filename, prune=False, return_object=True):
     files ending with `.gz`.
 
     If `return_object` is `True`, instead returns an `MESALog` object.
-    This will become default behaviour from v0.0.12.  The old
+    This is the default behaviour as of v0.0.12.  The old
     behaviour will be dropped completely from v0.1.0.
 
     Parameters
@@ -66,7 +66,7 @@ def load_profile(filename, return_object=True):
     files ending with `.gz`.
 
     If `return_object` is `True`, instead returns an `MESALog` object.
-    This will become default behaviour from v0.0.12.  The old
+    This is the default behaviour as of v0.0.12.  The old
     behaviour will be dropped completely from v0.1.0.
 
     Parameters
@@ -132,6 +132,9 @@ def load_astero_results(filename):
 def load_sample(filename):
     """Reads a MESA sample file that describes a model from one of the
     optimization routines in the `astero` module.
+
+    This function will be dropped completely from v0.1.0 in favour of
+    the more object-oriented :py:meth:`load_astero_sample`.
 
     Parameters
     ----------
@@ -351,7 +354,7 @@ class MESAAsteroSample(dict):
     MESA's astero module, usually created using
     :py:meth:`mesa.load_astero_sample`.
 
-    The frequency tables are access by the keys ``l0``, ``l1``, ``l2``
+    The frequency tables are accessed by the keys ``l0``, ``l1``, ``l2``
     and ``l3``, which return NumPy record arrays with columns ``n``,
     ``chi2term``, ``freq``, ``corr``, ``obs``, ``sigma`` and ``logE``
     that correspond to the data in MESA's ``astero`` sample files.
@@ -381,9 +384,9 @@ class MESAAsteroSamples(list):
     """A list-like object that contains a list of
     :py:class:`mesa.MESAAsteroSample` objects.  It basically behaves
     like a list except that if you ask for a valid key from the
-    samples in the list, it returns an array with the value of that
-    key in all the samples. e.g. ``samples['model_number']`` will
-    return an array containing the ``model_number`` of each sample.
+    samples in the list, it returns an array with the values of that
+    key in all the samples. e.g. ``samples['model number']`` will
+    return an array containing the ``model number`` of each sample.
     """
     def __init__(self, samples):
         super(MESAAsteroSamples, self).__init__(samples)

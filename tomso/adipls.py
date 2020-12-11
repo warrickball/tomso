@@ -61,8 +61,8 @@ def load_agsm(filename, return_object=True):
     """Reads an ADIPLS grand summary file and returns a structured array.
 
     If `return_object` is `True`, instead returns an
-    :py:class:`ADIPLSGrandSummary` object.  This will
-    become default behaviour from v0.0.12.  The old behaviour will be
+    :py:class:`ADIPLSGrandSummary` object.  This is the
+    default behaviour as of v0.0.12.  The old behaviour will be
     dropped completely from v0.1.0.
 
     Parameters
@@ -101,8 +101,8 @@ def load_amde(filename, nfmode=1, return_object=True):
     of ``nfmode`` in the input file (either 1, 2 or 3).
 
     If `return_object` is `True`, instead returns an
-    :py:class:`ADIPLSEigenfunctions` object.  This will become default
-    behaviour from v0.0.12.  The old behaviour will be dropped
+    :py:class:`ADIPLSEigenfunctions` object.  This is the default
+    behaviour as of v0.0.12.  The old behaviour will be dropped
     completely from v0.1.0.
 
     Parameters
@@ -173,8 +173,8 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
     documentation`_ for details.
 
     If `return_object` is `True`, instead returns an
-    :py:class:`ADIPLSStellarModel` object.  This will become default
-    behaviour from v0.0.12.  The old behaviour will be dropped
+    :py:class:`ADIPLSStellarModel` object.  This is the default
+    behaviour as of v0.0.12.  The old behaviour will be dropped
     completely from v0.1.0.
 
     Parameters
@@ -237,8 +237,8 @@ def load_rkr(filename, return_object=True):
     """Reads an ADIPLS rotational kernel file.
 
     If `return_object` is `True`, instead returns an
-    :py:class:`ADIPLSRotationKenerls` object.  This will become
-    default behaviour from v0.0.12.  The old behaviour will be dropped
+    :py:class:`ADIPLSRotationKenerls` object.  This is the default
+    behaviour as of v0.0.12.  The old behaviour will be dropped
     completely from v0.1.0.
 
     Parameters
@@ -715,6 +715,10 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
     stellar model stored in ADIPLS's internal binary model format.
     See Section 5 of the `ADIPLS documentation`_ for details.
 
+    This will usually be provided from a file by using
+    :py:meth:`load_amdl` but an object can be constructed from any
+    similarly structured arrays.
+
     The main attributes are the **D** and **A** arrays, which follow
     the definitions in the ADIPLS documentation.  The data in these
     arrays can be accessed via the attributes with more
@@ -1060,14 +1064,14 @@ class ADIPLSGrandSummary(object):
         variational period, in seconds
     nu_Ri: NumPy array of floats
         cyclic eigenfrequency corrected using Richardson
-        extrapolation, in seconds
+        extrapolation, in Hz
     nu_V: NumPy array of floats
         variational cyclic frequency, in Hz
     nu_E: NumPy array of floats
         cyclic eigenfrequency, in seconds
     nu_c: NumPy array of floats
         cyclic eigenfrequency corrected for the Cowling approximation,
-        in seconds
+        in Hz
     nu: NumPy array of floats
         alias of ``nu_c``
     E: NumPy array of floats
@@ -1166,8 +1170,8 @@ class ADIPLSEigenfunctions(ADIPLSGrandSummary):
     css: structured NumPy array
         The ``cs`` arrays for each mode.
     eigs: 3-d NumPy array
-        The eigenfunction arrays for each mode.  The *n*th element of
-        the array has the eigenfunction data for the *n*th mode, in
+        The eigenfunction arrays for each mode.  The nth element of
+        the array has the eigenfunction data for the nth mode, in
         the same order as the summary data in *css*.  The number of
         rows in the array for a given mode is the number of meshpoints
         in the model.  The number of columns is either 6 or 2,
@@ -1188,7 +1192,7 @@ class ADIPLSEigenfunctions(ADIPLSGrandSummary):
     x: NumPy array
         fractional radius co-ordinate
     eigs: list of NumPy arrays
-        The *n*th row is the eigenfunction data for the *n*th mode, in
+        The nth row is the eigenfunction data for the nth mode, in
         the same order as the summary data in *css*.
 
     """
@@ -1249,7 +1253,7 @@ class ADIPLSRotationKernels(ADIPLSGrandSummary):
     x: NumPy array
         fractional radius co-ordinate
     K: list of NumPy arrays
-        The *n*th row is the rotation kernel for the *n*th mode, in
+        The nth row is the rotation kernel for the nth mode, in
         the same order as the summary data in *css*.  The mode with
         radial order *n* and angular degree *l* can be accessed by the
         functions ``K_ln(l,n)`` or ``K_nl(n,l)``.
@@ -1268,9 +1272,9 @@ class ADIPLSRotationKernels(ADIPLSGrandSummary):
             return('ADIPLSRotationKernels(\ncss=\n%s,\nx=%s,\nK=\n%s)' % (self.css, self.x, self.K))
 
     def K_ln(self, l, n):
-        "Load kernels by *l* and *n*."
+        "Load kernel by *l* and *n*."
         return self.K[(self.l==l)&(self.n==n)][0]
 
     def K_nl(self, n, l):
-        "Load kernels by *n* and *l*."
+        "Load kernel by *n* and *l*."
         return self.K_ln(l, n)

@@ -145,8 +145,8 @@ def guess_format(filename):
     ends with `'fgong'`, `'amdl'`, `'gyre'`, `'history'`, `'profile'`,
     `'mode'` or `'summary'`.  Exits at first match so
     `profile1.data.FGONG` returns `fgong`, not `profile`."""
-    for format in ['fgong', 'amdl', 'gyre',
-                   'history', 'profile', 'mode', 'summary']:
+    for format in ['fgong', 'amdl', 'mode', 'summary',
+                   'gyre', 'history', 'profile']:
         if starts_or_ends_with(filename, format):
             return format
     else:

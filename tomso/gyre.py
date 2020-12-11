@@ -20,7 +20,7 @@ def load_summary(filename, return_object=True):
     files ending with `.gz`.
 
     If `return_object` is `True`, instead returns an `GYRELog` object.
-    This will become default behaviour from v0.0.13.  The old
+    This is the default behaviour as of v0.0.12.  The old
     behaviour will be dropped completely from v0.1.0.
 
     Parameters
@@ -59,7 +59,7 @@ def load_mode(filename, return_object=True):
     files ending with `.gz`.
 
     If `return_object` is `True`, instead returns an `GYRELog` object.
-    This will become default behaviour from v0.0.13.  The old
+    This is the default behaviour as of v0.0.12.  The old
     behaviour will be dropped completely from v0.1.0.
 
     Parameters
@@ -98,8 +98,8 @@ def load_gyre(filename, return_object=True):
     `gzip` module to read files ending with `.gz`.
 
     If `return_object` is `True`, instead returns a
-    :py:class:`GYREStellarModel` object.  This will become default
-    behaviour from v0.0.12.  The old behaviour will be dropped
+    :py:class:`GYREStellarModel` object.  This is the default
+    behaviour as of v0.0.12.  The old behaviour will be dropped
     completely from v0.1.0.
 
     Parameters
@@ -257,6 +257,9 @@ class GYRELog(object):
 class GYREStellarModel(FullStellarModel):
     """A class that contains and allows one to manipulate the data stored
     a plain-text GYRE Stellar Model.
+    This will usually be provided from a file by using
+    :py:meth:`load_gyre` but an object can be constructed from any
+    similarly structured arrays.
 
     The main attributes are the **header** and **data** record arrays,
     which store the data that's written in the text file.  The data in
