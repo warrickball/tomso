@@ -3,7 +3,7 @@
 """
 Functions for manipulating `GYRE`_ input and output files.
 
-.. _GYRE: https://bitbucket.org/rhdtownsend/gyre/wiki/Home
+.. _GYRE: https://gyre.readthedocs.io/
 """
 
 import numpy as np

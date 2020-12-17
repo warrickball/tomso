@@ -9,7 +9,7 @@ standard or code-specific formats:
 * [MESA](http://mesa.sourceforge.net)
 * [STARS](http://www.ast.cam.ac.uk/~stars)
 * [ADIPLS](http://users-phys.au.dk/jcd/adipack.n/)
-* [GYRE](https://bitbucket.org/rhdtownsend/gyre/wiki/Home)
+* [GYRE](https://gyre.readthedocs.io/)
 
 Documentation is available on
 [ReadTheDocs.org](http://tomso.readthedocs.io).  Beware that the code
