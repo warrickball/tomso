@@ -26,6 +26,9 @@ class TestMESAFunctions(unittest.TestCase):
 
         self.assertRaises(KeyError, h.__getitem__, 'asdf')
 
+        s = '%s' % h
+        s = '%r' % h
+
         r = mesa.load_history(remote_url + 'data/mesa.history', return_object=True)
         np.testing.assert_equal(h.header, r.header)
         np.testing.assert_equal(h.data, r.data)
@@ -105,6 +108,9 @@ class TestMESAFunctions(unittest.TestCase):
 
         np.testing.assert_equal(p['zone'], np.arange(len(p['zone']))+1)
 
+        s = '%s' % p
+        s = '%r' % p
+
     def test_load_gzipped_profile(self):
         header, profile = mesa.load_profile('data/mesa.profile.gz', return_object=False)
         self.assertEqual(header['model_number'], 95)
@@ -117,6 +123,7 @@ class TestMESAFunctions(unittest.TestCase):
         p = mesa.load_profile('data/mesa.profile.gz', return_object=True)
         self.assertEqual(p['model_number'], 95)
         self.assertEqual(p['num_zones'], 559)
+        self.assertEqual(len(p), 559)
         self.assertAlmostEqual(p['initial_mass'], 0.9995)
         self.assertAlmostEqual(p['initial_z'], 0.02)
 
@@ -144,6 +151,8 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertAlmostEqual(sample['logL_sigma'], 0.05)
         self.assertAlmostEqual(sample['logg_sigma'], 0.06)
         self.assertAlmostEqual(sample['FeH_sigma'], 0.05)
+
+        np.testing.assert_array_less(sample['l'], 4)
 
         np.testing.assert_allclose(sample['sigma'], 0.3)
         np.testing.assert_allclose(
@@ -220,8 +229,14 @@ class TestMESAFunctions(unittest.TestCase):
         line = mesa.replace_value('a = foo\n', 1)
         self.assertEqual(line, 'a = 1\n')
 
+        line = mesa.replace_value('a = foo\n', 1.0)
+        self.assertTrue(line.startswith('a = 1.000000'))
+
         line = mesa.replace_value('a = foo\n', 'bar')
         self.assertEqual(line, 'a = bar\n')
+
+        with self.assertRaises(ValueError):
+            line = mesa.replace_value('a = foo\n', {})
 
     def test_update_inlist(self):
         with open(tmpfile, 'wb') as f:

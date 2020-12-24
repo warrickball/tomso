@@ -43,6 +43,8 @@ class TestADIPLSFunctions(unittest.TestCase):
         cs2 = adipls.amdl_get('cs2', D, A)
         np.testing.assert_allclose(cs**2, cs2)
 
+        self.assertRaises(ValueError, adipls.amdl_get, ['asdf'], D, A)
+
         m = adipls.load_amdl('data/mesa.amdl', return_object=True)
         self.assertEqual(m.M, m.D[0])
         self.assertEqual(m.R, m.D[1])
@@ -52,6 +54,8 @@ class TestADIPLSFunctions(unittest.TestCase):
         np.testing.assert_equal(m.G1, m.A[:,3])
         np.testing.assert_equal(m.G1, m.Gamma_1)
         np.testing.assert_allclose(m.cs**2, m.cs2)
+        np.testing.assert_allclose(m.S2_1, m.S_1**2)
+        np.testing.assert_allclose(np.maximum(m.N2, 0), m.N**2)
 
     def test_amdl_get_cross_check(self):
         D, A = adipls.load_amdl('data/mesa.amdl', return_object=False)
@@ -70,6 +74,8 @@ class TestADIPLSFunctions(unittest.TestCase):
         np.testing.assert_allclose(m.Hp, m.P/(m.rho*m.g), rtol=4*EPS, equal_nan=True)
         np.testing.assert_allclose(m.cs2, m.Gamma_1*m.P/m.rho, rtol=4*EPS)
 
+        s = '%r' % m
+
     def test_load_modelS_agsm(self):
         css = adipls.load_agsm('data/modelS.agsm', return_object=False)
         for cs in css:
@@ -77,9 +83,13 @@ class TestADIPLSFunctions(unittest.TestCase):
             self.assertAlmostEqual(cs['R'], 6.959894677e10)
 
         agsm = adipls.load_agsm('data/modelS.agsm', return_object=True)
+        self.assertEqual(len(agsm), 3)
         for cs in agsm.css:
             self.assertAlmostEqual(cs['M'], 1.989e33)
             self.assertAlmostEqual(cs['R'], 6.959894677e10)
+
+        s = '%s' % agsm
+        s = '%r' % agsm
 
         self.assertAlmostEqual(agsm.M, 1.989e33)
         self.assertAlmostEqual(agsm.R, 6.959894677e10)
@@ -120,6 +130,9 @@ class TestADIPLSFunctions(unittest.TestCase):
         np.testing.assert_equal(amde1.eigs[0], amde1.eig_ln(amde1.l[0], amde1.n[0]))
         np.testing.assert_equal(amde1.eigs[0], amde1.eig_nl(amde1.n[0], amde1.l[0]))
 
+        s = '%s' % amde1
+        s = '%r' % amde2
+
     def test_load_amde_nfmode_value_error(self):
         self.assertRaises(ValueError, adipls.load_amde, 'data/modelS_nfmode1.amde', nfmode=4)
 
@@ -145,6 +158,9 @@ class TestADIPLSFunctions(unittest.TestCase):
 
         np.testing.assert_equal(rkr.K[0], rkr.K_ln(rkr.l[0], rkr.n[0]))
         np.testing.assert_equal(rkr.K[0], rkr.K_nl(rkr.n[0], rkr.l[0]))
+
+        s = '%s' % rkr
+        s = '%r' % rkr
 
     def test_save_mesa_amdl(self):
         D1, A1, nmod1 = adipls.load_amdl('data/mesa.amdl', return_nmod=True, return_object=False)

@@ -41,6 +41,10 @@ class TestUtilsFunctions(unittest.TestCase):
 
         for line, line_gz in zip(lines, lines_gz):
             self.assertEqual(line, line_gz)
+
+
+    def test_load_mesa_gyre_error(self):
+        self.assertRaises(ValueError, utils.load_mesa_gyre, 'data/mesa.history', 'asdf')
             
 
 if __name__ == '__main__':

@@ -23,9 +23,15 @@ class TestGYREFunctions(unittest.TestCase):
         s = gyre.load_summary('data/gyre.summ', return_object=True)
         self.assertAlmostEqual(s['M_star'], 1.989e33)
         self.assertAlmostEqual(s['R_star'], 6.959906258e10)
+        self.assertEqual(len(s), 3)
         for i, row in enumerate(s):
             self.assertEqual(row['l'], 1)
             self.assertEqual(row['n_pg'], i+19)
+
+        self.assertRaises(KeyError, s.__getitem__, 'asdf')
+
+        x = '%s' % s
+        x = '%r' % s
 
         r = gyre.load_summary(remote_url + 'data/gyre.summ', return_object=True)
         np.testing.assert_equal(s.header, r.header)
@@ -74,6 +80,10 @@ class TestGYREFunctions(unittest.TestCase):
         self.assertAlmostEqual(m.R, 6.2045507132959908E+10)
         self.assertAlmostEqual(m.L, 3.3408563666602257E+33)
         self.assertEqual(m.version, 101)
+
+        np.testing.assert_allclose(m.Omega, 0)
+
+        s = '%r' % m
 
         r = gyre.load_gyre(remote_url + 'data/mesa.gyre', return_object=True)
         np.testing.assert_equal(m.header, r.header)

@@ -28,6 +28,9 @@ class TestFGONGFunctions(unittest.TestCase):
         np.testing.assert_equal(m.x, var[:,0]/glob[1])
         np.testing.assert_equal(m.G1, m.Gamma_1)
 
+        s = '%s' % m
+        s = '%r' % m
+
         r = fgong.load_fgong(remote_url + 'data/modelS.fgong', return_object=True)
 
         for line1, line2 in zip(m.description, r.description):
@@ -67,6 +70,8 @@ class TestFGONGFunctions(unittest.TestCase):
         cs, = fgong.fgong_get(['cs'], glob, var)
         cs2 = fgong.fgong_get('cs2', glob, var)
         np.testing.assert_allclose(cs**2, cs2)
+
+        self.assertRaises(ValueError, fgong.fgong_get, ['asdf'], glob, var)
 
         m = fgong.load_fgong('data/modelS.fgong', return_object=True)
         np.testing.assert_equal(m.x, m.r/m.R)
