@@ -182,6 +182,13 @@ class TestMESAFunctions(unittest.TestCase):
 
         np.testing.assert_allclose(samples[0]['sigma'], 0.3)
         np.testing.assert_allclose(samples[:1]['sigma'][0], 0.3)
+        np.testing.assert_allclose(samples[[True]]['sigma'][0], 0.3)
+        np.testing.assert_allclose(samples[np.array([True])]['sigma'][0], 0.3)
+        np.testing.assert_allclose(samples[[0]]['sigma'][0], 0.3)
+        np.testing.assert_allclose(samples[np.array([0])]['sigma'][0], 0.3)
+
+        self.assertRaises(KeyError, samples.__getitem__, np.array([0.0]))
+        self.assertRaises(KeyError, samples.__getitem__, 'a,sDF1af!ds')
 
     def test_load_gzipped_sample(self):
         sample = mesa.load_sample('data/mesa.sample.gz')

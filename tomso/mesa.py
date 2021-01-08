@@ -382,8 +382,8 @@ class MESAAsteroSample(dict):
 
 class MESAAsteroSamples(list):
     """A list-like object that contains a list of
-    :py:class:`mesa.MESAAsteroSample` objects.  It basically behaves
-    like a list except that if you ask for a valid key from the
+    :py:class:`mesa.MESAAsteroSample` objects.  It can be sliced much
+    like a NumPy array except that if you ask for a valid key from the
     samples in the list, it returns an array with the values of that
     key in all the samples. e.g. ``samples['model number']`` will
     return an array containing the ``model number`` of each sample.
@@ -393,9 +393,18 @@ class MESAAsteroSamples(list):
 
     def __getitem__(self, key):
         get = super(MESAAsteroSamples, self).__getitem__
-        if isinstance(key, int):
+        if isinstance(key, (int, np.integer)):
             return get(key)
         elif isinstance(key, slice):
             return MESAAsteroSamples(get(key))
+        elif isinstance(key, (list, np.ndarray)):
+            if isinstance(key[0], (bool, np.bool_)):
+                return MESAAsteroSamples([
+                    get(i) for i, b in enumerate(key) if b])
+            elif isinstance(key[0], (int, np.integer)):
+                return MESAAsteroSamples([get(i) for i in key])
+            else:
+                raise KeyError("cannot slice MESAAsteroSamples with NumPy array of type %s"
+                               % type(key[0]))
         else:
             return np.array([sample[key] for sample in self])
