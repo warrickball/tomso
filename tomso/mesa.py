@@ -8,6 +8,8 @@ import numpy as np
 import warnings
 from tomso.utils import tomso_open, load_mesa_gyre
 
+astero_table_dtype = [('n', int), ('chi2term', float), ('freq', float), ('corr', float),
+                      ('obs', float), ('sigma', float), ('logE', float)]
 
 def load_history(filename, prune=False, return_object=True):
     """Reads a MESA history file and returns the global data and history
@@ -152,9 +154,7 @@ def load_sample(filename):
         #          if line.strip()]
         lines = [line.decode('utf-8').split() for line in f.readlines() if line.strip()]
 
-    table_dtype = [('n', int), ('chi2term', float), ('freq', float), ('corr', float),
-                   ('obs', float), ('sigma', float), ('logE', float)]
-    d = {'l%i' % ell: np.zeros(0, dtype=table_dtype) for ell in range(4)}
+    d = {'l%i' % ell: np.zeros(0, dtype=astero_table_dtype) for ell in range(4)}
     ell = 0
 
     for line in lines:
@@ -165,7 +165,7 @@ def load_sample(filename):
             # necessary but it seems that the recarray construction
             # depends on whether it gets a tuple or a list
             row = np.array(tuple([int(line[0])] + list(map(float, line[1:]))),
-                           dtype=table_dtype)
+                           dtype=astero_table_dtype)
             d['l%i' % ell] = np.append(d['l%i' % ell], row)
         else:
             key = ' '.join(line[:-1])
