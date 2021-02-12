@@ -150,28 +150,33 @@ def load_sample(filename):
 
     """
     with tomso_open(filename, 'rb') as f:
-        # lines = [line.split() for line in f.read().decode('utf-8').split('\n')
-        #          if line.strip()]
         lines = [line.decode('utf-8').split() for line in f.readlines() if line.strip()]
 
-    d = {'l%i' % ell: np.zeros(0, dtype=astero_table_dtype) for ell in range(4)}
-    ell = 0
+    # we accumulate the frequency data in lists before converting them
+    # to arrays at the end
+    d = {'l%i' % l: [] for l in range(4)}
 
     for line in lines:
         if line[0][:2] == 'l=':
-            ell = int(line[0][-1])
+            l = int(line[0][-1])
         elif len(line) == 7:
             # I'm not quite sure why this hideous construction is
             # necessary but it seems that the recarray construction
-            # depends on whether it gets a tuple or a list
-            row = np.array(tuple([int(line[0])] + list(map(float, line[1:]))),
-                           dtype=astero_table_dtype)
-            d['l%i' % ell] = np.append(d['l%i' % ell], row)
+            # depends on whether it gets a tuple or a list and this
+            # seems to be faster than using numpy.loadtxt
+            row = tuple([int(line[0])] + list(map(float, line[1:])))
+            d['l%i' % l].append(row)
         else:
             key = ' '.join(line[:-1])
             value = float(line[-1].lower().replace('d', 'e'))
 
             d[key] = value
+
+    for l in range(4):
+        try:
+            d['l%i' % l] = np.array(d['l%i' % l], dtype=astero_table_dtype)
+        except ValueError:
+            d['l%i' % l] = np.zeros(0, dtype=astero_table_dtype)
 
     warnings.warn("From tomso 0.1.0+, `mesa.load_sample` will be dropped "
                   "in favour of the object-oriented "
