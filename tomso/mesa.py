@@ -168,9 +168,9 @@ def load_sample(filename):
                            dtype=table_dtype)
             d['l%i' % ell] = np.append(d['l%i' % ell], row)
         else:
-            key = ''.join([word + ' ' for word in line[:-1]])[:-1]
-
+            key = ' '.join(line[:-1])
             value = float(line[-1].lower().replace('d', 'e'))
+
             d[key] = value
 
     warnings.warn("From tomso 0.1.0+, `mesa.load_sample` will be dropped "
