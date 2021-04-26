@@ -97,7 +97,7 @@ class AdiabaticStellarModel(object):
 
     @property
     def Dnu_factor(self):
-        return self.G*self.M/GMsun/self.R**3*Rsun**3
+        return (self.G*self.M/GMsun/self.R**3*Rsun**3)**0.5
 
     @property
     def Dnu(self): return self.Dnu_factor*Dnu_sun
