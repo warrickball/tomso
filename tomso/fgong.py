@@ -28,7 +28,7 @@ def load_fgong(filename, fmt='ivers', return_comment=False,
     The version number ``ivers`` is used to infer the format of floats
     if ``fmt='ivers'``.
 
-    If `return_object` is `True`, instead returns an :py:class:`FGONG`
+    If ``return_object`` is ``True``, instead returns an :py:class:`FGONG`
     object.  This is the default behaviour as of v0.0.12.  The old
     behaviour will be dropped completely from v0.1.0.
 
@@ -134,7 +134,15 @@ def save_fgong(filename, glob, var, ivers=1300, comment=['','','',''],
     comment: list of strs, optional
         The first four lines of the FGONG file, which usually contain
         notes about the stellar model.
-
+    float_formatter: str or function
+        Determines how floating point numbers are formatted.  If
+        ``'ivers'`` (the default), use the standard formats ``%16.9E``
+        if ``ivers < 1000`` or ``%26.18E3`` if ``ivers >= 1000``.  If
+        a Python format specifier (e.g. ``'%16.9E'``), pass floats
+        into that like ``float_formatter % float``.  Otherwise, must
+        be a function that takes a float as an argument and returns a
+        string.  In most circumstances you'll want to control the
+        output by changing the value of ``'ivers'``.
     """
     nn, ivar = var.shape
     iconst = len(glob)
@@ -467,9 +475,16 @@ class FGONG(FullStellarModel):
         ----------
         filename: str
             Filename to which the data is written.
-        fmt: str, optional
-            Format string for floating point numbers in the **glob**
-            and **var** arrays.
+        float_formatter: str or function
+            Determines how floating point numbers are formatted.  If
+            ``'ivers'`` (the default), use the standard formats
+            ``%16.9E`` if ``ivers < 1000`` or ``%26.18E3`` if ``ivers
+            >= 1000``.  If a Python format specifier
+            (e.g. ``'%16.9E'``), pass floats into that like
+            ``float_formatter % float``.  Otherwise, must be a
+            function that takes a float as an argument and returns a
+            string.  In most circumstances you'll want to control the
+            output by changing the value of ``'ivers'``.
         """
         save_fgong(filename, self.glob, self.var,
                    ivers=self.ivers, comment=self.description,
