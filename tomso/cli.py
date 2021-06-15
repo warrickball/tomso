@@ -243,7 +243,7 @@ def plot(args):
 
     file_labels = args.filenames.copy()
 
-    if args.legend[0] == 'unique':
+    if args.legend is not None and args.legend[0] == 'unique':
         while len(file_labels[0]) > 0:
             firsts = [file_label[0] for file_label in file_labels]
             if all([first == firsts[0] for first in firsts[1:]]):
