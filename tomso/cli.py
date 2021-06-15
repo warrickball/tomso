@@ -89,8 +89,10 @@ def get_parser():
         "models following a restart.")
     plot_parser.add_argument(
         '--legend', type=str, nargs='+', default=None,
-        help="If 'auto', add a legend using the filenames as "
-        "keys.  Otherwise, use the arguments as a list of keys "
+        help="If 'auto', add a legend using the filenames as keys.  "
+        "If 'unique', shorten filenames by removing common "
+        "characters from the beginnings and ends.  "
+        "Otherwise, use the arguments as a list of keys "
         "(default is no legend).")
     plot_parser.add_argument(
         '-s', '--style', type=str, default='-',
@@ -239,7 +241,26 @@ def plot(args):
         raise ValueError("invalid choice for --plotter "
                          "(but this should've been caught by argparse)")
 
-    for filename in args.filenames:
+    file_labels = args.filenames.copy()
+
+    if args.legend[0] == 'unique':
+        while len(file_labels[0]) > 0:
+            firsts = [file_label[0] for file_label in file_labels]
+            if all([first == firsts[0] for first in firsts[1:]]):
+                for i, file_label in enumerate(file_labels):
+                    file_labels[i] = file_labels[i][1:]
+            else:
+                break
+
+        while len(file_labels[0]) > 0:
+            lasts = [file_label[-1] for file_label in file_labels]
+            if all([last == lasts[0] for last in lasts[1:]]):
+                for i, file_label in enumerate(file_labels):
+                    file_labels[i] = file_labels[i][:-1]
+            else:
+                break
+
+    for filename, file_label in zip(args.filenames, file_labels):
         format = (guess_format(filename)
                   if args.format == 'guess' else args.format)
 
@@ -278,7 +299,7 @@ def plot(args):
                 y = getattr(data, ky)
 
             if len(args.filenames) > 1:
-                label = ' '.join([filename, ky])
+                label = ' '.join([file_label, ky])
             else:
                 label = ky
 
@@ -322,7 +343,7 @@ def plot(args):
         pl.ylabel(args.y[0])
 
     if args.legend:
-        if args.legend[0] == 'auto':
+        if args.legend[0] in ['auto', 'unique']:
             pl.legend()
         else:
             pl.legend(args.legend)
