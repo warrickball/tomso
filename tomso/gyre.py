@@ -401,6 +401,7 @@ class GYREStellarModel(FullStellarModel):
         var[:,6] = self.L_r
         var[:,7] = self.kappa
         var[:,9] = self.Gamma_1
+        var[:,10] = self.grad_a
         var[:,14] = self.AA
 
         if reverse:
@@ -522,6 +523,9 @@ class GYREStellarModel(FullStellarModel):
 
     @kappa.setter
     def kappa(self, val): self.data['kappa'] = val
+
+    @property
+    def grad_a(self): return self.data['nabla_ad']
 
     # Some properties have definitions that depend on the GYRE file
     # version.

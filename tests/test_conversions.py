@@ -15,7 +15,7 @@ mech_vectors = ['r', 'q', 'lnq', 'm', 'rho', 'P', 'Gamma_1', 'N2',
                 'U', 'V', 'tau']
 
 thermo_scalars = ['L', 'Teff']
-thermo_vectors = ['L_r', 'T']
+thermo_vectors = ['L_r', 'T', 'Gamma_2', 'grad_r', 'grad_a']
 
 class TestConversionFunctions(unittest.TestCase):
     def compare_models(self, m0, m1, thermo=False):

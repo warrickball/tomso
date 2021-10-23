@@ -659,6 +659,12 @@ class FGONG(FullStellarModel):
     def G1(self, val): self.var[:,9] = val
 
     @property
+    def grad_a(self): return self.var[:,10]
+
+    @grad_a.setter
+    def grad_a(self, val): self.var[:,10] = val
+
+    @property
     def cp(self): return self.var[:,12]
 
     @cp.setter
