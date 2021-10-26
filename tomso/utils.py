@@ -170,4 +170,7 @@ class FullStellarModel(AdiabaticStellarModel):
     def Gamma_2(self): return 1.0/(1.0-self.grad_a)
 
     @property
+    def Gamma_3(self): return 1. + (1.-1./self.Gamma_2)*self.Gamma_1
+
+    @property
     def grad_r(self): return 3*self.kappa*self.P*self.L_r/(64.*np.pi*sigma_SB*self.G*self.m*self.T**4)

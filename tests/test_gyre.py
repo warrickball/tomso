@@ -82,6 +82,9 @@ class TestGYREFunctions(unittest.TestCase):
         self.assertEqual(m.version, 101)
 
         np.testing.assert_allclose(m.Omega, 0)
+        np.testing.assert_allclose(m.Gamma_1/(m.Gamma_3-1),
+                                   m.Gamma_2/(m.Gamma_2-1),
+                                   rtol=1e-14, atol=1e-14)
 
         s = '%r' % m
 

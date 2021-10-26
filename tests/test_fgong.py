@@ -28,6 +28,10 @@ class TestFGONGFunctions(unittest.TestCase):
         np.testing.assert_equal(m.x, var[:,0]/glob[1])
         np.testing.assert_equal(m.G1, m.Gamma_1)
 
+        np.testing.assert_allclose(m.Gamma_1/(m.Gamma_3-1),
+                                   m.Gamma_2/(m.Gamma_2-1),
+                                   rtol=1e-14, atol=1e-14)
+
         s = '%s' % m
         s = '%r' % m
 
