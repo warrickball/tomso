@@ -244,7 +244,7 @@ def plot(args):
     file_labels = args.filenames.copy()
 
     if args.legend is not None and args.legend[0] == 'unique':
-        while len(file_labels[0]) > 0:
+        while all([len(file_label) > 0 for file_label in file_labels]):
             firsts = [file_label[0] for file_label in file_labels]
             if all([first == firsts[0] for first in firsts[1:]]):
                 for i, file_label in enumerate(file_labels):
@@ -252,7 +252,7 @@ def plot(args):
             else:
                 break
 
-        while len(file_labels[0]) > 0:
+        while all([len(file_label) > 0 for file_label in file_labels]):
             lasts = [file_label[-1] for file_label in file_labels]
             if all([last == lasts[0] for last in lasts[1:]]):
                 for i, file_label in enumerate(file_labels):
