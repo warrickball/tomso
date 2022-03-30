@@ -8,14 +8,7 @@ remote_url = 'https://raw.githubusercontent.com/warrickball/tomso/master/tests/'
 class TestMESAFunctions(unittest.TestCase):
 
     def test_load_history(self):
-        header, history = mesa.load_history('data/mesa.history', return_object=False)
-        self.assertEqual(header['version_number'], 11701)
-        self.assertAlmostEqual(header['burn_min1'], 50.0)
-        self.assertAlmostEqual(header['burn_min2'], 1000.0)
-        self.assertEqual(history['model_number'][-1], 125)
-        self.assertEqual(max(history['model_number']), 137)
-
-        h = mesa.load_history('data/mesa.history', return_object=True)
+        h = mesa.load_history('data/mesa.history')
         self.assertEqual(h['version_number'], 11701)
         self.assertAlmostEqual(h['burn_min1'], 50.0)
         self.assertAlmostEqual(h['burn_min2'], 1000.0)
@@ -29,24 +22,12 @@ class TestMESAFunctions(unittest.TestCase):
         s = '%s' % h
         s = '%r' % h
 
-        r = mesa.load_history(remote_url + 'data/mesa.history', return_object=True)
+        r = mesa.load_history(remote_url + 'data/mesa.history')
         np.testing.assert_equal(h.header, r.header)
         np.testing.assert_equal(h.data, r.data)
 
     def test_load_pruned_history(self):
-        header, history = mesa.load_history('data/mesa.history', prune=True, return_object=False)
-        self.assertEqual(header['version_number'], 11701)
-        self.assertAlmostEqual(header['burn_min1'], 50.0)
-        self.assertAlmostEqual(header['burn_min2'], 1000.0)
-        self.assertEqual(history['model_number'][-1], 125)
-        self.assertEqual(max(history['model_number']), 125)
-
-        np.testing.assert_array_less(
-            history['model_number'][:-1], history['model_number'][1:])
-        np.testing.assert_array_less(
-            history['star_age'][:-1], history['star_age'][1:])
-
-        h = mesa.load_history('data/mesa.history', prune=True, return_object=True)
+        h = mesa.load_history('data/mesa.history', prune=True)
         self.assertEqual(h['version_number'], 11701)
         self.assertAlmostEqual(h['burn_min1'], 50.0)
         self.assertAlmostEqual(h['burn_min2'], 1000.0)
@@ -59,7 +40,7 @@ class TestMESAFunctions(unittest.TestCase):
     def test_sliced_history(self):
         i0 = 5
         di = 5
-        h0 = mesa.load_history('data/mesa.history', return_object=True)
+        h0 = mesa.load_history('data/mesa.history')
         h1 = h0[i0:i0+di]
 
         for k in ['burn_min1', 'burn_min2']:
@@ -77,14 +58,7 @@ class TestMESAFunctions(unittest.TestCase):
             self.assertEqual(h0[k][i0], h1[k])
 
     def test_gzipped_load_history(self):
-        header, history = mesa.load_history('data/mesa.history.gz', return_object=False)
-        self.assertEqual(header['version_number'], 11701)
-        self.assertAlmostEqual(header['burn_min1'], 50.0)
-        self.assertAlmostEqual(header['burn_min2'], 1000.0)
-        self.assertEqual(history['model_number'][-1], 125)
-        self.assertEqual(max(history['model_number']), 137)
-
-        h = mesa.load_history('data/mesa.history.gz', return_object=True)
+        h = mesa.load_history('data/mesa.history.gz')
         self.assertEqual(h['version_number'], 11701)
         self.assertAlmostEqual(h['burn_min1'], 50.0)
         self.assertAlmostEqual(h['burn_min2'], 1000.0)
@@ -92,15 +66,7 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(max(h['model_number']), 137)
 
     def test_load_profile(self):
-        header, profile = mesa.load_profile('data/mesa.profile', return_object=False)
-        self.assertEqual(header['model_number'], 95)
-        self.assertEqual(header['num_zones'], 559)
-        self.assertAlmostEqual(header['initial_mass'], 0.9995)
-        self.assertAlmostEqual(header['initial_z'], 0.02)
-
-        np.testing.assert_equal(profile['zone'], np.arange(len(profile['zone']))+1)
-
-        p = mesa.load_profile('data/mesa.profile', return_object=True)
+        p = mesa.load_profile('data/mesa.profile')
         self.assertEqual(p['model_number'], 95)
         self.assertEqual(p['num_zones'], 559)
         self.assertAlmostEqual(p['initial_mass'], 0.9995)
@@ -112,15 +78,7 @@ class TestMESAFunctions(unittest.TestCase):
         s = '%r' % p
 
     def test_load_gzipped_profile(self):
-        header, profile = mesa.load_profile('data/mesa.profile.gz', return_object=False)
-        self.assertEqual(header['model_number'], 95)
-        self.assertEqual(header['num_zones'], 559)
-        self.assertAlmostEqual(header['initial_mass'], 0.9995)
-        self.assertAlmostEqual(header['initial_z'], 0.02)
-
-        np.testing.assert_equal(profile['zone'], np.arange(len(profile['zone']))+1)
-
-        p = mesa.load_profile('data/mesa.profile.gz', return_object=True)
+        p = mesa.load_profile('data/mesa.profile.gz')
         self.assertEqual(p['model_number'], 95)
         self.assertEqual(p['num_zones'], 559)
         self.assertEqual(len(p), 559)
