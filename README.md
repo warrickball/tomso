@@ -5,7 +5,7 @@ output files for and from stellar evolution and oscillation codes.
 The functions are bundled together in modules that correspond to a
 specific stellar evolution code, stellar oscillation code or file
 format.  TOMSO currently supports the
-[FGONG](http://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf),
+[FGONG](http://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf)
 format and various input/output files for
 [ADIPLS](http://users-phys.au.dk/jcd/adipack.n/),
 [GYRE](https://gyre.readthedocs.io/),
@@ -30,9 +30,9 @@ including the files (or parts thereof) that are causing the problem.
 
 ### I found a bug and wrote a patch to fix it
 
-If you've found the problem is something in TOMSO doesn't work as it
-should, open a [pull request](https://github.com/warrickball/tomso/pulls)
-with a detailed description of what the problem was and how your patch fixes it.
+If you've found the problem is something in TOMSO that doesn't work as it
+should and fixed it yourself, great!  Open a [pull request](https://github.com/warrickball/tomso/pulls)
+that describes what the problem was and how your patch fixes it.
 
 ### I want TOMSO to support my favourite file format
 
