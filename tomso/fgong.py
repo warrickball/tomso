@@ -15,22 +15,20 @@ from .utils import FullStellarModel
 
 
 def load_fgong(filename, fmt='ivers', return_comment=False,
-               return_object=True, G=None):
-    """Given an FGONG file, returns NumPy arrays ``glob`` and ``var`` that
+               G=None):
+    """Given an FGONG file, returns a :py:class:`FGONG` that contains
+    NumPy arrays ``glob`` and ``var`` that
     correspond to the scalar and point-wise variables, as specified
     in the `FGONG format`_.
 
     .. _FGONG format: https://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf
 
-    Also returns the first four lines of the file as a `comment`, if
-    desired.
+    Also returns the first four lines of the file as a ``comment``, if
+    desired.  The data can be accessed via properties like ``x`` or ``P``
+    for fractional radius and pressure.
 
     The version number ``ivers`` is used to infer the format of floats
     if ``fmt='ivers'``.
-
-    If ``return_object`` is ``True``, instead returns an :py:class:`FGONG`
-    object.  This is the default behaviour as of v0.0.12.  The old
-    behaviour will be dropped completely from v0.1.0.
 
     Parameters
     ----------
@@ -47,15 +45,8 @@ def load_fgong(filename, fmt='ivers', return_comment=False,
 
     Returns
     -------
-    glob: NumPy array
+    f: :py:class:`FGONG`
         The scalar (or global) variables for the stellar model
-    var: NumPy array
-        The point-wise variables for the stellar model. i.e. things
-        that vary through the star like temperature, density, etc.
-    comment: list of strs, optional
-        The first four lines of the FGONG file.  These are comments
-        that are not used in any calculations.  Only returned if
-        ``return_comment=True``.
 
     """
     with tomso_open(filename, 'rb') as f:
@@ -96,18 +87,8 @@ def load_fgong(filename, fmt='ivers', return_comment=False,
     glob = np.array(tmp[:iconst])
     var = np.array(tmp[iconst:]).reshape((-1, ivar))
 
-    if return_object:
-        return FGONG(glob, var, ivers=ivers, G=G,
-                     description=comment)
-    else:
-        warnings.warn("From tomso 0.1.0+, `fgong.load_fgong` will only "
-                      "return an `FGONG` object: use `return_object=True` "
-                      "to mimic future behaviour",
-                      FutureWarning)
-        if return_comment:
-            return glob, var, comment
-        else:
-            return glob, var
+    return FGONG(glob, var, ivers=ivers, G=G,
+                 description=comment)
 
 
 def save_fgong(filename, glob, var, ivers=1300, comment=['','','',''],
