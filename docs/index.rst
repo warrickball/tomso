@@ -12,7 +12,13 @@ TOMSO is a set of Python modules for loading and saving input and
 output files for and from stellar evolution and oscillation codes.
 The functions are bundled together in modules that correspond to a
 specific stellar evolution code, stellar oscillation code or file
-format.
+format.  TOMSO currently supports the
+`FGONG <http://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf>`_
+format and various input/output files for
+`ADIPLS <https://phys.au.dk/~jcd/adipack.v0_3/>`_,
+`GYRE <https://gyre.readthedocs.io/>`_,
+`MESA <https://docs.mesastar.org>`_ and
+`STARS <https://www.ast.cam.ac.uk/~stars>`_.
 
 The code is intended to be the minimum necessary to usefully
 manipulate input and output data.  The only current requirement is

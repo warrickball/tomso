@@ -1,20 +1,46 @@
 # TOMSO: Tools for Modelling Stars and their Oscillations
 
 TOMSO is a set of Python modules for loading and saving input and
-output files for and from stellar evolution and oscillation
-codes.  Functions are presently implemented for the following
-standard or code-specific formats:
+output files for and from stellar evolution and oscillation codes.
+The functions are bundled together in modules that correspond to a
+specific stellar evolution code, stellar oscillation code or file
+format.  TOMSO currently supports the
+[FGONG](http://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf),
+format and various input/output files for
+[ADIPLS](http://users-phys.au.dk/jcd/adipack.n/),
+[GYRE](https://gyre.readthedocs.io/),
+[MESA](https://docs.mesastar.org) and
+[STARS](https://www.ast.cam.ac.uk/~stars).
 
-* [FGONG](https://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf)
-* [MESA](http://mesa.sourceforge.net)
-* [STARS](http://www.ast.cam.ac.uk/~stars)
-* [ADIPLS](http://users-phys.au.dk/jcd/adipack.n/)
-* [GYRE](https://gyre.readthedocs.io/)
+Read the full documentation at
+[tomso.readthedocs.io](https://tomso.readthedocs.io).
 
-Documentation is available on
-[ReadTheDocs.org](http://tomso.readthedocs.io).  Beware that the code
-is *very unstable*.  Expect the API to change drastically or
-completely without warning!
+## Contributing
+
+### Something isn't working
+
+Search [the issues](https://github.com/warrickball/tomso/issues?q=is%3Aissue)
+on GitHub and, if your problem hasn't been addressed before, open a
+new issue that describes what you tried to do, what you expected to
+happen and what happened instead.  In case it's helpful, include your
+operating system, Python version and NumPy version.  Also try to
+include a [minimal working
+example](https://stackoverflow.com/help/minimal-reproducible-example),
+including the files (or parts thereof) that are causing the problem.
+
+### I found a bug and wrote a patch to fix it
+
+If you've found the problem is something in TOMSO doesn't work as it
+should, open a [pull request](https://github.com/warrickball/tomso/pulls)
+with a detailed description of what the problem was and how your patch fixes it.
+
+### I want TOMSO to support my favourite file format
+
+Open an issue with links to the specification of the file format or
+where I can find (or create) examples with which to test new code.  I
+have limited time to extend TOMSO's features unless it happens to
+align with research I'm doing but I'll try my best to implement
+something.
 
 ## Contributors
-* [Warrick Ball](https://warrickball.github.io)
+* [Warrick Ball](https://warrickball.gitlab.io)
