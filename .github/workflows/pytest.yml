@@ -26,4 +26,7 @@ jobs:
         python -m pip install pytest numpy
     - name: Test with pytest
       run: |
+        pwd
+        ls
+        cd tomso
         pytest tests/test_adipls.py
