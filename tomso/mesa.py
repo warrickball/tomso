@@ -11,14 +11,10 @@ from tomso.utils import tomso_open, load_mesa_gyre
 astero_table_dtype = [('n', int), ('chi2term', float), ('freq', float), ('corr', float),
                       ('obs', float), ('sigma', float), ('logE', float)]
 
-def load_history(filename, prune=False, return_object=True):
+def load_history(filename, prune=False):
     """Reads a MESA history file and returns the global data and history
-    data in two structured arrays.  Uses builtin `gzip` module to read
+    data a `:py:class:MESALog` object.  Uses builtin `gzip` module to read
     files ending with `.gz`.
-
-    If `return_object` is `True`, instead returns an `MESALog` object.
-    This is the default behaviour as of v0.0.12.  The old
-    behaviour will be dropped completely from v0.1.0.
 
     Parameters
     ----------
@@ -34,15 +30,7 @@ def load_history(filename, prune=False, return_object=True):
 
     Returns
     -------
-    header: structured array
-        Global data for the evolutionary run. e.g. initial parameters.
-        The keys for the array are the MESA variable names as in
-        `history.columns`.
-
-    data: structured array
-        History data for the run. e.g. age, effective temperature.
-        The keys for the array are the MESA variable names as in
-        `history.columns`.
+    history: `:py:class:MESALog` object
 
     """
 
@@ -52,24 +40,13 @@ def load_history(filename, prune=False, return_object=True):
         I = np.unique(data['model_number'][::-1], return_index=True)[1][::-1]
         data = data[len(data) - I - 1][::-1]
 
-    if return_object:
-        return MESALog(header, data)
-    else:
-        warnings.warn("From tomso 0.1.0+, `mesa.load_history` will only "
-                      "return a `MESALog` object: use `return_object=True` "
-                      "to mimic future behaviour",
-                      FutureWarning)
-        return header, data
+    return MESALog(header, data)
 
 
-def load_profile(filename, return_object=True):
+def load_profile(filename):
     """Reads a MESA profile and returns the global data and profile
-    data in two structured arrays.  Uses builtin `gzip` module to read
+    data in a `:py:mesa:MESALog` object.  Uses builtin `gzip` module to read
     files ending with `.gz`.
-
-    If `return_object` is `True`, instead returns an `MESALog` object.
-    This is the default behaviour as of v0.0.12.  The old
-    behaviour will be dropped completely from v0.1.0.
 
     Parameters
     ----------
@@ -78,26 +55,12 @@ def load_profile(filename, return_object=True):
 
     Returns
     -------
-    header: structured array
-        Global data for the stellar model. e.g. total mass, luminosity.
-        The keys for the array are the MESA variable names as in
-        `profile.columns`.
+    profile: `:py:class:MESALog` object
 
-    data: structured array
-        Profile data for the stellar model. e.g. radius, pressure.
-        The keys for the array are the MESA variable names as in
-        `profile.columns`.
     """
 
     header, data = load_mesa_gyre(filename, 'mesa')
-    if return_object:
-        return MESALog(header, data)
-    else:
-        warnings.warn("From tomso 0.1.0+, `mesa.load_profile` will only "
-                      "return a `MESALog` object: use `return_object=True` "
-                      "to mimic future behaviour",
-                      FutureWarning)
-        return header, data
+    return MESALog(header, data)
 
 
 def load_astero_results(filename):
