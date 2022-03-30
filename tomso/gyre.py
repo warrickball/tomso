@@ -14,14 +14,10 @@ from .utils import integrate, regularize
 from .utils import FullStellarModel
 
 
-def load_summary(filename, return_object=True):
+def load_summary(filename):
     """Reads a GYRE summary file and returns the global data and mode data
-    in two structured arrays.  Uses builtin `gzip` module to read
-    files ending with `.gz`.
-
-    If `return_object` is `True`, instead returns an `GYRELog` object.
-    This is the default behaviour as of v0.0.12.  The old
-    behaviour will be dropped completely from v0.1.0.
+    in a dict-like `:py:class:GYRELog` object.  Uses builtin `gzip`
+    module to read files ending with `.gz`.
 
     Parameters
     ----------
@@ -30,37 +26,17 @@ def load_summary(filename, return_object=True):
 
     Returns
     -------
-    header: structured array
-        Global data for the frequency calculation. e.g. initial parameters.
-        The keys for the array are the GYRE variable names as in
-        the ``&output`` namelist in the GYRE input file.
-
-    data: structured array
-        Mode data for the frequency calculation. e.g. mode frequencies.
-        The keys for the array are the GYRE variable names as in
-        the ``&output`` namelist in the GYRE input file.
+    summary: `:py:class:GYRELog` object
 
     """
 
-    header, data = load_mesa_gyre(filename, 'gyre')
-    if return_object:
-        return GYRELog(header, data)
-    else:
-        warnings.warn("From tomso 0.1.0+, `gyre.load_summary` will only "
-                      "return a `GYRELog` object: use `return_object=True` "
-                      "to mimic future behaviour",
-                      FutureWarning)
-        return header, data
+    return GYRELog(*load_mesa_gyre(filename, 'gyre'))
 
 
-def load_mode(filename, return_object=True):
+def load_mode(filename):
     """Reads a GYRE mode file and returns the global data and mode profile
-    data in two structured arrays.  Uses builtin `gzip` module to read
-    files ending with `.gz`.
-
-    If `return_object` is `True`, instead returns an `GYRELog` object.
-    This is the default behaviour as of v0.0.12.  The old
-    behaviour will be dropped completely from v0.1.0.
+    data a dict-like `:py:class:GYRELog` object.  Uses builtin `gzip`
+    module to read files ending with `.gz`.
 
     Parameters
     ----------
@@ -69,38 +45,17 @@ def load_mode(filename, return_object=True):
 
     Returns
     -------
-    header: structured array
-        Global data for the frequency calculation. e.g. initial parameters.
-        The keys for the array are the GYRE variable names as in
-        the ``&output`` namelist in the GYRE input file.
-
-    data: structured array
-        Mode data for the frequency calculation. e.g. mode frequencies.
-        The keys for the array are the GYRE variable names as in
-        the ``&output`` namelist in the GYRE input file.
+    mode: `:py:class:GYRELog` object
 
     """
 
-    header, data = load_mesa_gyre(filename, 'gyre')
-    if return_object:
-        return GYRELog(header, data)
-    else:
-        warnings.warn("From tomso 0.1.0+, `gyre.load_summary` will only "
-                      "return a `GYRELog` object: use `return_object=True` "
-                      "to mimic future behaviour",
-                      FutureWarning)
-        return header, data
+    return GYRELog(*load_mesa_gyre(filename, 'gyre'))
 
 
-def load_gyre(filename, return_object=True):
+def load_gyre(filename):
     """Reads a GYRE stellar model file and returns the global data and
-    point-wise data in a pair of NumPy record arrays.  Uses builtin
-    `gzip` module to read files ending with `.gz`.
-
-    If `return_object` is `True`, instead returns a
-    :py:class:`GYREStellarModel` object.  This is the default
-    behaviour as of v0.0.12.  The old behaviour will be dropped
-    completely from v0.1.0.
+    point-wise data in a :py:class:`GYREStellarModel` object.  Uses
+    builtin `gzip` module to read files ending with `.gz`.
 
     Parameters
     ----------
@@ -109,11 +64,8 @@ def load_gyre(filename, return_object=True):
 
     Returns
     -------
-    header: structured array
-        Global data for the stellar model. e.g. total mass, luminosity.
-
-    data: structured array
-        Profile data for the stellar model. e.g. radius, pressure.
+    model: :py:class:`GYREStellarModel`
+        Dict-like access to global and profile data.
 
     """
     def replace(s):
@@ -141,14 +93,7 @@ def load_gyre(filename, return_object=True):
     header = np.loadtxt(lines[:1], dtype=gyre_header_dtypes[version])
     data = np.loadtxt(lines[1:], dtype=gyre_data_dtypes[version])
 
-    if return_object:
-        return GYREStellarModel(header, data)
-    else:
-        warnings.warn("From tomso 0.1.0+, `gyre.load_gyre` will only return "
-                      "a `GYREStellarModel` object: use `return_object=True` "
-                      "to mimic future behaviour",
-                      FutureWarning)
-        return header, data
+    return GYREStellarModel(header, data)
 
 
 def save_gyre(filename, header, data):
