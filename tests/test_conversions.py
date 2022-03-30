@@ -33,15 +33,15 @@ class TestConversionFunctions(unittest.TestCase):
                                        rtol=1e-14, atol=1e-14, err_msg=attr)
 
     def test_fgong_to_fgong(self):
-        f = load_fgong('data/modelS.fgong', return_object=True)
+        f = load_fgong('data/modelS.fgong')
         self.compare_models(f, f.to_gyre().to_fgong(), thermo=True)
 
     def test_gyre_to_gyre(self):
-        g = load_gyre('data/mesa.gyre', return_object=True)
+        g = load_gyre('data/mesa.gyre')
         self.compare_models(g, g.to_fgong().to_gyre(), thermo=True)
 
     def test_amdl_to_amdl(self):
-        a = load_amdl('data/modelS.amdl', return_object=True)
+        a = load_amdl('data/modelS.amdl')
         self.compare_models(a, a.to_fgong().to_amdl())
         self.compare_models(a, a.to_gyre().to_amdl())
         self.compare_models(a, a.to_fgong().to_gyre().to_amdl())

@@ -57,13 +57,9 @@ def load_pointwise_data(filename, ncols):
     return np.squeeze(css), np.squeeze(data)
 
 
-def load_agsm(filename, return_object=True):
-    """Reads an ADIPLS grand summary file and returns a structured array.
-
-    If `return_object` is `True`, instead returns an
-    :py:class:`ADIPLSGrandSummary` object.  This is the
-    default behaviour as of v0.0.12.  The old behaviour will be
-    dropped completely from v0.1.0.
+def load_agsm(filename):
+    """Reads an ADIPLS grand summary file and returns an
+    :py:class:`ADIPLSGrandSummary` object.
 
     Parameters
     ----------
@@ -73,9 +69,8 @@ def load_agsm(filename, return_object=True):
 
     Returns
     -------
-    css: structured array
-        The ``cs`` arrays for each mode.
-
+    agsm: :py:class:`ADIPLSGrandSummary` object
+        Contains data from the ``cs`` arrays for each mode.
     """
 
     css = []
@@ -86,24 +81,13 @@ def load_agsm(filename, return_object=True):
             css.append(read_one_cs(f))
             f.read(4)
 
-    if return_object:
-        return ADIPLSGrandSummary(np.squeeze(css))
-    else:
-        warnings.warn("From tomso 0.1.0+, `adipls.load_agsm` will only "
-                      "return an `ADIPLSGrandSummary` object: use "
-                      "`return_object=True` to mimic future behaviour",
-                      FutureWarning)
-        return np.squeeze(css)
+    return ADIPLSGrandSummary(np.squeeze(css))
 
 
-def load_amde(filename, nfmode=1, return_object=True):
+def load_amde(filename, nfmode=1):
     """Reads an ADIPLS eigenfunction file written with the specified value
-    of ``nfmode`` in the input file (either 1, 2 or 3).
-
-    If `return_object` is `True`, instead returns an
-    :py:class:`ADIPLSEigenfunctions` object.  This is the default
-    behaviour as of v0.0.12.  The old behaviour will be dropped
-    completely from v0.1.0.
+    of ``nfmode`` in the input file (either 1, 2 or 3)
+    and returns an :py:class:`ADIPLSEigenfunctions` object.
 
     Parameters
     ----------
@@ -119,20 +103,8 @@ def load_amde(filename, nfmode=1, return_object=True):
 
     Returns
     -------
-    css: structured array
-        The ``cs`` arrays for each mode.
-    eigs: list of arrays
-        The eigenfunction arrays for each mode.  Each array has seven
-        columns: the fractional radius :math:`x` and six columns of
-        ADIPLS's :math:`y` matrix.  The first four columns of
-        :math:`y` are defined by equation (2.5) of the documentation
-        and the last two by equations (4.4) and (4.6).
-    x: array
-        Fractional radius co-ordinate ``x`` of the eigenfunctions.  If
-        ``nfmode=1``, the radial co-ordinate is also stored in
-        ``eigs[...,0]`` but it's returned anyway so that the returned
-        data always has the same structure.
-
+    amde: :py:class:`ADIPLSEigenfunctions`
+        The eigenfunction data for the modes.
     """
 
     if nfmode == 1:
@@ -158,24 +130,14 @@ def load_amde(filename, nfmode=1, return_object=True):
     else:
         raise ValueError('nfmode must be 1, 2 or 3 but got %i' % nfmode)
 
-    if return_object:
-        return ADIPLSEigenfunctions(np.squeeze(css), np.squeeze(data), x=x, nfmode=nfmode)
-    else:
-        warnings.warn("From tomso 0.1.0+, `adipls.load_amde` will only "
-                      "return an `ADIPLSEigenfunctions` object: use "
-                      "`return_object=True` to mimic future behaviour",
-                      FutureWarning)
-        return np.squeeze(css), np.squeeze(data), x
+    return ADIPLSEigenfunctions(np.squeeze(css), np.squeeze(data), x=x, nfmode=nfmode)
+
 
 def load_amdl(filename, return_nmod=False, live_dangerously=False,
-              return_object=True, G=G_DEFAULT):
-    """Reads an ADIPLS model file.  See Section 5 of the `ADIPLS
-    documentation`_ for details.
-
-    If `return_object` is `True`, instead returns an
-    :py:class:`ADIPLSStellarModel` object.  This is the default
-    behaviour as of v0.0.12.  The old behaviour will be dropped
-    completely from v0.1.0.
+              G=G_DEFAULT):
+    """Reads an ADIPLS model file and returns an
+    :py:class:`ADIPLSStellarModel` object.  See Section 5 of the
+    `ADIPLS documentation`_ for details.
 
     Parameters
     ----------
@@ -193,15 +155,8 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
 
     Returns
     -------
-    D: 1-d NumPy array
-        Global data, as defined by eq. (5.2) of the ADIPLS
-        documentation.
-    A: 2-d NumPy array
-        Point-wise data, as defined by eq. (5.1) of the ADIPLS
-        documentation.
-    nmod: int, optional
-        The model number.  I'm not sure what it's used for but it
-        doesn't seem to matter.  Only returned if `return_nmod=True`.
+    amdl: :py:class:`ADIPLSStellarModel` object
+        Contains the model data.
 
     """
 
@@ -220,26 +175,12 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
         f.read(4)
         # check that this is the end of the file
 
-    if return_object:
-        return ADIPLSStellarModel(D, A, nmod=nmod, G=G)
-    else:
-        warnings.warn("From tomso 0.1.0+, `adipls.load_amdl` will only "
-                      "return an `ADIPLSStellarModel` object: use "
-                      "`return_object=True` to mimic future behaviour",
-                      FutureWarning)
-        if return_nmod:
-            return D, A, int(nmod)
-        else:
-            return D, A
+    return ADIPLSStellarModel(D, A, nmod=nmod, G=G)
 
 
-def load_rkr(filename, return_object=True):
-    """Reads an ADIPLS rotational kernel file.
-
-    If `return_object` is `True`, instead returns an
-    :py:class:`ADIPLSRotationKenerls` object.  This is the default
-    behaviour as of v0.0.12.  The old behaviour will be dropped
-    completely from v0.1.0.
+def load_rkr(filename):
+    """Reads an ADIPLS rotational kernel file and returns an
+    :py:class:`ADIPLSRotationKernels` object.
 
     Parameters
     ----------
@@ -249,22 +190,12 @@ def load_rkr(filename, return_object=True):
 
     Returns
     -------
-    css: structured array
-        The ``cs`` arrays for each mode.
-    rkrs: list of arrays
-        The kernel arrays for each mode.  Each array has two columns:
-        the fractional radius :math:`x` and the kernel :math:`K(x)`.
+    rkr: :py:class:`ADIPLSRotationKernels` object
+        The kernel arrays for each mode.
 
     """
 
-    if return_object:
-        return ADIPLSRotationKernels(*load_pointwise_data(filename, 2))
-    else:
-        warnings.warn("From tomso 0.1.0+, `adipls.load_rkr` will only "
-                      "return an `ADIPLSRotationKernels` object: use "
-                      "`return_object=True` to mimic future behaviour",
-                      FutureWarning)
-    return load_pointwise_data(filename, 2)
+    return ADIPLSRotationKernels(*load_pointwise_data(filename, 2))
 
 
 def save_amdl(filename, D, A, nmod=0):
