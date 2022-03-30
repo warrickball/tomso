@@ -174,3 +174,12 @@ class FullStellarModel(AdiabaticStellarModel):
 
     @property
     def grad_r(self): return 3*self.kappa*self.P*self.L_r/(64.*np.pi*sigma_SB*self.G*self.m*self.T**4)
+
+    @property
+    def tau_opt(self):
+        y = self.rho*self.kappa
+        if np.all(np.diff(self.x) < 0):
+            return -integrate(y, self.r)
+        else:
+            tau_opt = integrate(y[::-1], self.r[::-1])[::-1]
+            return np.max(tau_opt)-tau_opt
