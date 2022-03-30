@@ -5,7 +5,7 @@
 
 TOMSO
 =====
-Tools for Modelling Stars and their Oscillations
+Tools for Models of Stars and their Oscillations
 ------------------------------------------------
 
 TOMSO is a set of Python modules for loading and saving input and

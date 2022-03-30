@@ -4,7 +4,7 @@ setup(
     name = 'tomso',
     packages = ['tomso'],
     version = '0.0.13',
-    description = 'Tools for Modelling Stars and their Oscillations',
+    description = 'Tools for Models of Stars and their Oscillations',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     author = 'Warrick Ball',
