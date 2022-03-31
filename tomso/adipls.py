@@ -195,37 +195,6 @@ def load_rkr(filename):
     return ADIPLSRotationKernels(*load_pointwise_data(filename, 2))
 
 
-def save_amdl(filename, D, A, nmod=0):
-    """Writes an ADIPLS model file, given data in the same form as
-    returned by :py:meth:`load_amdl`.  See Section 5 of the `ADIPLS
-    documentation`_ for details.
-
-    Parameters
-    ----------
-    filename: str
-        Name of the model file, usually starting or ending with amdl.
-    D: 1-d NumPy array
-        Global data, as defined by eq. (5.2) of the `ADIPLS
-        documentation`_.
-    A: 2-d NumPy array
-        Point-wise data, as defined by eq. (5.1) of the `ADIPLS
-        documentation`_.
-    nmod: int, optional
-        The model number.  I'm not sure what it's used for but it
-        doesn't seem to matter.
-
-    """
-    nn = len(A)
-    length = np.array(8*(1+8+6*nn), dtype=np.int32)
-    with open(filename, 'wb') as f:
-        length.tofile(f)
-        np.array((nmod,), dtype=np.int32).tofile(f)
-        np.array((nn,), dtype=np.int32).tofile(f)
-        D.tofile(f)
-        A.tofile(f)
-        length.tofile(f)
-
-
 def amdl_get(key_or_keys, D, A, G=G_DEFAULT):
     """Retrieves physical properties of an AMDL model from the ``D`` and
     ``A`` arrays.
@@ -580,7 +549,15 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
         filename: str
             Filename to which the data is written.
         """
-        save_amdl(filename, self.D, self.A, nmod=self.nmod)
+        nn = len(self.A)
+        length = np.array(8*(1+8+6*nn), dtype=np.int32)
+        with open(filename, 'wb') as f:
+            length.tofile(f)
+            np.array((self.nmod,), dtype=np.int32).tofile(f)
+            np.array((nn,), dtype=np.int32).tofile(f)
+            self.D.tofile(f)
+            self.A.tofile(f)
+            length.tofile(f)
 
     def to_fgong(self, reverse=True, ivers=1300):
         """Convert the model to an :py:class:`~tomso.fgong.FGONG` object.
