@@ -13,8 +13,7 @@ from .utils import integrate, tomso_open, regularize
 from .utils import FullStellarModel
 
 
-def load_fgong(filename, fmt='ivers', return_comment=False,
-               G=None):
+def load_fgong(filename, fmt='ivers', G=None):
     """Given an FGONG file, returns a :py:class:`FGONG` that contains
     NumPy arrays ``glob`` and ``var`` that
     correspond to the scalar and point-wise variables, as specified
@@ -37,10 +36,7 @@ def load_fgong(filename, fmt='ivers', return_comment=False,
         Format string for floats in `glob` and `var`.  If ``'ivers'``,
         uses ``%16.9E`` if the file's ``ivers < 1000`` or ``%26.18E3` if
         ``ivers >= 1000``.  If ``'auto'``, tries to guess the size of each
-        float. (default: 'ivers')
-    return_comment: bool, optional
-        If ``True``, return the first four lines of the FGONG file.
-        These are comments that are not used in any calculations.
+        float. (default: ``'ivers'``)
 
     Returns
     -------
