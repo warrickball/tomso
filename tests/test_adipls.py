@@ -81,7 +81,7 @@ class TestADIPLSFunctions(unittest.TestCase):
         self.assertRaises(ValueError, adipls.load_amde, 'data/modelS_nfmode1.amde', nfmode=4)
 
     def test_load_modelS_amdl(self):
-        a = adipls.load_amdl('data/modelS.amdl', return_nmod=True)
+        a = adipls.load_amdl('data/modelS.amdl')
         self.assertEqual(a.nmod, 1)
         self.assertEqual(len(a.A), 2482)
         self.assertAlmostEqual(a.D[0], 1.989e33)

@@ -133,8 +133,7 @@ def load_amde(filename, nfmode=1):
     return ADIPLSEigenfunctions(np.squeeze(css), np.squeeze(data), x=x, nfmode=nfmode)
 
 
-def load_amdl(filename, return_nmod=False, live_dangerously=False,
-              G=G_DEFAULT):
+def load_amdl(filename, live_dangerously=False, G=G_DEFAULT):
     """Reads an ADIPLS model file and returns an
     :py:class:`ADIPLSStellarModel` object.  See Section 5 of the
     `ADIPLS documentation`_ for details.
@@ -143,10 +142,8 @@ def load_amdl(filename, return_nmod=False, live_dangerously=False,
     ----------
     filename: str
         Name of the model file, usually starting or ending with ``amdl``.
-    return_nmod: bool, optional
-        If `True`, return the ``nmod`` parameter in the file.
     live_dangerously: bool, optional
-        If `True`, load the file even if it looks like it might be
+        If ``True``, load the file even if it looks like it might be
         too large for an AMDL file (i.e. has more than a million points).
     G: float, optional
         Value for the gravitational constant, in cgs units.  If not
