@@ -20,7 +20,7 @@ class TestADIPLSFunctions(unittest.TestCase):
         with self.assertRaises(IOError):
             a = adipls.load_amdl(tmpfile)
 
-    def test_amdl_get(self):
+    def test_amdl_properties(self):
         m = adipls.load_amdl('data/mesa.amdl')
         self.assertEqual(m.M, m.D[0])
         self.assertEqual(m.R, m.D[1])
@@ -33,7 +33,7 @@ class TestADIPLSFunctions(unittest.TestCase):
         np.testing.assert_allclose(m.S2_1, m.S_1**2)
         np.testing.assert_allclose(np.maximum(m.N2, 0), m.N**2)
 
-    def test_amdl_get_cross_check(self):
+    def test_amdl_properties_cross_check(self):
         m = adipls.load_amdl('data/mesa.amdl')
         np.testing.assert_allclose(m.q, m.m/m.M, rtol=4*EPS)
         np.testing.assert_allclose(m.x, m.r/m.R, rtol=4*EPS)
