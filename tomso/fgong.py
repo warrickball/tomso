@@ -8,7 +8,6 @@ from a file.
 
 import numpy as np
 import warnings
-from .adipls import fgong_to_amdl
 from .constants import G_DEFAULT
 from .utils import integrate, tomso_open, regularize
 from .utils import FullStellarModel
@@ -472,14 +471,69 @@ class FGONG(FullStellarModel):
                    float_formatter=float_formatter)
 
     def to_amdl(self):
-        """Convert the model to an ``ADIPLSStellarModel`` object."""
+        """Convert the model to an :py:class:`ADIPLSStellarModel` object.
+
+        The output should be identical (to within a few times machine
+        error) to the output of ``fgong-amdl.d`` tool distributed with
+        ADIPLS.
+        """
         from .adipls import ADIPLSStellarModel
 
-        return ADIPLSStellarModel(
-            *fgong_to_amdl(self.glob, self.var, G=self.G), G=self.G)
+        M, R = self.glob[:2]
+        r, P, rho, G1, AA = self.var[::-1,[0,3,4,9,14]].T
+        m = np.exp(self.var[::-1,1])*M
+
+        ioff = (0 if r[0] < 1e6 else 1)
+        nn = len(self.var) + ioff
+
+        # convert profile
+        A = np.zeros((nn, 6))
+
+        # we can safely ignore division by 0 here
+        with np.errstate(divide='ignore', invalid='ignore'):
+            A[ioff:,0] = r/R
+            A[ioff:,1] = m/M/(r/R)**3
+            A[ioff:,2] = self.G*m*rho/(G1*P*r)
+            A[ioff:,3] = G1
+            A[ioff:,4] = AA
+            A[ioff:,5] = 4.*np.pi*rho*r**3/m
+
+        A[0,0] = 0.
+        A[0,1] = 4.*np.pi/3.*rho[0]*R**3/M
+        A[0,2] = 0.
+        A[0,3] = G1[0]
+        A[0,4] = 0.
+        A[0,5] = 3.
+
+        # convert header
+        D = np.zeros(8)
+        D[0] = M
+        D[1] = R
+        D[2] = P[0]
+        D[3] = rho[0]
+
+        # second derivatives at centre are given
+        if self.glob[10] < 0.:
+            D[4] = -self.glob[10]/G1[0]
+            D[5] = -self.glob[11]
+        else:
+            D[4] = 4.*np.pi/3.*self.G*(rho[0]*R)**2/(P[0]*G1[0])
+            # D[5] = np.nanmax((A[1:,4]/A[1:,0]**2)[A[1:,0]<0.05])
+            # D[5] = np.max((D[5], 0.))+D[4]
+            D[5] = D[4]
+
+        D[6] = -1.
+        D[7] = 0.
+
+        if A[-1,4] <= 10.:
+            # chop off outermost point
+            A = A[:-1]
+            nn -= 1
+
+        return ADIPLSStellarModel(D, A, G=self.G)
 
     def to_gyre(self, version=None):
-        """Convert the model to a ``GYREStellarModel`` object.
+        """Convert the model to a :py:class:`GYREStellarModel` object.
 
         Parameters
         ----------
