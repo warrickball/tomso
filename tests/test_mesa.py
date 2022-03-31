@@ -87,20 +87,6 @@ class TestMESAFunctions(unittest.TestCase):
 
         np.testing.assert_equal(p['zone'], np.arange(len(p['zone']))+1)
 
-    def test_load_sample(self):
-        sample = mesa.load_sample('data/mesa.sample')
-        self.assertAlmostEqual(sample['mass/Msun'], 0.9995)
-        self.assertAlmostEqual(sample['csound_rms'], 0.0)
-        self.assertAlmostEqual(sample['Teff_sigma'], 65.0)
-        self.assertAlmostEqual(sample['logL_sigma'], 0.05)
-        self.assertAlmostEqual(sample['logg_sigma'], 0.06)
-        self.assertAlmostEqual(sample['FeH_sigma'], 0.05)
-        for ell in range(4):
-            table = sample['l%i' % ell]  # for brevity
-            np.testing.assert_allclose(table['sigma'], 0.3)
-            np.testing.assert_allclose(
-                table['chi2term'], (table['corr']-table['obs'])**2/table['sigma']**2)
-
     def test_load_astero_sample(self):
         sample = mesa.load_astero_sample('data/mesa.sample')
         self.assertAlmostEqual(sample['mass/Msun'], 0.9995)
@@ -148,22 +134,21 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertRaises(KeyError, samples.__getitem__, np.array([0.0]))
         self.assertRaises(KeyError, samples.__getitem__, 'a,sDF1af!ds')
 
-    def test_load_gzipped_sample(self):
-        sample = mesa.load_sample('data/mesa.sample.gz')
+    def test_load_gzipped_astero_sample(self):
+        sample = mesa.load_astero_sample('data/mesa.sample')
         self.assertAlmostEqual(sample['mass/Msun'], 0.9995)
         self.assertAlmostEqual(sample['csound_rms'], 0.0)
         self.assertAlmostEqual(sample['Teff_sigma'], 65.0)
         self.assertAlmostEqual(sample['logL_sigma'], 0.05)
         self.assertAlmostEqual(sample['logg_sigma'], 0.06)
         self.assertAlmostEqual(sample['FeH_sigma'], 0.05)
-        for ell in range(4):
-            table = sample['l%i' % ell]  # for brevity
-            np.testing.assert_allclose(table['sigma'], 0.3)
-            np.testing.assert_allclose(
-                table['chi2term'], (table['corr']-table['obs'])**2/table['sigma']**2)
 
-            # for sigma in sample['l%i' % ell]['err']:
-            #     self.assertAlmostEqual(sigma, 0.3)
+        np.testing.assert_array_less(sample['l'], 4)
+
+        np.testing.assert_allclose(sample['sigma'], 0.3)
+        np.testing.assert_allclose(
+            sample['chi2term'],
+            (sample['corr']-sample['obs'])**2/sample['sigma']**2)
 
     def test_load_astero_results(self):
         results = mesa.load_astero_results('data/simplex_results.data')
