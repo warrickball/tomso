@@ -541,84 +541,6 @@ def fgong_to_amdl(glob, var, G=G_DEFAULT):
     return D, A
 
 
-def amdl_to_fgong(D, A, G=G_DEFAULT):
-    """Converts ADIPLS binary data (in the form of `D` and `A`, as
-    returned by :py:meth:`load_amdl`) into FGONG data,
-    which can be saved using :py:meth:`~tomso.fgong.save_fgong`.
-
-    Designed to be the inverse of the ``fgong-amdl.d`` tool
-    distributed with ADIPLS, modulo the fact that various thermal
-    variables (e.g. temperature and luminosity) are not stored in the
-    AMDL format, and that the innermost point may have been truncated.
-    It's impossible to tell when reversing the process, so we assume
-    not.
-
-    The output should be identical (to within a few times machine
-    error) of going from FGONG to AMDL and back again.
-
-    Parameters
-    ----------
-    D: 1-d array
-        Global data, as defined by eq. (5.2) of the `ADIPLS
-        documentation`_.
-    A: 2-d array
-        Point-wise data, as defined by eq. (5.1) of the `ADIPLS
-        documentation`_.
-    G: float, optional
-        Value for the gravitational constant, in cgs units.  If not
-        given (which is the default behaviour), we use the module-wise
-        default value.
-
-    Returns
-    -------
-    glob: NumPy array
-        The scalar (or global) variables for the stellar model
-    var: NumPy array
-        The point-wise variables for the stellar model. i.e. things
-        that vary through the star like temperature, density, etc.
-
-    """
-    warnings.warn("From tomso 0.1.0+, AMDL should be converted to "
-                  "FGONG by loading an `ADIPLSStellarModel` object "
-                  "and using its `to_fgong` function.  To mimic the "
-                  "future behaviour, load an FGONG object by using "
-                  "`adipls.load_amdl` with `return_object=True`.",
-                  FutureWarning)
-    M, R = D[:2]
-
-    glob = np.zeros(15)
-    var = np.zeros((len(A), 40))
-
-    r = A[:,0]*R
-    q = A[:,1]*A[:,0]**3
-    m = q*M
-    G1 = A[:,3]
-    AA = A[:,4]
-
-    # we can safely ignore division by 0 here
-    with np.errstate(divide='ignore', invalid='ignore'):
-        lnq = np.log(q)
-        rho = A[:,5]*m/(4.*np.pi*r**3)
-        P = G*m*rho/(G1*r*A[:,2])
-
-    P[0] = D[2]
-    rho[0] = D[3]
-
-    var[::-1,0] = r
-    var[::-1,1] = lnq
-    var[::-1,3] = P
-    var[::-1,4] = rho
-    var[::-1,9] = G1
-    var[::-1,14] = AA
-
-    glob[0] = M
-    glob[1] = R
-    glob[10] = -D[4]*G1[0]
-    glob[11] = -D[5]
-
-    return glob, var
-
-
 cs_dtypes = [('xmod','float'), ('M','float'), ('R','float'),
              ('P_c','float'), ('rho_c','float'), ('D_5','float'),
              ('D_6','float'), ('D_7','float'), ('D_8','float'),
@@ -771,13 +693,43 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
         """
         from .fgong import FGONG
 
-        # `amdl_to_fgong` already reverses the data by default
+        M, R = self.D[:2]
+
+        glob = np.zeros(15)
+        var = np.zeros((len(self.A), 40))
+
+        r = self.A[:,0]*R
+        q = self.A[:,1]*self.A[:,0]**3
+        m = q*M
+        G1 = self.A[:,3]
+        AA = self.A[:,4]
+
+        # we can safely ignore division by 0 here
+        with np.errstate(divide='ignore', invalid='ignore'):
+            lnq = np.log(q)
+            rho = self.A[:,5]*m/(4.*np.pi*r**3)
+            P = self.G*m*rho/(G1*r*self.A[:,2])
+
+        P[0] = self.D[2]
+        rho[0] = self.D[3]
+
+        var[:,0] = r
+        var[:,1] = lnq
+        var[:,3] = P
+        var[:,4] = rho
+        var[:,9] = G1
+        var[:,14] = AA
+
+        glob[0] = M
+        glob[1] = R
+        glob[10] = -self.D[4]*G1[0]
+        glob[11] = -self.D[5]
+
         if reverse:
-            return FGONG(*amdl_to_fgong(self.D, self.A, G=self.G),
-                         ivers=ivers)
-        else:
-            return FGONG(*amdl_to_fgong(self.D, self.A[::-1], G=self.G),
-                         ivers=ivers)
+            var = var[::-1]
+
+        return FGONG(glob, var, G=self.G, ivers=ivers)
+
 
     def to_gyre(self, version=None):
         """Convert the model to an :py:class:`~tomso.gyre.GYREStellarModel`
