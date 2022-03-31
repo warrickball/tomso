@@ -94,12 +94,10 @@ def load_astero_results(filename):
     return data
 
 
-def load_sample(filename):
+def load_astero_sample(filename):
     """Reads a MESA sample file that describes a model from one of the
-    optimization routines in the `astero` module.
-
-    This function will be dropped completely from v0.1.0 in favour of
-    the more object-oriented :py:meth:`load_astero_sample`.
+    optimization routines in the `astero` module, and returns a
+    :py:class:`MESAAsteroSample` object.
 
     Parameters
     ----------
@@ -108,8 +106,8 @@ def load_sample(filename):
 
     Returns
     -------
-    d: dict
-        A dictionary containing all the results.
+    sample: :py:class:`MESAAsteroSample`
+        A dictionary-like object containing all the results.
 
     """
     with tomso_open(filename, 'rb') as f:
@@ -141,31 +139,7 @@ def load_sample(filename):
         except ValueError:
             d['l%i' % l] = np.zeros(0, dtype=astero_table_dtype)
 
-    warnings.warn("From tomso 0.1.0+, `mesa.load_sample` will be dropped "
-                  "in favour of the object-oriented "
-                  "`mesa.load_astero_sample` function.",
-                  FutureWarning)
-
-    return d
-
-
-def load_astero_sample(filename):
-    """Reads a MESA sample file that describes a model from one of the
-    optimization routines in the `astero` module, and returns a
-    :py:class:`MESAAsteroSample` object.
-
-    Parameters
-    ----------
-    filename: str
-        Filename of the file containing the result.
-
-    Returns
-    -------
-    sample: :py:class:`MESAAsteroSample`
-        A dictionary-like object containing all the results.
-
-    """
-    return MESAAsteroSample(load_sample(filename))
+    return MESAAsteroSample(d)
 
 
 def load_astero_samples(filenames):
@@ -175,8 +149,8 @@ def load_astero_samples(filenames):
 
     Parameters
     ----------
-    filename: str
-        Filename of the file containing the result.
+    filenames: iterable of strs
+        Filenames of the files containing the result.
 
     Returns
     -------
