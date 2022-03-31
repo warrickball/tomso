@@ -90,95 +90,6 @@ def load_fgong(filename, fmt='ivers', return_comment=False,
                  description=comment)
 
 
-def save_fgong(filename, glob, var, ivers=1300, comment=['','','',''],
-               float_formatter='ivers'):
-    """Given data for an FGONG file in the format returned by
-    :py:meth:`~tomso.fgong.load_fgong` (i.e. two NumPy arrays and a
-    possible header), writes the data to a file.
-
-    This function will be dropped from v0.1.0 in favour of the `to_file`
-    function of the :py:class:`FGONG` object.
-
-    Parameters
-    ----------
-    filename: str
-        Filename to which FGONG data is written.
-    glob: NumPy array
-        The global variables for the stellar model.
-    var: NumPy array
-        The point-wise variables for the stellar model. i.e. things
-        that vary through the star like temperature, density, etc.
-    ivers: int, optional
-        The integer indicating the version number of the file.
-        (default=1300)
-    comment: list of strs, optional
-        The first four lines of the FGONG file, which usually contain
-        notes about the stellar model.
-    float_formatter: str or function
-        Determines how floating point numbers are formatted.  If
-        ``'ivers'`` (the default), use the standard formats ``%16.9E``
-        if ``ivers < 1000`` or ``%26.18E3`` if ``ivers >= 1000``.  If
-        a Python format specifier (e.g. ``'%16.9E'``), pass floats
-        into that like ``float_formatter % float``.  Otherwise, must
-        be a function that takes a float as an argument and returns a
-        string.  In most circumstances you'll want to control the
-        output by changing the value of ``'ivers'``.
-    """
-    nn, ivar = var.shape
-    iconst = len(glob)
-
-    if float_formatter == 'ivers':
-        if ivers < 1000:
-            def ff(x):
-                if not np.isfinite(x):
-                    return '%16s' % x
-
-                s = np.format_float_scientific(x, precision=9, unique=False, exp_digits=2, sign=True)
-                if s[0] == '+':
-                    s = ' ' + s[1:]
-
-                return s
-        else:
-            def ff(x):
-                if not np.isfinite(x):
-                    return '%27s' % x
-
-                s = np.format_float_scientific(x, precision=18, unique=False, exp_digits=3, sign=True)
-                if s[0] == '+':
-                    s = ' ' + s[1:]
-
-                return ' ' + s
-    else:
-        try:
-            float_formatter % 1.111
-            ff = lambda x: float_formatter % x
-        except TypeError:
-            ff = float_formatter
-
-    with open(filename, 'wt') as f:
-        f.write('\n'.join(comment) + '\n')
-
-        line = '%10i'*4 % (nn, iconst, ivar, ivers) + '\n'
-        f.write(line)
-
-        for i, val in enumerate(glob):
-            f.write(ff(val))
-            if i % 5 == 4:
-                f.write('\n')
-
-        if i % 5 != 4:
-            f.write('\n')
-
-        for row in var:
-            for i, val in enumerate(row):
-                f.write(ff(val))
-                if i % 5 == 4:
-                    f.write('\n')
-
-        if i % 5 != 4:
-            f.write('\n')
-
-
 def fgong_get(key_or_keys, glob, var, reverse=False, G=G_DEFAULT):
     """Retrieves physical properties of a FGONG model from the ``glob`` and
     ``var`` arrays.
@@ -466,9 +377,60 @@ class FGONG(FullStellarModel):
             string.  In most circumstances you'll want to control the
             output by changing the value of ``'ivers'``.
         """
-        save_fgong(filename, self.glob, self.var,
-                   ivers=self.ivers, comment=self.description,
-                   float_formatter=float_formatter)
+        nn, ivar = self.var.shape
+        iconst = len(self.glob)
+
+        if float_formatter == 'ivers':
+            if self.ivers < 1000:
+                def ff(x):
+                    if not np.isfinite(x):
+                        return '%16s' % x
+
+                    s = np.format_float_scientific(x, precision=9, unique=False, exp_digits=2, sign=True)
+                    if s[0] == '+':
+                        s = ' ' + s[1:]
+
+                    return s
+            else:
+                def ff(x):
+                    if not np.isfinite(x):
+                        return '%27s' % x
+
+                    s = np.format_float_scientific(x, precision=18, unique=False, exp_digits=3, sign=True)
+                    if s[0] == '+':
+                        s = ' ' + s[1:]
+
+                    return ' ' + s
+        else:
+            try:
+                float_formatter % 1.111
+                ff = lambda x: float_formatter % x
+            except TypeError:
+                ff = float_formatter
+
+        with open(filename, 'wt') as f:
+            f.write('\n'.join(self.description) + '\n')
+
+            line = '%10i'*4 % (nn, iconst, ivar, self.ivers) + '\n'
+            f.write(line)
+
+            for i, val in enumerate(self.glob):
+                f.write(ff(val))
+                if i % 5 == 4:
+                    f.write('\n')
+
+            if i % 5 != 4:
+                f.write('\n')
+
+            for row in self.var:
+                for i, val in enumerate(row):
+                    f.write(ff(val))
+                    if i % 5 == 4:
+                        f.write('\n')
+
+            if i % 5 != 4:
+                f.write('\n')
+
 
     def to_amdl(self):
         """Convert the model to an :py:class:`ADIPLSStellarModel` object.
