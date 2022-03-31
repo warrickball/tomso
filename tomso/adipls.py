@@ -5,7 +5,7 @@ return or contain what I call ``cs`` arrays.  These are defined in Section 8.2 o
 the `ADIPLS documentation`_.  They are structured arrays containing
 various scalar results from the frequency calculation.
 
-    .. _ADIPLS documentation: https://sourceforge.net/p/mesa/code/HEAD/tree/trunk/adipls/adipack.c/notes/adiab.prg.c.pdf
+    .. _ADIPLS documentation: https://github.com/MESAHub/mesa/raw/r21.12.1/adipls/adipack.c/notes/adiab.prg.c.pdf
 """
 import numpy as np
 import warnings
@@ -97,9 +97,7 @@ def load_amde(filename, nfmode=1):
     nfmode: int, optional
         ADIPLS's ``nfmode`` parameter, which determines the format of
         the eigenfunction data.  See Section 8.4 of the `ADIPLS
-        documentation`_ for details of the output.  Note that for
-        ``nfmode=2`` or ``3``, the fractional radius is returned as an
-        extra (third) component.
+        documentation`_ for details of the output.
 
     Returns
     -------
@@ -703,7 +701,7 @@ class ADIPLSGrandSummary(object):
     l: NumPy array of ints
         angular degrees
     n: NumPy array of ints
-        angular degrees
+        radial orders
     sigma2: NumPy array of floats
         square of the dimensionless angular eigenfrequency
     sigma2_c: NumPy array of floats
@@ -923,9 +921,9 @@ class ADIPLSRotationKernels(ADIPLSGrandSummary):
             return('ADIPLSRotationKernels(\ncss=\n%s,\nx=%s,\nK=\n%s)' % (self.css, self.x, self.K))
 
     def K_ln(self, l, n):
-        "Load kernel by *l* and *n*."
+        "Load kernel by angular degree *l* and radial order *n*."
         return self.K[(self.l==l)&(self.n==n)][0]
 
     def K_nl(self, n, l):
-        "Load kernel by *n* and *l*."
+        "Load kernel by radial order *n* and angular degree *l*."
         return self.K_ln(l, n)
