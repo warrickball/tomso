@@ -13,7 +13,7 @@ astero_table_dtype = [('n', int), ('chi2term', float), ('freq', float), ('corr',
 
 def load_history(filename, prune=False):
     """Reads a MESA history file and returns the global data and history
-    data a `:py:class:MESALog` object.  Uses builtin `gzip` module to read
+    data a :py:class:`MESALog` object.  Uses builtin `gzip` module to read
     files ending with `.gz`.
 
     Parameters
@@ -30,7 +30,7 @@ def load_history(filename, prune=False):
 
     Returns
     -------
-    history: `:py:class:MESALog` object
+    history: :py:class:`MESALog` object
 
     """
 
@@ -55,7 +55,7 @@ def load_profile(filename):
 
     Returns
     -------
-    profile: `:py:class:MESALog` object
+    profile: :py:class:`MESALog` object
 
     """
 

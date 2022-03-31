@@ -581,5 +581,3 @@ class FGONG(FullStellarModel):
         else:
             tau = integrate(1./self.cs[::-1], self.r[::-1])[::-1]
             return np.max(tau)-tau
-
-    # - ``G1``: first adiabatic index (array)

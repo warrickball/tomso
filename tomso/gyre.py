@@ -16,7 +16,7 @@ from .utils import FullStellarModel
 
 def load_summary(filename):
     """Reads a GYRE summary file and returns the global data and mode data
-    in a dict-like `:py:class:GYRELog` object.  Uses builtin `gzip`
+    in a dict-like :py:class:`GYRELog` object.  Uses builtin `gzip`
     module to read files ending with `.gz`.
 
     Parameters
@@ -26,7 +26,7 @@ def load_summary(filename):
 
     Returns
     -------
-    summary: `:py:class:GYRELog` object
+    summary: :py:class:`GYRELog` object
 
     """
 
@@ -35,7 +35,7 @@ def load_summary(filename):
 
 def load_mode(filename):
     """Reads a GYRE mode file and returns the global data and mode profile
-    data a dict-like `:py:class:GYRELog` object.  Uses builtin `gzip`
+    data a dict-like :py:class:`GYRELog` object.  Uses builtin `gzip`
     module to read files ending with `.gz`.
 
     Parameters
@@ -45,7 +45,7 @@ def load_mode(filename):
 
     Returns
     -------
-    mode: `:py:class:GYRELog` object
+    mode: :py:class:`GYRELog` object
 
     """
 
