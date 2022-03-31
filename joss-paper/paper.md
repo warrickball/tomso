@@ -8,7 +8,7 @@ authors:
     orcid: 0000-0002-4773-1017
 affiliations:
  - name: School of Physics & Astronomy, University of Birmingham, United Kingdom
-date: 30 March 2022
+date: 31 March 2022
 bibliography: paper.bib
 
 ---
@@ -23,26 +23,32 @@ one-dimensional models.  Since the problem was defined in its modern
 form around the mid-20th century, many programs have been written to
 produce models and predict their frequencies and correspondingly many
 custom data formats have been defined, with varying levels of ease-of-use
-and interoperability.  Some are fixed-width plain text files; some are
-Fortran binaries; some can be converted from one format to another
-(but not necessarily back again).
+and interoperability.  `tomso`'s main purpose is to provide a high-level
+interface for parsing data in these formats and simplify research that
+uses them.
 
 # Statement of need
 
+Data formats for stellar models and their oscillations vary widely.
+Some are fixed-width plain text files with several blocks; some are
+Fortran binaries; and few can easily be read with standard routines
+for loading data.  Some programs require data to be prepared in a
+specific format and provide tools to do so but these tools are
+incomplete and difficult to extend.
+
 `tomso` is a set of Python modules that provides a high-level
 interface to several formats and enables or simplifies several common
-tasks in analysing the stellar models and oscillations.  First, it can
-be convenient—and is sometimes necessary—to convert files between
-different formats.  Some programs are distributed with converstion routines but
-these can be incomplete and difficult to use or extend to new formats.  Second, some
-experiments require involve modifying the stellar models directly,
-which requires reading the file in the correct (potentially fixed or binary) format, manipulating
-the data, then making sure that the data is re-written in the same
-format.  Finally, the high-level interface allows
-convenient access to sometimes complicated properties that can be
-derived from the data.
-
-# Example application
+tasks in analysing the stellar models and oscillations.  First, it
+allows the user to load the data for inspection, which can be
+cumbersome, given the complicated specifications of some formats.  The
+high-level interface also allows straightforward access to complicated
+properties that can be derived from the data.  Second, it can be
+convenient—and, as mentioned above, is sometimes necessary—to convert
+files between different formats.  Finally, some computational
+experiments involve modifying the stellar models directly, which
+requires reading the file in the correct format, manipulating the
+data, then ensuring that the data is correctly re-written in the same
+format.
 
 For example, two derived properties are the speed of sound
 $c_\mathrm{s}$ and acoustic depth $\tau$, which is how long a sound
@@ -59,12 +65,20 @@ data format.  Fig. \autoref{fig:dc_dtau} shows the same data but with
 to read the data file and one to plot the relevant data using the
 high-level properties `cs` and `tau`.
 
+`tomso`'s interfaces also aim to be easily extensible, so that in the
+future it can not only support more current codes and file formats,
+but also those that have yet to be developed.
+
 ![Plot of the sound speed gradient as a function of the acoustic depth
 in a standard solar model [Model S, @modelS], as in Fig. 7.30 of
 @acdk2010.\label{fig:dc_dtau}](https://tomso.readthedocs.io/en/stable/index-1.hires.png)
 
-`tomso`'s interfaces also aim to be easily extensible, so that in the
-future it can not only support more current codes and file formats,
-but also those that have yet to be developed.
+# Acknowledgements
+
+This work has indirectly been supported by the Deutsche
+Forschungsgemeinschaft (DFG) through grant SFB 963/1 ``Astrophysical
+Flow Instabilities and Turbulence'' (Project A18) and the UK Science
+and Technologies Facilities Council (STFC) through grant
+ST/R0023297/1.
 
 # References
