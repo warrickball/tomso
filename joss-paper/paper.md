@@ -6,9 +6,11 @@ tags:
 authors:
   - name: Warrick H. Ball
     orcid: 0000-0002-4773-1017
+    affiliation: 1
 affiliations:
  - name: School of Physics & Astronomy, University of Birmingham, United Kingdom
-date: 31 March 2022
+   index: 1
+date: 01 April 2022
 bibliography: paper.bib
 
 ---
