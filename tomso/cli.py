@@ -22,7 +22,7 @@ def get_parser():
     info_parser.add_argument(
         '-F', '--format', type=str, default='guess',
         choices={'guess', 'history', 'profile', 'summary',
-                 'mode', 'fgong', 'gyre', 'amdl'})
+                 'mode', 'fgong', 'gyre', 'amdl', 'stars-plot'})
     info_parser.add_argument(
         '-G', type=float, default=None,
         help="gravitational constant that, if given, will override "
@@ -67,7 +67,7 @@ def get_parser():
     plot_parser.add_argument(
         '-F', '--format', type=str, default='guess',
         choices={'guess', 'history', 'profile', 'summary',
-                 'mode', 'fgong', 'gyre', 'amdl'})
+                 'mode', 'fgong', 'gyre', 'amdl', 'stars-plot'})
     plot_parser.add_argument('-x', type=str, default=None)
     plot_parser.add_argument('-y', type=str, nargs='+', default=[''])
     plot_parser.add_argument(
@@ -177,6 +177,8 @@ def info(args):
             from .gyre import load_gyre as loader
         elif format == 'amdl':
             from .adipls import load_amdl as loader
+        elif format == 'stars-plot':
+            from .stars import load_plot as loader
         else:
             raise ValueError('format %s not implemented' % format)
 
@@ -264,7 +266,7 @@ def plot(args):
         format = (guess_format(filename)
                   if args.format == 'guess' else args.format)
 
-        use_keys = format in ['history', 'profile', 'summary', 'mode']
+        use_keys = format in ['history', 'profile', 'summary', 'mode', 'stars-plot']
 
         if format == 'history':
             from .mesa import load_history as loader
@@ -280,6 +282,8 @@ def plot(args):
             from .gyre import load_gyre as loader
         elif format == 'amdl':
             from .adipls import load_amdl as loader
+        elif format == 'stars-plot':
+            from .stars import load_plot as loader
         else:
             raise ValueError('format %s not implemented' % format)
 
