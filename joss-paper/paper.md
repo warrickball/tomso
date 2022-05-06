@@ -35,15 +35,26 @@ Data formats for stellar models and their oscillations vary widely.
 Some are fixed-width plain text files with several blocks; some are
 Fortran binaries; and few can easily be read with standard routines
 for loading data.  Some programs require data to be prepared in a
-specific format and provide tools to do so but these tools are
-incomplete and difficult to extend.  For example, the Aarhus adiabatic
+specific format and provide tools to do so but these tools, if publicly available, are
+incomplete and difficult to extend.  At one extreme, there are no
+public, open source libraries for manipulating data from the Cambridge
+stellar evolution code [STARS, @stars].  The Aarhus adiabatic
 oscillation package [ADIPLS, @adipls] includes tools to convert
 stellar models of one particular widely-used format (FGONG) into its
 internal Fortran binary format but not to convert them back after
 they've been manipulated by other bundled tools.
+Other programs enjoy greater support, though often limited to that
+single program,
+e.g. [PyGYRE](https://pygyre.readthedocs.io/en/stable/)'s support for
+GYRE [@gyre].  The Modules for Experiments in Stellar Astrophysics
+[MESA, @mesa] in particular enjoys support from a number of packages,
+e.g. [PyMesaReader](https://billwolf.space/py_mesa_reader/) for loading
+output data; pyMesa
+[@pymesa], which also allows access to program variables and functions;
+and mesaplot [@mesaplot], which allows advanced plotting.
 
-`tomso` is a set of Python modules that provides a high-level
-interface to several formats and enables or simplifies several common
+`tomso` is a set of Python modules that provides a compact
+interface to access data in several formats and enables or simplifies several common
 tasks in analysing the stellar models and oscillations.  First, it
 allows the user to load the data for inspection, which can be
 cumbersome, given the complicated specifications of some formats.  The
@@ -72,9 +83,7 @@ to read the data file and one to plot the relevant data using the
 high-level properties `cs` and `tau`.
 
 `tomso` currently includes interfaces for ADIPLS, the FGONG file format,
-output from GYRE [@gyre], input and output from the Modules for
-Experiments in Stellar Astrophysics [MESA, @mesa], and output from
-the Cambridge stellar evolution code [STARS, @stars].
+output from GYRE, input and output from MESA, and output from STARS.
 `tomso`'s interfaces also aim to be easily extensible, so that in the
 future it can not only support more current codes and file formats,
 but also those that have yet to be developed.
