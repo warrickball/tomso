@@ -12,7 +12,7 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(h['version_number'], 11701)
         self.assertAlmostEqual(h['burn_min1'], 50.0)
         self.assertAlmostEqual(h['burn_min2'], 1000.0)
-        self.assertEqual(h['model_number'][-1], 125)
+        self.assertEqual(h['model_number'][-1], 126)
         self.assertEqual(max(h['model_number']), 137)
 
         np.testing.assert_allclose(h['log_dt'], np.log10(h['dt']))
@@ -31,8 +31,8 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(h['version_number'], 11701)
         self.assertAlmostEqual(h['burn_min1'], 50.0)
         self.assertAlmostEqual(h['burn_min2'], 1000.0)
-        self.assertEqual(h['model_number'][-1], 125)
-        self.assertEqual(max(h['model_number']), 125)
+        self.assertEqual(h['model_number'][-1], 126)
+        self.assertEqual(max(h['model_number']), 126)
 
         np.testing.assert_array_less(h['model_number'][:-1], h['model_number'][1:])
         np.testing.assert_array_less(h['star_age'][:-1], h['star_age'][1:])
@@ -62,7 +62,7 @@ class TestMESAFunctions(unittest.TestCase):
         self.assertEqual(h['version_number'], 11701)
         self.assertAlmostEqual(h['burn_min1'], 50.0)
         self.assertAlmostEqual(h['burn_min2'], 1000.0)
-        self.assertEqual(h['model_number'][-1], 125)
+        self.assertEqual(h['model_number'][-1], 126)
         self.assertEqual(max(h['model_number']), 137)
 
     def test_load_profile(self):
