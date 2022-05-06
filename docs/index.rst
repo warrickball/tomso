@@ -8,6 +8,12 @@ TOMSO
 Tools for Models of Stars and their Oscillations
 ------------------------------------------------
 
+.. image:: https://img.shields.io/badge/GitHub-warrickball%2Ftomso-blue.svg
+    :target: https://github.com/warrickball/tomso
+.. image:: https://github.com/warrickball/tomso/actions/workflows/pytest.yml/badge.svg
+.. image:: https://img.shields.io/badge/license-MIT-orange.svg?style=flat
+    :target: https://github.com/warrickball/tomso/blob/main/LICENSE
+
 TOMSO is a set of Python modules for loading and saving input and
 output files for and from stellar evolution and oscillation codes.
 The functions are bundled together in modules that correspond to a
@@ -23,10 +29,6 @@ format and various input/output files for
 The code is intended to be the minimum necessary to usefully
 manipulate input and output data.  The only current requirement is
 *NumPy*.  *Matplotlib* is optional and only required for the command-line plotter.
-It is also *very unstable*.  Expect the API to change
-drastically or completely without warning!  Many
-modules are currently changing to object-oriented
-interfaces.  The old methods will be dropped completely from v0.1.0.
 
 Installation
 ++++++++++++
@@ -41,12 +43,22 @@ system and with ``-U`` or ``--upgrade`` to upgrade from a previous
 version.
 
 The `development version <https://github.com/warrickball/tomso>`_ is
-on GitHub.  The repo also includes unit tests and test data, which is
-omitted from the PyPI package to keep it small.
+on GitHub.  The repo also includes unit tests and test data, which I
+try to omit from the PyPI package to keep it small.  The tests are
+written using `unittest <https://docs.python.org/3/library/unittest.html>`_
+and must be run from the `tests` directory.  I usually run the tests using
+`pytest <https://docs.pytest.org/>_` with::
 
-Aside from reading URLs,
-TOMSO still appears to work with Python 2 but I'm not specifically
-supporting Python 2 anymore.
+  cd tests
+  pytest
+
+but you can run them as standalone Python scripts with, e.g.::
+
+  ls test_*.py | xargs -n1 python3
+
+The tests retrieve some online data to check that we can read from
+URLs.  These will fail if you're offline or run slowly if your
+internet connection is slow.
 
 Basic usage
 +++++++++++
@@ -98,6 +110,40 @@ where the ``--scale-factor`` multiplies the angular frequencies by
 
 The code is described in more detail through the links in the
 *user guide*.  The *module APIs* list all available functions.
+
+Contributing
+++++++++++++
+
+Something isn't working
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Search
+`the issues <https://github.com/warrickball/tomso/issues?q=is%3Aissue>`_
+on GitHub and, if your problem hasn't been addressed before, open a
+new issue that describes what you tried to do, what you expected to
+happen and what happened instead.  In case it's helpful, include your
+operating system, Python version and NumPy version.  Also try to
+include a
+`minimal working example <https://stackoverflow.com/help/minimal-reproducible-example>`_,
+including the files (or parts thereof) that are causing the problem.
+
+I found a bug and wrote a patch to fix it
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you've found the problem is something in TOMSO that doesn't work as it
+should and fixed it yourself, great!  Open a
+`pull request <https://github.com/warrickball/tomso/pulls>`_
+that describes what the problem was and how your patch fixes it.
+
+I want TOMSO to support my favourite file format
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Open an issue with links to the specification of the file format or
+where I can find (or create) examples with which to test new code.  I
+have limited time to extend TOMSO's features unless it happens to
+align with research I'm doing but I'll try my best to implement
+something.
+
 
 .. toctree::
    :maxdepth: 1

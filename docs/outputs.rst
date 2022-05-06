@@ -32,6 +32,8 @@ be accessed by keys. e.g. to plot ``logRho`` against ``logT``,
    from tomso.mesa import load_profile
    profile = load_profile('../tests/data/mesa.profile')
    pl.plot(profile['logRho'], profile['logT'])
+   pl.xlabel('logRho')
+   pl.ylabel('logT')
 
 Note that brackets are stripped so in GYRE files, things like
 ``Re(freq)`` become ``Refreq``.
@@ -72,3 +74,39 @@ STARS
 The Cambridge stellar evolution code---STARS---provides two main sets
 of plain text output: ``plot`` and ``out``.  TOMSO provides associated
 routines.
+
+The ``plot`` files contains (a lot of!) fixed-width columns of data in
+plain-text format.  The columns can be accessed using the names defined
+in ``stars.plot_dtypes``. e.g.::
+
+  from tomso import stars
+  print([name for (name, kind) in stars.plot_dtypes])
+
+``stars.load_plot`` currently just returns a NumPy record array and
+doesn't (yet) do anything clever with transforming (non-)logarithmic
+versions of the columns.
+
+The ``out`` files contain a mixture of information, starting with a
+copy of the original fixed-format input control file.  There are then
+regular "summaries": tables of some stellar properties and, at some
+user-defined interval, "profiles" that give the interior properties of
+the star.  ``stars.load_out`` reads a files and returns a
+``(summaries, profiles)`` tuple, where each component contains (most
+of) the data from the file.  The ``profiles`` object's first index is
+the profile number; the second index is the row number within that
+model.  So you can plot ``r`` against ``T`` of the last model
+with something like
+
+.. plot::
+   :include-source:
+
+   import matplotlib.pyplot as pl
+   from tomso.stars import load_out
+   summaries, profiles = load_out('../tests/data/stars.out')
+   pl.plot(profiles[-1]['r'], profiles[-1]['T'])
+   pl.xlabel('r')
+   pl.ylabel('T')
+
+The profiles' columns are defined by the user when they run STARS, so
+TOMSO infers their content from the output.  You can see what a
+profile contains with ``print(profiles.dtype.names)``.
