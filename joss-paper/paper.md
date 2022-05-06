@@ -25,7 +25,7 @@ one-dimensional models.  Since the problem was defined in its modern
 form around the mid-20th century, many programs have been written to
 produce models and predict their frequencies and correspondingly many
 custom data formats have been defined, with varying levels of ease-of-use
-and interoperability.  `tomso`'s main purpose is to provide a high-level
+and interoperability.  `tomso`'s main purpose is to provide a compact
 interface for parsing data in these formats and simplify research that
 uses them.
 
@@ -83,7 +83,7 @@ to read the data file and one to plot the relevant data using the
 high-level properties `cs` and `tau`.
 
 `tomso` currently includes interfaces for ADIPLS, the FGONG file format,
-output from GYRE, input and output from MESA, and output from STARS.
+plain-text output from GYRE, input and output from MESA, and output from STARS.
 `tomso`'s interfaces also aim to be easily extensible, so that in the
 future it can not only support more current codes and file formats,
 but also those that have yet to be developed.
