@@ -22,7 +22,8 @@ def get_parser():
     info_parser.add_argument(
         '-F', '--format', type=str, default='guess',
         choices={'guess', 'history', 'profile', 'summary',
-                 'mode', 'fgong', 'gyre', 'amdl', 'stars-plot'})
+                 'mode', 'fgong', 'gyre', 'amdl',
+                 'stars-plot', 'stars-summ'})
     info_parser.add_argument(
         '-G', type=float, default=None,
         help="gravitational constant that, if given, will override "
@@ -67,7 +68,8 @@ def get_parser():
     plot_parser.add_argument(
         '-F', '--format', type=str, default='guess',
         choices={'guess', 'history', 'profile', 'summary',
-                 'mode', 'fgong', 'gyre', 'amdl', 'stars-plot'})
+                 'mode', 'fgong', 'gyre', 'amdl',
+                 'stars-plot', 'stars-summ'})
     plot_parser.add_argument('-x', type=str, default=None)
     plot_parser.add_argument('-y', type=str, nargs='+', default=[''])
     plot_parser.add_argument(
@@ -179,6 +181,9 @@ def info(args):
             from .adipls import load_amdl as loader
         elif format == 'stars-plot':
             from .stars import load_plot as loader
+        elif format == 'stars-summ':
+            from .stars import load_out
+            loader = lambda s: load_out(s)[0]
         else:
             raise ValueError('format %s not implemented' % format)
 
@@ -266,7 +271,8 @@ def plot(args):
         format = (guess_format(filename)
                   if args.format == 'guess' else args.format)
 
-        use_keys = format in ['history', 'profile', 'summary', 'mode', 'stars-plot']
+        use_keys = format in ['history', 'profile', 'summary', 'mode',
+                              'stars-plot', 'stars-summ']
 
         if format == 'history':
             from .mesa import load_history as loader
@@ -284,6 +290,9 @@ def plot(args):
             from .adipls import load_amdl as loader
         elif format == 'stars-plot':
             from .stars import load_plot as loader
+        elif format == 'stars-summ':
+            from .stars import load_out
+            loader = lambda s: load_out(s)[0]
         else:
             raise ValueError('format %s not implemented' % format)
 
