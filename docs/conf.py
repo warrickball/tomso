@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# TOMSO documentation build configuration file, created by
+# tomso documentation build configuration file, created by
 # sphinx-quickstart on Wed Nov  8 10:58:52 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -57,7 +57,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'TOMSO'
+project = 'tomso'
 copyright = '2022, Warrick Ball'
 author = 'Warrick Ball'
 
@@ -132,7 +132,7 @@ html_theme_options = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'TOMSOdoc'
+htmlhelp_basename = 'tomsodoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -159,7 +159,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'TOMSO.tex', 'TOMSO Documentation',
+    (master_doc, 'tomso.tex', '``tomso`` Documentation',
      'Warrick Ball', 'manual'),
 ]
 
@@ -169,7 +169,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'tomso', 'TOMSO Documentation',
+    (master_doc, 'tomso', 'tomso Documentation',
      [author], 1)
 ]
 
@@ -180,8 +180,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'TOMSO', 'TOMSO Documentation',
-     author, 'TOMSO', 'One line description of project.',
+    (master_doc, 'tomso', 'tomso Documentation',
+     author, 'tomso', 'One line description of project.',
      'Miscellaneous'),
 ]
 

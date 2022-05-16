@@ -1,9 +1,10 @@
 Command-line interface
 ======================
 
-Many things I do with TOMSO lend themselves to being done from the
-command line, so TOMSO provides an executable script ``tomso``, which
-should be in your ``$PATH`` after installing TOMSO.  The script has
+Many things I do with ``tomso`` lend themselves to being done from the
+command line, so ``tomso`` provides an executable script ``tomso``, which
+should be in your ``$PATH`` after installing ``tomso``.  If it isn't,
+let me know (e.g. by opening an issue on GitHub)!  The script has
 three subcommands: ``info``, ``convert`` and ``plot``.  The script
 uses ``argparse``, so you can get help for the script itself with
 ``tomso -h`` or for any of the subcommands with ``tomso subcommand
@@ -61,7 +62,7 @@ in the file itself.
 --------------
 
 The ``plot`` subcommand facilitates quick look plots to inspect data
-in many of the formats that TOMSO supports.  Let's plot a MESA track in the
+in many of the formats that ``tomso`` supports.  Let's plot a MESA track in the
 Hertzsprung--Russell diagram: ::
 
   tomso plot ../tests/data/mesa.history -x Teff -y log_L --prune --flip-x

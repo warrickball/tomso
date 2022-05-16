@@ -3,7 +3,7 @@ Code outputs
 
 Stellar evolution and oscillation programs provide their output
 quantities (e.g. luminosity as a function of age or tables of mode
-frequencies) in a number of formats.  TOMSO provides functions to make
+frequencies) in a number of formats.  ``tomso`` provides functions to make
 it easier to work with this data.
 
 Most of the loading functions will interpret filenames starting with
@@ -22,7 +22,7 @@ columns for quantities that vary, either over a star's evolution, as a
 function of position in the star, or, for tables of mode frequencies,
 as a function of the radial order and angular degree.
 
-TOMSO's functions for reading these files return objects that can
+``tomso``'s functions for reading these files return objects that can
 be accessed by keys. e.g. to plot ``logRho`` against ``logT``,
 
 .. plot::
@@ -54,7 +54,7 @@ ADIPLS
 ------
 
 ADIPLS produces most of its output in Fortran binary formats and
-provides tools to convert these to plain text.  TOMSO provides
+provides tools to convert these to plain text.  ``tomso`` provides
 functions to read the binary files directly into Python.  The binary
 output files for the mode frequencies, eigenfunctions and rotation
 kernels all have the same basic data for the mode frequencies, which
@@ -72,7 +72,7 @@ STARS
 -----
 
 The Cambridge stellar evolution code---STARS---provides two main sets
-of plain text output: ``plot`` and ``out``.  TOMSO provides associated
+of plain text output: ``plot`` and ``out``.  ``tomso`` provides associated
 routines.
 
 The ``plot`` files contains (a lot of!) fixed-width columns of data in
@@ -108,5 +108,5 @@ with something like
    pl.ylabel('T')
 
 The profiles' columns are defined by the user when they run STARS, so
-TOMSO infers their content from the output.  You can see what a
+``tomso`` infers their content from the output.  You can see what a
 profile contains with ``print(profiles.dtype.names)``.

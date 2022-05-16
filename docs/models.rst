@@ -2,7 +2,7 @@ Stellar models
 ==============
 
 Stellar oscillation programs require stellar models stored in specific
-formats.  TOMSO provides functions to save and load files in these
+formats.  ``tomso`` provides functions to save and load files in these
 formats and to convert between formats.
 
 **FGONG** is a well-established plain-text format used to provide
@@ -15,7 +15,7 @@ to be confused with the HDF5 files that GYRE supports.
 
 **ADIPLS** expects stellar models in its own specific Fortran binary
 format, which I refer to as **AMDL** format.  ADIPLS provides its own
-tool to convert from FGONG (usually ``fgong-amdl.d``), which TOMSO
+tool to convert from FGONG (usually ``fgong-amdl.d``), which ``tomso``
 mimics when converting ``FGONG`` objects to ``ADIPLSStellarModel``
 objects using ``FGONG.to_amdl()``.  Note that AMDL files only contain
 data necessary to compute adiabatic oscillations (so no temperature,
@@ -30,7 +30,7 @@ The formats are inconsistent about including the value of the
 gravitational constant *G*, so it can be passed as an argument when
 loading a model.
 
-For each format, TOMSO returns an object with convenient
+For each format, ``tomso`` returns an object with convenient
 properties. e.g. although the sound speed isn't a field in any of the
 standard formats, using the ``cs`` property will compute it.  For
 example, here's Fig. (7.30) of Aerts, Christensen-Dalsgaard & Kurtz

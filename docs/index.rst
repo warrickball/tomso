@@ -1,12 +1,10 @@
-.. TOMSO documentation master file, created by
+.. tomso documentation master file, created by
    sphinx-quickstart on Wed Nov  8 10:58:52 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-TOMSO
-=====
-Tools for Models of Stars and their Oscillations
-------------------------------------------------
+``tomso``: Tools for Models of Stars and their Oscillations
+===========================================================
 
 .. image:: https://img.shields.io/badge/GitHub-warrickball%2Ftomso-blue.svg
     :target: https://github.com/warrickball/tomso
@@ -14,11 +12,11 @@ Tools for Models of Stars and their Oscillations
 .. image:: https://img.shields.io/badge/license-MIT-orange.svg?style=flat
     :target: https://github.com/warrickball/tomso/blob/main/LICENSE
 
-TOMSO is a set of Python modules for loading and saving input and
+``tomso`` is a set of Python modules for loading and saving input and
 output files for and from stellar evolution and oscillation codes.
 The functions are bundled together in modules that correspond to a
 specific stellar evolution code, stellar oscillation code or file
-format.  TOMSO currently supports the
+format.  ``tomso`` currently supports the
 `FGONG <http://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf>`_
 format and various input/output files for
 `ADIPLS <https://phys.au.dk/~jcd/adipack.v0_3/>`_,
@@ -31,9 +29,9 @@ manipulate input and output data.  The only current requirement is
 *NumPy*.  *Matplotlib* is optional and only required for the command-line plotter.
 
 Installation
-++++++++++++
+------------
 
-You can install most recent stable(ish) version of TOMSO from the
+You can install most recent stable(ish) version of ``tomso`` from the
 `Python Package Index <https://pypi.python.org/pypi>`_ using::
 
   pip3 install tomso
@@ -47,7 +45,7 @@ on GitHub.  The repo also includes unit tests and test data, which I
 try to omit from the PyPI package to keep it small.  The tests are
 written using `unittest <https://docs.python.org/3/library/unittest.html>`_
 and must be run from the `tests` directory.  I usually run the tests using
-`pytest <https://docs.pytest.org/>_` with::
+`pytest <https://docs.pytest.org/>`_ with::
 
   cd tests
   pytest
@@ -61,9 +59,9 @@ URLs.  These will fail if you're offline or run slowly if your
 internet connection is slow.
 
 Basic usage
-+++++++++++
+-----------
 
-TOMSO provides a straightforward interface for multiple tasks on
+``tomso`` provides a straightforward interface for multiple tasks on
 stellar models.
 
 For a simple real-world example, to convert an FGONG file (that
@@ -112,7 +110,7 @@ The code is described in more detail through the links in the
 *user guide*.  The *module APIs* list all available functions.
 
 Contributing
-++++++++++++
+------------
 
 Something isn't working
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -130,20 +128,19 @@ including the files (or parts thereof) that are causing the problem.
 I found a bug and wrote a patch to fix it
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you've found the problem is something in TOMSO that doesn't work as it
+If you've found the problem is something in ``tomso`` that doesn't work as it
 should and fixed it yourself, great!  Open a
 `pull request <https://github.com/warrickball/tomso/pulls>`_
 that describes what the problem was and how your patch fixes it.
 
-I want TOMSO to support my favourite file format
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+I want ``tomso`` to support my favourite file format
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Open an issue with links to the specification of the file format or
 where I can find (or create) examples with which to test new code.  I
-have limited time to extend TOMSO's features unless it happens to
+have limited time to extend ``tomso``'s features unless it happens to
 align with research I'm doing but I'll try my best to implement
 something.
-
 
 .. toctree::
    :maxdepth: 1
