@@ -21,9 +21,11 @@ Many branches of astronomy interpret observations through approximate,
 one-dimensional models of stars.  Furthermore, many stars are observed
 to undergo resonant pulsations, and the frequencies at which they do
 so are similarly interpreted through the predicted pulsations of the
-one-dimensional models.  Since the problem was defined in its modern
-form around the mid-20th century, many programs have been written to
-produce models and predict their frequencies and correspondingly many
+one-dimensional models.  The study of these resonant pulsations in stars
+is known as *asteroseismology*.  Since the equations of stellar structure,
+evolution and pulsation were defined in their modern
+forms around the mid-20th century, many programs have been written to
+produce models and predict their pulsations frequencies and correspondingly many
 custom data formats have been defined, with varying levels of ease-of-use
 and interoperability.  `tomso`'s main purpose is to provide a compact
 interface for parsing data in these formats and simplify research that
@@ -54,7 +56,7 @@ output data; pyMesa
 and mesaplot [@mesaplot], which allows advanced plotting.
 
 `tomso` is a set of Python modules that provides a compact
-interface to access data in several formats and enables or simplifies several common
+interface to access data in several formats.  It also enables or simplifies several common
 tasks in analysing the stellar models and oscillations.  First, it
 allows the user to load the data for inspection, which can be
 cumbersome, given the complicated specifications of some formats.  The
@@ -65,7 +67,8 @@ files between different formats.  Finally, some computational
 experiments involve modifying the stellar models directly, which
 requires reading the file in the correct format, manipulating the
 data, then ensuring that the data is correctly re-written in the same
-format.
+format.  A key—and currently unique—aim of `tomso` is to provide a common interface to
+data stored in several different fixed-width or binary formats.
 
 For example, two derived properties are the speed of sound
 $c_\mathrm{s}$ and acoustic depth $\tau$, which is how long a sound
@@ -73,9 +76,8 @@ wave would take to travel from a star's surface to some depth inside.
 The sound speed gradient $dc_\mathrm{s}/d\tau$ is useful for
 identifying regions where sudden changes in the star's structure might
 discernibly affect the frequencies at which it vibrates.
-Such a figure is shown for a standard solar model, Model S [@modelS],
-in the textbook by @acdk2010 [their Fig. 7.30, which is in essence the
-same as Fig. 1 in @monteiro2000] but requires some manipulation of the
+Such figures are shown for models of the Sun in, e.g., @monteiro2000[Fig. 1]
+and @acdk2010 [Fig. 7.30].  These figures, however, require some manipulation of the
 source data because neither $c_\mathrm{s}$ nor $\tau$ are part of the
 data format.  \autoref{fig:dc_dtau} shows the same data but with
 `tomso` this is naturally expressed in two functional lines of Python code: one
