@@ -40,6 +40,10 @@ extensions = ['sphinx.ext.autodoc',
               'sphinxarg.ext',
               'matplotlib.sphinxext.plot_directive']
 
+plot_html_show_source_link = False
+plot_html_show_formats = False
+plot_formats = ['png', 'pdf']
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
