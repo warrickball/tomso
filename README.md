@@ -1,10 +1,10 @@
 # `tomso`: Tools for Models of Stars and their Oscillations
 
-TOMSO is a set of Python modules for loading and saving input and
+`tomso` is a set of Python modules for loading and saving input and
 output files for and from stellar evolution and oscillation codes.
 The functions are bundled together in modules that correspond to a
 specific stellar evolution code, stellar oscillation code or file
-format.  TOMSO currently supports the
+format.  `tomso` currently supports the
 [FGONG](http://www.astro.up.pt/corot/ntools/docs/CoRoT_ESTA_Files.pdf)
 format and various input/output files for
 [ADIPLS](http://users-phys.au.dk/jcd/adipack.n/),
@@ -30,15 +30,15 @@ including the files (or parts thereof) that are causing the problem.
 
 ### I found a bug and wrote a patch to fix it
 
-If you've found the problem is something in TOMSO that doesn't work as it
+If you've found the problem is something in `tomso` that doesn't work as it
 should and fixed it yourself, great!  Open a [pull request](https://github.com/warrickball/tomso/pulls)
 that describes what the problem was and how your patch fixes it.
 
-### I want TOMSO to support my favourite file format
+### I want `tomso` to support my favourite file format
 
 Open an issue with links to the specification of the file format or
 where I can find (or create) examples with which to test new code.  I
-have limited time to extend TOMSO's features unless it happens to
+have limited time to extend `tomso`'s features unless it happens to
 align with research I'm doing but I'll try my best to implement
 something.
 
