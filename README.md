@@ -1,4 +1,4 @@
-# TOMSO: Tools for Models of Stars and their Oscillations
+# `tomso`: Tools for Models of Stars and their Oscillations
 
 TOMSO is a set of Python modules for loading and saving input and
 output files for and from stellar evolution and oscillation codes.
