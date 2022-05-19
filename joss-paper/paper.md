@@ -69,6 +69,11 @@ requires reading the file in the correct format, manipulating the
 data, then ensuring that the data is correctly re-written in the same
 format.  A key—and currently unique—aim of `tomso` is to provide a common interface to
 data stored in several different fixed-width or binary formats.
+When working with the input and output of a single program that
+is already supported by similar packages (e.g., MESA),
+`tomso` might not offer any benefit.  `tomso` is, however, particularly
+useful for manipulating and converting stellar models that are inputs for frequency
+calculations, which is generally unsupported by any public, open-source package.
 
 For example, two derived properties are the speed of sound
 $c_\mathrm{s}$ and acoustic depth $\tau$, which is how long a sound
@@ -82,7 +87,9 @@ source data because neither $c_\mathrm{s}$ nor $\tau$ are part of the
 data format.  \autoref{fig:dc_dtau} shows the same data but with
 `tomso` this is naturally expressed in two functional lines of Python code: one
 to read the data file and one to plot the relevant data using the
-high-level properties `cs` and `tau`.
+high-level properties `cs` and `tau`.  The code is the same whether
+the stellar model is in ADIPLS's binary format, FGONG format or GYRE's plain-text
+model format.
 
 `tomso` currently includes interfaces for ADIPLS, the FGONG file format,
 plain-text output from GYRE, input and output from MESA, and output from STARS.
