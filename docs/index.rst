@@ -83,6 +83,7 @@ Fig. (7.30) of Aerts, Christensen-Dalsgaard & Kurtz (2010):
 .. plot::
    :include-source:
 
+   import numpy as np
    import matplotlib.pyplot as pl
    from tomso import fgong
 
