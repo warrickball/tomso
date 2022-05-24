@@ -99,7 +99,7 @@ but also those that have yet to be developed.
 
 ![Plot of the sound speed gradient as a function of the acoustic depth
 in a standard solar model [Model S, @modelS], as in Fig. 7.30 of
-@acdk2010.\label{fig:dc_dtau}](https://tomso.readthedocs.io/en/stable/index-1.hires.png)
+@acdk2010.\label{fig:dc_dtau}](modelS_dcs_dtau.png)
 
 # Acknowledgements
 
