@@ -22,7 +22,7 @@ def get_parser():
     info_parser.add_argument(
         '-F', '--format', type=str, default='guess',
         choices={'guess', 'history', 'profile', 'summary',
-                 'mode', 'fgong', 'gyre', 'amdl',
+                 'mode', 'fgong', 'gyre', 'amdl', 'agsm',
                  'stars-plot', 'stars-summ'})
     info_parser.add_argument(
         '-G', type=float, default=None,
@@ -149,7 +149,7 @@ def guess_format(filename):
     ends with `'fgong'`, `'amdl'`, `'gyre'`, `'history'`, `'profile'`,
     `'mode'` or `'summary'`.  Exits at first match so
     `profile1.data.FGONG` returns `fgong`, not `profile`."""
-    for format in ['fgong', 'amdl', 'mode', 'summary',
+    for format in ['fgong', 'amdl', 'agsm', 'mode', 'summary',
                    'gyre', 'history', 'profile']:
         if starts_or_ends_with(filename, format):
             return format
@@ -179,6 +179,8 @@ def info(args):
             from .gyre import load_gyre as loader
         elif format == 'amdl':
             from .adipls import load_amdl as loader
+        elif format == 'agsm':
+            from .adipls import load_agsm as loader
         elif format == 'stars-plot':
             from .stars import load_plot as loader
         elif format == 'stars-summ':
