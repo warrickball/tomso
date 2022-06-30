@@ -205,7 +205,7 @@ def convert(args):
         raise ValueError("input format and output format are both %s\n"
                          "did you mean to copy the file?" % from_format)
 
-    kwargs = {'return_object': True}
+    kwargs = {}
     if args.G is not None:
         kwargs['G'] = args.G
 
