@@ -193,8 +193,8 @@ def load_rkr(filename):
     return ADIPLSRotationKernels(*load_pointwise_data(filename, 2))
 
 
-def kernels(cs, eig, D, A, G=G_DEFAULT, alpha=None):
-    """Returns the density and squared sound speed kernels.  I have tried
+def kernels(cs, eig, D, A, G=G_DEFAULT, alpha=None, pair='cs2,rho'):
+    """Returns inversion kernels for variables specified using ``pair``.  I have tried
     to make this as notationally similar to Gough & Thompson (1991) as
     possible.  The kernels are normalized to have unit integrals over
     the radius *r*.
@@ -219,6 +219,11 @@ def kernels(cs, eig, D, A, G=G_DEFAULT, alpha=None):
     alpha: float, optional
         Coefficient of the complementary function.  If ``None``, computed
         as in Michael Thompson's kernel code.
+    pair: str, optional
+        Variable pair for which to compute kernels.  Options are
+        ``cs2,rho`` for squared sound speed and density or
+        ``Gamma1,rho`` for first adiabatic index and density.
+        This also defines the order in which the kernels are returned.
 
     Returns
     -------
@@ -279,24 +284,41 @@ def kernels(cs, eig, D, A, G=G_DEFAULT, alpha=None):
 
     S = np.trapz((xi_r**2 + L2*xi_h**2)*rho*r**2, r)
 
-    K_cs2 = rho*cs2*chi**2*r**2  # c.f. equation (60)
-    K_cs2 = K_cs2/S/omega**2/2.
+    K_cs2_rho = rho*cs2*chi**2*r**2  # c.f. equation (60)
+    K_cs2_rho = K_cs2_rho/S/omega**2/2.
 
     # following InversionKit (103)
-    K_rho = cs2*chi**2 - omega**2*(xi_r**2+L2*xi_h**2) \
+    K_rho_cs2 = cs2*chi**2 - omega**2*(xi_r**2+L2*xi_h**2) \
         - 2.*g*xi_r*(chi - dxi_r_dr) \
         + 4.*np.pi*G*rho*xi_r**2 \
         - 4.*np.pi*G*complement((2.*rho*chi+xi_r*drho_dr)*xi_r, r) \
         + 2.*(xi_r*dPhi_dr + L2*xi_h*Phi_r)
-    K_rho = K_rho*rho*r**2/2./S/omega**2
+    K_rho_cs2 = K_rho_cs2*rho*r**2/2./S/omega**2
 
     comp = rho*r**2
-    if alpha is None:
-        alpha = np.trapz(K_rho*comp, r)/np.trapz(comp*comp, r)
 
-    K_rho = K_rho - alpha*comp
+    if pair == 'cs2,rho':
+        if alpha is None:
+            alpha = np.trapz(K_rho_cs2*comp, r)/np.trapz(comp*comp, r)
 
-    return K_cs2, K_rho
+        return K_cs2_rho, K_rho_cs2 - alpha*comp
+
+    # (Γ₁,ρ)
+    K_Gamma1_rho = K_cs2_rho
+    integrand = G1*chi**2*r**2/2/S/omega**2
+    integral_rho_div_r2 = integrate(integrand, r)*rho/r**2
+    integral_rho_div_r2[r==0] = 2*integral_rho_div_r2[1] - integral_rho_div_r2[2]
+    K_rho_Gamma1 = K_rho_cs2 - K_cs2_rho \
+        + G*m*integral_rho_div_r2 \
+        + 4*np.pi*G*rho*r**2*complement(integral_rho_div_r2, r)
+
+    if pair == 'Gamma1,rho':
+        if alpha is None:
+            alpha = np.trapz(K_rho_Gamma1*comp, r)/np.trapz(comp*comp, r)
+
+        return K_Gamma1_rho, K_rho_Gamma1 - alpha*comp
+
+    raise ValueError("invalid choice '%s' for pair" % pair)
 
 
 cs_dtypes = [('xmod','float'), ('M','float'), ('R','float'),
