@@ -1,4 +1,4 @@
-          2022-06-30 -- `adipls` can now calculate (Γ₁,ρ) kernels
+v0.2.1,   2022-06-30 -- `adipls` can now calculate (Γ₁,ρ) kernels
 v0.2.0,   2022-05-19 -- add basic support for command-line plots of STARS output
 v0.1.0,   2022-03-31 -- removed old procedural functions
           2021-06-15 -- added 'unique' option to `tomso plot --legend`
