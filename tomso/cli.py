@@ -157,6 +157,34 @@ def guess_format(filename):
         raise ValueError("couldn't guess format of %s" % filename)
 
 
+def get_loader(format):
+    if format == 'history':
+        from .mesa import load_history as loader
+    elif format == 'profile':
+        from .mesa import load_profile as loader
+    elif format == 'summary':
+        from .gyre import load_summary as loader
+    elif format == 'mode':
+        from .gyre import load_mode as loader
+    elif format == 'fgong':
+        from .fgong import load_fgong as loader
+    elif format == 'gyre':
+        from .gyre import load_gyre as loader
+    elif format == 'amdl':
+        from .adipls import load_amdl as loader
+    elif format == 'agsm':
+        from .adipls import load_agsm as loader
+    elif format == 'stars-plot':
+        from .stars import load_plot as loader
+    elif format == 'stars-summ':
+        from .stars import load_out
+        loader = lambda s: load_out(s)[0]
+    else:
+        raise ValueError('format %s not implemented' % format)
+
+    return loader
+
+
 def info(args):
     """Info function for `tomso` command-line script."""
 
@@ -164,32 +192,7 @@ def info(args):
         format = (guess_format(filename)
                   if args.format == 'guess' else args.format)
 
-
-        if format == 'history':
-            from .mesa import load_history as loader
-        elif format == 'profile':
-            from .mesa import load_profile as loader
-        elif format == 'summary':
-            from .gyre import load_summary as loader
-        elif format == 'mode':
-            from .gyre import load_mode as loader
-        elif format == 'fgong':
-            from .fgong import load_fgong as loader
-        elif format == 'gyre':
-            from .gyre import load_gyre as loader
-        elif format == 'amdl':
-            from .adipls import load_amdl as loader
-        elif format == 'agsm':
-            from .adipls import load_agsm as loader
-        elif format == 'stars-plot':
-            from .stars import load_plot as loader
-        elif format == 'stars-summ':
-            from .stars import load_out
-            loader = lambda s: load_out(s)[0]
-        else:
-            raise ValueError('format %s not implemented' % format)
-
-        print(loader(filename))
+        print(get_loader(format)(filename))
 
 
 def convert(args):
@@ -209,17 +212,7 @@ def convert(args):
     if args.G is not None:
         kwargs['G'] = args.G
 
-    if from_format == 'fgong':
-        from tomso.fgong import load_fgong
-        m = load_fgong(args.input_file, **kwargs)
-    elif from_format == 'amdl':
-        from tomso.adipls import load_amdl
-        m = load_amdl(args.input_file, **kwargs)
-    elif from_format == 'gyre':
-        from tomso.gyre import load_gyre
-        m = load_gyre(args.input_file, **kwargs)
-    else:
-        raise ValueError("%s is not a valid input format" % from_format)
+    m = get_loader(from_format)(args.input_file, **kwargs)
 
     if to_format == 'fgong':
         m.to_fgong(ivers=args.ivers).to_file(args.output_file)
@@ -275,28 +268,7 @@ def plot(args):
 
         use_keys = format in ['history', 'profile', 'summary', 'mode',
                               'stars-plot', 'stars-summ']
-
-        if format == 'history':
-            from .mesa import load_history as loader
-        elif format == 'profile':
-            from .mesa import load_profile as loader
-        elif format == 'summary':
-            from .gyre import load_summary as loader
-        elif format == 'mode':
-            from .gyre import load_mode as loader
-        elif format == 'fgong':
-            from .fgong import load_fgong as loader
-        elif format == 'gyre':
-            from .gyre import load_gyre as loader
-        elif format == 'amdl':
-            from .adipls import load_amdl as loader
-        elif format == 'stars-plot':
-            from .stars import load_plot as loader
-        elif format == 'stars-summ':
-            from .stars import load_out
-            loader = lambda s: load_out(s)[0]
-        else:
-            raise ValueError('format %s not implemented' % format)
+        loader = get_loader(format)
 
         if format in ['history', 'profile'] and args.prune:
             data = loader(filename, prune=True)
