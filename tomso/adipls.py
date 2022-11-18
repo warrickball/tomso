@@ -542,9 +542,9 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
             version = max([k for k in gyre_header_dtypes.keys()])
 
         header = np.zeros(1, gyre_header_dtypes[version])
-        header['M'] = self.D[0]
-        header['R'] = self.D[1]
-        header['L'] = 42.0
+        header['M_star'] = self.D[0]
+        header['R_star'] = self.D[1]
+        header['L_star'] = 42.0
         header['version'] = version
 
         data = np.ones(self.nn, gyre_data_dtypes[version])

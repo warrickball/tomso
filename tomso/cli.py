@@ -6,6 +6,7 @@ directly."""
 
 from argparse import ArgumentParser
 
+
 def get_parser():
     """Returns the ``argparse.ArgumentParser`` used by the `tomso`
     command-line script."""
@@ -22,7 +23,7 @@ def get_parser():
     info_parser.add_argument(
         '-F', '--format', type=str, default='guess',
         choices={'guess', 'history', 'profile', 'summary',
-                 'mode', 'fgong', 'gyre', 'amdl', 'agsm',
+                 'mode', 'fgong', 'gyre', 'gsm', 'amdl', 'agsm',
                  'stars-plot', 'stars-summ'})
     info_parser.add_argument(
         '-G', type=float, default=None,
@@ -37,10 +38,10 @@ def get_parser():
         "another.")
     convert_parser.add_argument(
         '-f', '--from', type=str, default='guess', dest='from_format',
-        choices={'guess', 'fgong', 'amdl', 'gyre'})
+        choices={'guess', 'fgong', 'amdl', 'gyre', 'gsm'})
     convert_parser.add_argument(
         '-t', '--to', type=str, default='guess', dest='to_format',
-        choices={'guess', 'fgong', 'amdl', 'gyre'})
+        choices={'guess', 'fgong', 'amdl', 'gyre', 'gsm'})
     convert_parser.add_argument('input_file', type=str)
     convert_parser.add_argument('-o', '--output-file', type=str,
                                 required=True)
@@ -68,7 +69,7 @@ def get_parser():
     plot_parser.add_argument(
         '-F', '--format', type=str, default='guess',
         choices={'guess', 'history', 'profile', 'summary',
-                 'mode', 'fgong', 'gyre', 'amdl',
+                 'mode', 'fgong', 'gyre', 'gsm', 'amdl',
                  'stars-plot', 'stars-summ'})
     plot_parser.add_argument('-x', type=str, default=None)
     plot_parser.add_argument('-y', type=str, nargs='+', default=[''])
@@ -146,11 +147,11 @@ def starts_or_ends_with(s, w):
 
 def guess_format(filename):
     """Try to guess the format of `filename` by testing if it starts or
-    ends with `'fgong'`, `'amdl'`, `'gyre'`, `'history'`, `'profile'`,
+    ends with `'fgong'`, `'amdl'`, `'gyre'`, `'gsm'`, `'history'`, `'profile'`,
     `'mode'` or `'summary'`.  Exits at first match so
     `profile1.data.FGONG` returns `fgong`, not `profile`."""
     for format in ['fgong', 'amdl', 'agsm', 'mode', 'summary',
-                   'gyre', 'history', 'profile']:
+                   'gyre', 'gsm', 'history', 'profile']:
         if starts_or_ends_with(filename, format):
             return format
     else:
@@ -170,6 +171,8 @@ def get_loader(format):
         from .fgong import load_fgong as loader
     elif format == 'gyre':
         from .gyre import load_gyre as loader
+    elif format == 'gsm':
+        from .gyre import load_gsm as loader
     elif format == 'amdl':
         from .adipls import load_amdl as loader
     elif format == 'agsm':
@@ -219,7 +222,15 @@ def convert(args):
     elif to_format == 'amdl':
         m.to_amdl().to_file(args.output_file)
     elif to_format == 'gyre':
-        m.to_gyre().to_file(args.output_file)
+        if from_format == 'gsm':
+            m.to_plain(args.output_file)
+        else:
+            m.to_gyre().to_file(args.output_file)
+    elif to_format == 'gsm':
+        if from_format == 'gyre':
+            m.to_gsm(args.output_file)
+        else:
+            m.to_gyre().to_gsm(args.output_file)
     else:
         raise ValueError("%s is not a valid output format" % to_format)
 
@@ -272,7 +283,7 @@ def plot(args):
 
         if format in ['history', 'profile'] and args.prune:
             data = loader(filename, prune=True)
-        elif format in ['fgong', 'gyre', 'amdl'] and args.G:
+        elif format in ['fgong', 'gyre', 'gsm', 'amdl'] and args.G:
             data = loader(filename, G=args.G)
         else:
             data = loader(filename)
