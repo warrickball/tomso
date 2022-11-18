@@ -11,7 +11,7 @@ setup(
     author_email = 'W.H.Ball@bham.ac.uk',
     url = 'https://github.com/warrickball/tomso',
     download_url = 'https://github.com/warrickball/tomso/archive/v0.2.1.tar.gz',
-    install_requires=['numpy'],
+    install_requires=['numpy', 'h5py'],
     keywords = [],
     scripts = ['scripts/tomso'],
     license = 'MIT',

@@ -6,8 +6,8 @@ Functions for manipulating `GYRE`_ input and output files.
 .. _GYRE: https://gyre.readthedocs.io/
 """
 
+import h5py
 import numpy as np
-import warnings
 from .constants import G_DEFAULT
 from .utils import tomso_open, load_mesa_gyre
 from .utils import integrate, regularize
@@ -96,6 +96,26 @@ def load_gyre(filename):
     return GYREStellarModel(header, data)
 
 
+def load_gsm(filename):
+    """Reads a GSM file and returns the global data and point-wise data
+    in a :py:class:`HDF5GYREStellarModel` object.  Uses the `h5py` module.
+
+    Parameters
+    ----------
+    filename: str
+        Filename of the GSM file.
+
+    Returns
+    -------
+    model: :py:class:`HDF5GYREStellarModel`
+        Dict-like access to global and profile data.
+
+    """
+    f = h5py.File(filename, "r")
+
+    return HDF5GYREStellarModel(f)
+
+
 def save_gyre(filename, header, data):
     """Given the global data and point-wise data for a stellar model (as
     returned by :py:meth:`load_gyre`), saves the data to a target file
@@ -114,23 +134,15 @@ def save_gyre(filename, header, data):
 
     """
     with open(filename, 'wt') as f:
-        header_length = len(list(header[()]))
-        # if header_length == 4:
-        #     fmt = ''.join(['%6i','%26.16E'*3,'\n'])
-        # elif header_length == 5:
-        #     fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
-        # else:
-        #     raise ValueError("header should have 4 or 5 components but "
-        #                      "it appears to have %i" % header_length)
-        if not 'version' in header.dtype.names:
-            fmt = ''.join(['%6i','%26.16E'*3,'\n'])
+        if 'version' not in header.dtype.names:
+            fmt = ''.join(['%6i', '%26.16E' * 3, '\n'])
         else:
-            fmt = ''.join(['%6i','%26.16E'*3,'%6i\n'])
+            fmt = ''.join(['%6i', '%26.16E' * 3, '%6i\n'])
 
         f.writelines([fmt % tuple(header[()])])
 
-        N = len(data[0])-1
-        fmt = ''.join(['%6i',' %26.16E'*N,'\n'])
+        N = len(data[0]) - 1
+        fmt = ''.join(['%6i', ' %26.16E' * N, '\n'])
         for row in data:
             f.writelines([fmt % tuple(row)])
 
@@ -199,12 +211,12 @@ class GYRELog(object):
             return GYRELog(self.header, self.data[key])
 
 
-class GYREStellarModel(FullStellarModel):
+class AbstractGYREStellarModel(FullStellarModel):
     """A class that contains and allows one to manipulate the data stored
-    a plain-text GYRE Stellar Model.
+    a plain-text or HDF5 GYRE Stellar Model.
     This will usually be provided from a file by using
-    :py:meth:`load_gyre` but an object can be constructed from any
-    similarly structured arrays.
+    :py:meth:`load_gyre` or :py:meth:`load_gsm` but an object can be
+    constructed from any similarly structured arrays.
 
     The main attributes are the **header** and **data** record arrays,
     which store the data that's written in the text file.  The data in
@@ -292,28 +304,10 @@ class GYREStellarModel(FullStellarModel):
     tau: NumPy array
         acoustic depth
     """
-    def __init__(self, header, data, G=G_DEFAULT):
-        self.header = header
-        self.data = data
-        self.G = G
-
-    def __len__(self):
-        return len(self.data)
 
     def __repr__(self):
         with np.printoptions(threshold=10):
             return('GYREStellarModel(\nheader=\n%s,\ndata=\n%s\n)' % (self.header, self.data))
-
-    def to_file(self, filename):
-        """Save the model to a file.
-
-        Parameters
-        ----------
-        filename: str
-            Filename to which the data is written.
-        """
-        self.header['n'] = self.n
-        save_gyre(filename, self.header, self.data)
 
     def to_fgong(self, reverse=True, ivers=1300):
         """Convert the model to an ``FGONG`` object.
@@ -337,7 +331,7 @@ class GYREStellarModel(FullStellarModel):
         glob[2] = self.L
         glob[14] = self.G
 
-        var = np.zeros((len(self.data), 40))
+        var = np.zeros((len(self), 40))
         var[:,0] = self.r
         var[:,1] = self.lnq
         var[:,2] = self.T
@@ -359,7 +353,7 @@ class GYREStellarModel(FullStellarModel):
         from .adipls import ADIPLSStellarModel
 
         ioff = (0 if self.r[0] < 1e6 else 1) # mimic ADIPLS's FGONG to AMDL script
-        A = np.zeros((len(self.data) + ioff, 6))
+        A = np.zeros((len(self) + ioff, 6))
 
         # we can safely ignore division by 0 here
         with np.errstate(divide='ignore', invalid='ignore'):
@@ -389,40 +383,26 @@ class GYREStellarModel(FullStellarModel):
 
         return ADIPLSStellarModel(D, A, G=self.G)
 
-    @property
-    def version(self):
-        if 'version' in self.header.dtype.names:
-            return self.header['version']
-        else:
-            return 1
-
-    @property
-    def n(self):
-        return len(self.data)
-
     # Various properties for easier access to the data in `header` and
     # `data`.
 
     @property
-    def M(self): return self.header['M']
+    def M(self): return self.header['M_star']
 
     @M.setter
-    def M(self, val): self.header['M'] = val
+    def M(self, val): self.header['M_star'] = val
 
     @property
-    def R(self): return self.header['R']
+    def R(self): return self.header['R_star']
 
     @R.setter
-    def R(self, val): self.header['R'] = val
+    def R(self, val): self.header['R_star'] = val
 
     @property
-    def L(self): return self.header['L']
+    def L(self): return self.header['L_star']
 
     @L.setter
-    def L(self, val): self.header['L'] = val
-
-    @property
-    def k(self): return self.data['k']
+    def L(self, val): self.header['L_star'] = val
 
     @property
     def r(self): return self.data['r']
@@ -437,10 +417,12 @@ class GYREStellarModel(FullStellarModel):
     def L_r(self, val): self.data['L_r'] = val
 
     @property
-    def P(self): return self.data['P']
+    def P(self):
+        return self.data['p' if self.version in (1, 19) else 'P']
 
     @P.setter
-    def P(self, val): self.data['P'] = val
+    def P(self, val):
+        self.data['p' if self.version in (1, 19) else 'P'] = val
 
     @property
     def T(self): return self.data['T']
@@ -464,10 +446,12 @@ class GYREStellarModel(FullStellarModel):
     def N2(self, val): self.data['N2'] = val
 
     @property
-    def kappa(self): return self.data['kappa']
+    def kappa(self):
+        return self.data['kappa' if self.version in (1, 19, 100) else 'kap']
 
     @kappa.setter
-    def kappa(self, val): self.data['kappa'] = val
+    def kappa(self, val):
+        self.data['kappa' if self.version in (1, 19, 100) else 'kap'] = val
 
     @property
     def grad_a(self): return self.data['nabla_ad']
@@ -479,21 +463,21 @@ class GYREStellarModel(FullStellarModel):
         if self.version in [1, 19]:
             return self.data['w']
         else:
-            return self.data['m']/(self.header['M']-self.data['m'])
+            return self.data['M_r'] / (self.header['M_star'] - self.data['M_r'])
 
     @property
     def m(self):
         if self.version in [1, 19]:
-            return self.data['w']*self.header['M']/(self.data['w']+1)
+            return self.data['w'] * self.header['M_r'] / (self.data['w'] + 1)
         else:
-            return self.data['m']
+            return self.data['M_r']
 
     @m.setter
     def m(self, val):
         if self.version in [1, 19]:
-            self.data['w'] = val/(self.M-w)
+            self.data['w'] = val / (self.M - val)
         else:
-            self.data['m'] = val
+            self.data['M_r'] = val
 
     @property
     def Gamma_1(self):
@@ -511,17 +495,17 @@ class GYREStellarModel(FullStellarModel):
 
     @property
     def eps(self):
-        if self.version in [1, 19, 100]:
-            return self.data['eps_tot']
+        if self.version in [1, 19]:
+            return self.data['epsilon']
         else:
             return self.data['eps']
 
     @property
     def Omega(self):
         if self.version == 1:
-            return np.zeros_like(self.data['k'])
+            return np.zeros(len(self))
         else:
-            return self.data['Omega']
+            return self.data['Omega_rot']
 
     # Some convenient quantities derived from data in `header` and
     # `data` arrays.
@@ -566,45 +550,169 @@ class GYREStellarModel(FullStellarModel):
 
 gyre_header_dtypes = {1: [('n','int'), ('M','float'), ('R','float'),
                           ('L','float')],
-                      19: [('n','int'), ('M','float'), ('R','float'),
-                           ('L','float'), ('version','int')],
-                      100: [('n','int'), ('M','float'), ('R','float'),
-                            ('L','float'), ('version','int')],
-                      101: [('n','int'), ('M','float'), ('R','float'),
-                            ('L','float'), ('version','int')]}
+                      19: [('n','int'), ('M_star','float'), ('R_star','float'),
+                           ('L_star','float'), ('version','int')],
+                      100: [('n','int'), ('M_star','float'), ('R_star','float'),
+                            ('L_star','float'), ('version','int')],
+                      101: [('n','int'), ('M_star','float'), ('R_star','float'),
+                            ('L_star','float'), ('version','int')]}
 
 gyre_data_dtypes = {1: [('k','int'), ('r','float'), ('w','float'),
-                        ('L_r','float'), ('P','float'), ('T','float'),
+                        ('L_r','float'), ('p','float'), ('T','float'),
                         ('rho','float'), ('nabla','float'),
                         ('N2','float'), ('c_V','float'), ('c_P','float'),
                         ('chi_T','float'), ('chi_rho','float'),
                         ('kappa','float'), ('kappa_T','float'),
-                        ('kappa_rho','float'), ('eps_tot','float'),
-                        ('eps_eps_T','float'), ('eps_eps_rho','float')],
+                        ('kappa_rho','float'), ('epsilon','float'),
+                        ('epsilon_T','float'), ('epsilon_rho','float')],
                     19: [('k','int'), ('r','float'), ('w','float'),
-                         ('L_r','float'), ('P','float'), ('T','float'),
+                         ('L_r','float'), ('p','float'), ('T','float'),
                          ('rho','float'), ('nabla','float'),
                          ('N2','float'), ('Gamma_1','float'),
                          ('nabla_ad','float'), ('delta','float'),
                          ('kappa','float'), ('kappa_T','float'),
-                         ('kappa_rho','float'), ('eps_tot','float'),
-                         ('eps_eps_T','float'), ('eps_eps_rho','float'),
-                         ('Omega','float')],
-                    100: [('k','int'), ('r','float'), ('m','float'),
+                         ('kappa_rho','float'), ('epsilon','float'),
+                         ('epsilon_T','float'), ('epsilon_rho','float'),
+                         ('Omega_rot','float')],
+                    100: [('k','int'), ('r','float'), ('M_r','float'),
                           ('L_r','float'), ('P','float'), ('T','float'),
                           ('rho','float'), ('nabla','float'),
                           ('N2','float'), ('Gamma_1','float'),
                           ('nabla_ad','float'), ('delta','float'),
-                          ('kappa','float'), ('kappa_kappa_T','float'),
-                          ('kappa_kappa_rho','float'), ('eps_tot','float'),
-                          ('eps_eps_T','float'), ('eps_eps_rho','float'),
-                          ('Omega','float')],
-                    101: [('k','int'), ('r','float'), ('m','float'),
+                          ('kap','float'), ('kap_T','float'),
+                          ('kap_rho','float'), ('eps','float'),
+                          ('eps_T','float'), ('eps_rho','float'),
+                          ('Omega_rot','float')],
+                    101: [('k','int'), ('r','float'), ('M_r','float'),
                           ('L_r','float'), ('P','float'), ('T','float'),
                           ('rho','float'), ('nabla','float'),
                           ('N2','float'), ('Gamma_1','float'),
                           ('nabla_ad','float'), ('delta','float'),
-                          ('kappa','float'), ('kappa_kappa_T','float'),
-                          ('kappa_kappa_rho','float'), ('eps','float'),
+                          ('kap','float'), ('kap_kap_T','float'),
+                          ('kap_kap_rho','float'), ('eps','float'),
                           ('eps_eps_T','float'), ('eps_eps_rho','float'),
-                          ('Omega','float')]}
+                          ('Omega_rot','float')]}
+
+
+class GYREStellarModel(AbstractGYREStellarModel):
+    def __init__(self, header, data, G=G_DEFAULT):
+        self.header = header
+        self.data = data
+        self.G = G
+
+    def __len__(self):
+        return len(self.data)
+
+    @property
+    def version(self):
+        if 'version' in self.header.dtype.names:
+            return self.header['version'][()]
+        else:
+            return 1
+
+    @property
+    def k(self):
+        return self.data['k']
+
+    def to_file(self, filename):
+        """Save the model to a file.
+
+        Parameters
+        ----------
+        filename: str
+            Filename to which the data is written.
+        """
+        save_gyre(filename, self.header, self.data)
+
+    def to_gsm(self, filename):
+        """Save the model to a GSM file.
+
+        Parameters
+        ----------
+        filename: str
+            Filename to which the data is written.
+        """
+        if self.version == 1:
+            raise ValueError("Version 1 GYRE stellar models cannot be converted to GSM")
+
+        with h5py.File(filename, "w") as f:
+            for key in self.header.dtype.names:
+                if key == 'version':
+                    if self.version != 19:
+                        f.attrs[key] = {100: 100, 101: 110}[self.version]
+                else:
+                    f.attrs[key] = self.header[key]
+
+            f.attrs['n'] = len(self)
+
+            for key in self.data.dtype.names:
+                if key != 'k':
+                    f[key] = self.data[key]
+
+
+class HDF5GYREStellarModel(AbstractGYREStellarModel):
+
+    def __init__(self, hdf5_file, G=G_DEFAULT):
+        self._hdf5_file = hdf5_file
+        self.G = G
+
+    @property
+    def header(self):
+        return self._hdf5_file.attrs
+
+    @property
+    def data(self):
+        return self._hdf5_file
+
+    def __len__(self):
+        return self.header['n']
+
+    @property
+    def version(self):
+        if 'version' in self.header:
+            return self.header['version']
+        else:
+            return 19  # the 0.00 version of the GSM format is similar to the 0.19 version of the plain text format
+
+    def to_plain(self, filename):
+        """Save the model to a plain text GYRE stellar model.
+
+        Parameters
+        ----------
+        filename: str
+            Filename to which the data is written.
+        """
+        version = {19: 19, 100: 100, 110: 101}[self.version]
+        header_dtype = gyre_header_dtypes[version]
+        data_dtype = gyre_data_dtypes[version]
+
+        header = []
+
+        for name, _ in header_dtype:
+            if name == "version":
+                header.append(version)
+            else:
+                header.append(self.header[name])
+
+        header = np.array(tuple(header), dtype=gyre_header_dtypes[version])
+
+        data = np.empty(len(self), dtype=data_dtype)
+
+        for name, _ in data_dtype:
+            if name == 'k':
+                data[name] = np.arange(1, len(self) + 1)
+            else:
+                data[name] = self.data[name]
+
+        save_gyre(filename, header, data)
+
+    def to_file(self, filename):
+        """Save the model to a file.
+
+        Parameters
+        ----------
+        filename: str
+            Filename to which the data is written.
+        """
+        with h5py.File(filename, "w") as f:
+            self._hdf5_file.copy(self._hdf5_file, f)

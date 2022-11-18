@@ -372,9 +372,9 @@ class FGONG(FullStellarModel):
             version = max([k for k in gyre_header_dtypes.keys()])
 
         header = np.zeros(1, gyre_header_dtypes[version])
-        header['M'] = self.glob[0]
-        header['R'] = self.glob[1]
-        header['L'] = self.glob[2]
+        header['M_star'] = self.glob[0]
+        header['R_star'] = self.glob[1]
+        header['L_star'] = self.glob[2]
 
         if version > 1:
             header['version'] = version
