@@ -215,8 +215,8 @@ class AbstractGYREStellarModel(FullStellarModel):
     """A class that contains and allows one to manipulate the data stored
     a plain-text or HDF5 GYRE Stellar Model.
     This will usually be provided from a file by using
-    :py:meth:`load_gyre` or :py:meth:`load_gsm` but an object can be
-    constructed from any similarly structured arrays.
+    :py:meth:`load_gyre` or :py:meth:`load_gsm`, constructing a
+    :py:class:`GYREStellarModel` or :py:class:`HDF5GYREStellarModel` respectively.
 
     The main attributes are the **header** and **data** record arrays,
     which store the data that's written in the text file.  The data in
@@ -230,19 +230,6 @@ class AbstractGYREStellarModel(FullStellarModel):
     the actual radius **r** to the corresponding values.  Values that
     are settable are indicated in the list of parameters.
 
-    Parameters
-    ----------
-    header: structured array
-        Global data for the stellar model. e.g. total mass, luminosity.
-
-    data: structured array
-        Profile data for the stellar model. e.g. radius, pressure.
-
-    G: float, optional
-        Value for the gravitational constant, in cgs units.  If not
-        given (which is the default behaviour), we use the module-wise
-        default value.
-
     Attributes
     ----------
     version: int
@@ -255,8 +242,6 @@ class AbstractGYREStellarModel(FullStellarModel):
         total luminosity
     Teff: float
         effective temperature, derived from luminosity and radius
-    k: NumPy array
-        mesh point number
     r: NumPy array, settable
         radius co-ordinate
     T: NumPy array, settable
@@ -310,7 +295,7 @@ class AbstractGYREStellarModel(FullStellarModel):
             return('GYREStellarModel(\nheader=\n%s,\ndata=\n%s\n)' % (self.header, self.data))
 
     def to_fgong(self, reverse=True, ivers=1300):
-        """Convert the model to an ``FGONG`` object.
+        """Convert the model to an :py:class:`~tomso.fgong.FGONG` object.
 
         Parameters
         ----------
@@ -349,7 +334,7 @@ class AbstractGYREStellarModel(FullStellarModel):
             return FGONG(glob, var, ivers=ivers, G=self.G)
 
     def to_amdl(self):
-        """Convert the model to an ``ADIPLSStellarModel`` object."""
+        """Convert the model to an :py:class:`~tomso.adipls.ADIPLSStellarModel` object."""
         from .adipls import ADIPLSStellarModel
 
         ioff = (0 if self.r[0] < 1e6 else 1) # mimic ADIPLS's FGONG to AMDL script
@@ -382,6 +367,26 @@ class AbstractGYREStellarModel(FullStellarModel):
         D[7] = 0.0
 
         return ADIPLSStellarModel(D, A, G=self.G)
+
+    def to_plain(self, filename):
+        """Save the model to a plain text GYRE stellar model.
+
+        Parameters
+        ----------
+        filename: str
+            Filename to which the data is written.
+        """
+        raise NotImplementedError
+
+    def to_gsm(self, filename):
+        """Save the model to an HDF5 GYRE stellar model.
+
+        Parameters
+        ----------
+        filename: str
+            Filename to which the data is written.
+        """
+        raise NotImplementedError
 
     # Various properties for easier access to the data in `header` and
     # `data`.
@@ -595,6 +600,29 @@ gyre_data_dtypes = {1: [('k','int'), ('r','float'), ('w','float'),
 
 
 class GYREStellarModel(AbstractGYREStellarModel):
+    """
+    GYRE stellar model constructed from a plain text file. This can also be
+    constructed from similarly structured arrays.
+
+    Parameters
+    ----------
+    header: structured array
+        Global data for the stellar model. e.g. total mass, luminosity.
+
+    data: structured array
+        Profile data for the stellar model. e.g. radius, pressure.
+
+    G: float, optional
+        Value for the gravitational constant, in cgs units.  If not
+        given (which is the default behaviour), we use the module-wise
+        default value.
+
+    Attributes
+    ----------
+    k: NumPy array
+        mesh point number
+    """
+
     def __init__(self, header, data, G=G_DEFAULT):
         self.header = header
         self.data = data
@@ -615,23 +643,9 @@ class GYREStellarModel(AbstractGYREStellarModel):
         return self.data['k']
 
     def to_plain(self, filename):
-        """Save the model to a plain text GYRE stellar model.
-
-        Parameters
-        ----------
-        filename: str
-            Filename to which the data is written.
-        """
         save_gyre(filename, self.header, self.data)
 
     def to_gsm(self, filename):
-        """Save the model to a HDF5 GYRE stellar model.
-
-        Parameters
-        ----------
-        filename: str
-            Filename to which the data is written.
-        """
         if self.version == 1:
             raise ValueError("Version 1 GYRE stellar models cannot be converted to GSM")
 
@@ -651,6 +665,19 @@ class GYREStellarModel(AbstractGYREStellarModel):
 
 
 class HDF5GYREStellarModel(AbstractGYREStellarModel):
+    """
+    GYRE stellar model constructed from an HDF5 file.
+
+    Parameters
+    ----------
+    hdf5_file: h5py.File
+        HDF5 file object containing the stellar model
+
+    G: float, optional
+        Value for the gravitational constant, in cgs units.  If not
+        given (which is the default behaviour), we use the module-wise
+        default value.
+    """
 
     def __init__(self, hdf5_file, G=G_DEFAULT):
         self._hdf5_file = hdf5_file
@@ -675,13 +702,6 @@ class HDF5GYREStellarModel(AbstractGYREStellarModel):
             return 19  # the 0.00 version of the GSM format is similar to the 0.19 version of the plain text format
 
     def to_plain(self, filename):
-        """Save the model to a plain text GYRE stellar model.
-
-        Parameters
-        ----------
-        filename: str
-            Filename to which the data is written.
-        """
         version = {19: 19, 100: 100, 110: 101}[self.version]
         header_dtype = gyre_header_dtypes[version]
         data_dtype = gyre_data_dtypes[version]
@@ -707,12 +727,5 @@ class HDF5GYREStellarModel(AbstractGYREStellarModel):
         save_gyre(filename, header, data)
 
     def to_gsm(self, filename):
-        """Save the model to an HDF5 GYRE stellar model.
-
-        Parameters
-        ----------
-        filename: str
-            Filename to which the data is written.
-        """
         with h5py.File(filename, "w") as f:
             self._hdf5_file.copy(self._hdf5_file, f)
