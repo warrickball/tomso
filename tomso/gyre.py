@@ -614,8 +614,8 @@ class GYREStellarModel(AbstractGYREStellarModel):
     def k(self):
         return self.data['k']
 
-    def to_file(self, filename):
-        """Save the model to a file.
+    def to_plain(self, filename):
+        """Save the model to a plain text GYRE stellar model.
 
         Parameters
         ----------
@@ -625,7 +625,7 @@ class GYREStellarModel(AbstractGYREStellarModel):
         save_gyre(filename, self.header, self.data)
 
     def to_gsm(self, filename):
-        """Save the model to a GSM file.
+        """Save the model to a HDF5 GYRE stellar model.
 
         Parameters
         ----------
@@ -706,8 +706,8 @@ class HDF5GYREStellarModel(AbstractGYREStellarModel):
 
         save_gyre(filename, header, data)
 
-    def to_file(self, filename):
-        """Save the model to a file.
+    def to_gsm(self, filename):
+        """Save the model to an HDF5 GYRE stellar model.
 
         Parameters
         ----------
