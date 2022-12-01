@@ -225,7 +225,7 @@ def convert(args):
         if from_format == 'gsm':
             m.to_plain(args.output_file)
         else:
-            m.to_gyre().to_file(args.output_file)
+            m.to_gyre().to_plain(args.output_file)
     elif to_format == 'gsm':
         if from_format == 'gyre':
             m.to_gsm(args.output_file)

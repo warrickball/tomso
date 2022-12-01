@@ -69,7 +69,7 @@ class TestGYREFunctions(unittest.TestCase):
                      'data/spb.mesa.adc6989']
         for filename in filenames:
             m1 = gyre.load_gyre('data/mesa.gyre')
-            m1.to_file(tmpfile)
+            m1.to_plain(tmpfile)
             m2 = gyre.load_gyre(tmpfile)
 
             np.testing.assert_equal(m1.header, m2.header)
@@ -81,7 +81,7 @@ class TestGYREFunctions(unittest.TestCase):
 
     def test_save_gyre(self):
         m1 = gyre.load_gyre('data/mesa.gyre')
-        m1.to_file(tmpfile)
+        m1.to_plain(tmpfile)
         m2 = gyre.load_gyre(tmpfile)
 
         np.testing.assert_equal(m1.header, m2.header)
