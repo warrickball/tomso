@@ -54,7 +54,7 @@ def load_mode(filename):
 
 def load_gyre(filename):
     """Reads a GYRE stellar model file and returns the global data and
-    point-wise data in a :py:class:`GYREStellarModel` object.  Uses
+    point-wise data in a :py:class:`PlainGYREStellarModel` object.  Uses
     builtin `gzip` module to read files ending with `.gz`.
 
     Parameters
@@ -64,7 +64,7 @@ def load_gyre(filename):
 
     Returns
     -------
-    model: :py:class:`GYREStellarModel`
+    model: :py:class:`PlainGYREStellarModel`
         Dict-like access to global and profile data.
 
     """
@@ -93,7 +93,7 @@ def load_gyre(filename):
     header = np.loadtxt(lines[:1], dtype=gyre_header_dtypes[version])
     data = np.loadtxt(lines[1:], dtype=gyre_data_dtypes[version])
 
-    return GYREStellarModel(header, data)
+    return PlainGYREStellarModel(header, data)
 
 
 def load_gsm(filename):
@@ -216,13 +216,13 @@ class AbstractGYREStellarModel(FullStellarModel):
     a plain-text or HDF5 GYRE Stellar Model.
     This will usually be provided from a file by using
     :py:meth:`load_gyre` or :py:meth:`load_gsm`, constructing a
-    :py:class:`GYREStellarModel` or :py:class:`HDF5GYREStellarModel` respectively.
+    :py:class:`PlainGYREStellarModel` or :py:class:`HDF5GYREStellarModel` respectively.
 
     The main attributes are the **header** and **data** record arrays,
     which store the data that's written in the text file.  The data in
     these arrays can be accessed via the attributes with more
     physically-meaningful names (e.g. the speed of sound is
-    ``GYREStellarModel.cs``).
+    ``AbstractGYREStellarModel.cs``).
 
     Some of these values can also be set via the attributes if doing
     so is unambiguous. For example, the fractional radius **x** is not
@@ -599,7 +599,7 @@ gyre_data_dtypes = {1: [('k','int'), ('r','float'), ('w','float'),
                           ('Omega_rot','float')]}
 
 
-class GYREStellarModel(AbstractGYREStellarModel):
+class PlainGYREStellarModel(AbstractGYREStellarModel):
     """
     GYRE stellar model constructed from a plain text file. This can also be
     constructed from similarly structured arrays.

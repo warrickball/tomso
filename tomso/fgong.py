@@ -356,7 +356,7 @@ class FGONG(FullStellarModel):
         return ADIPLSStellarModel(D, A, G=self.G)
 
     def to_gyre(self, version=None):
-        """Convert the model to a :py:class:`GYREStellarModel` object.
+        """Convert the model to a :py:class:`PlainGYREStellarModel` object.
 
         Parameters
         ----------
@@ -366,7 +366,7 @@ class FGONG(FullStellarModel):
             ``None`` (the default), the latest version available in
             TOMSO is used.
        """
-        from .gyre import gyre_header_dtypes, gyre_data_dtypes, GYREStellarModel
+        from .gyre import gyre_header_dtypes, gyre_data_dtypes, PlainGYREStellarModel
 
         if version is None:
             version = max([k for k in gyre_header_dtypes.keys()])
@@ -386,11 +386,11 @@ class FGONG(FullStellarModel):
         # data['rho'] = self.var[:,4]
 
         # if np.all(np.diff(data['r']) <= 0):
-        #     return GYREStellarModel(header, data[::-1], G=self.G)
+        #     return PlainGYREStellarModel(header, data[::-1], G=self.G)
         # else:
-        #     return GYREStellarModel(header, data, G=self.G)
+        #     return PlainGYREStellarModel(header, data, G=self.G)
 
-        g = GYREStellarModel(header[0], data, G=self.G)
+        g = PlainGYREStellarModel(header[0], data, G=self.G)
 
         g.r = self.r
         g.m = self.m
