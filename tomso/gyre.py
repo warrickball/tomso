@@ -6,6 +6,7 @@ Functions for manipulating `GYRE`_ input and output files.
 .. _GYRE: https://gyre.readthedocs.io/
 """
 
+from collections import UserDict
 import h5py
 import numpy as np
 from .constants import G_DEFAULT
@@ -687,9 +688,16 @@ class HDF5GYREStellarModel(AbstractGYREStellarModel):
     def header(self):
         return self._hdf5_file.attrs
 
+    class _HDF5NumpyProxy(UserDict):
+        def __init__(self, data):
+            self.data = data
+
+        def __getitem__(self, key):
+            return self.data[key][:]
+
     @property
     def data(self):
-        return self._hdf5_file
+        return HDF5GYREStellarModel._HDF5NumpyProxy(self._hdf5_file)
 
     def __len__(self):
         return self.header['n']
