@@ -3,6 +3,7 @@ import numpy as np
 import unittest
 
 tmpfile = 'data/tmpfile'
+tmpfile2 = 'data/tmpfile2'
 remote_url = 'https://raw.githubusercontent.com/warrickball/tomso/master/tests/'
 
 class TestGYREFunctions(unittest.TestCase):
@@ -45,7 +46,7 @@ class TestGYREFunctions(unittest.TestCase):
             np.testing.assert_equal(m['Imxi_r'], 0.0)
             np.testing.assert_equal(m['Imxi_h'], 0.0)
 
-    def test_load_gyre(self):
+    def test_load_gyre_plain(self):
         m = gyre.load_gyre('data/mesa.gyre')
         self.assertEqual(len(m.data), 601)
         self.assertAlmostEqual(m.M, 1.9882053999999999E+33)
@@ -64,6 +65,19 @@ class TestGYREFunctions(unittest.TestCase):
         np.testing.assert_equal(m.header, r.header)
         np.testing.assert_equal(m.data, r.data)
 
+    def test_load_gyre_hdf5(self):
+        m = gyre.load_gsm('data/mesa.gsm')
+        self.assertEqual(len(m), 601)
+        self.assertAlmostEqual(m.M, 1.9882053999999999E+33)
+        self.assertAlmostEqual(m.R, 6.2045507132959908E+10)
+        self.assertAlmostEqual(m.L, 3.3408563666602257E+33)
+        self.assertEqual(m.version, 110)
+
+        np.testing.assert_allclose(m.Omega, 0)
+        np.testing.assert_allclose(m.Gamma_1/(m.Gamma_3-1),
+                                   m.Gamma_2/(m.Gamma_2-1),
+                                   rtol=1e-14, atol=1e-14)
+
     def test_load_spb_mesa_versions(self):
         filenames = ['data/spb.mesa.78677cc', 'data/spb.mesa.813eed2',
                      'data/spb.mesa.adc6989']
@@ -79,7 +93,7 @@ class TestGYREFunctions(unittest.TestCase):
             np.testing.assert_allclose(m1.cs2, m2.Gamma_1*m2.P/m2.rho)
             np.testing.assert_allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:])
 
-    def test_save_gyre(self):
+    def test_save_gyre_plain(self):
         m1 = gyre.load_gyre('data/mesa.gyre')
         m1.to_plain(tmpfile)
         m2 = gyre.load_gyre(tmpfile)
@@ -91,6 +105,15 @@ class TestGYREFunctions(unittest.TestCase):
         np.testing.assert_allclose(m1.cs2, m2.Gamma_1*m2.P/m2.rho)
         np.testing.assert_allclose(m1.AA[1:], m2.N2[1:]*m2.r[1:]/m2.g[1:])
 
+    def test_convert_plain_to_hdf5(self):
+        m1 = gyre.load_gyre('data/mesa.gyre')
+        m1.to_gsm(tmpfile)
+        m2 = gyre.load_gsm(tmpfile)
+        m2.to_plain(tmpfile2)
+        m2 = gyre.load_gyre(tmpfile2)
+
+        np.testing.assert_equal(m1.header, m2.header)
+        np.testing.assert_equal(m1.data, m2.data)
 
 if __name__ == '__main__':
     unittest.main()
