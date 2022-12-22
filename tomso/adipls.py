@@ -520,7 +520,7 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
 
 
     def to_gyre(self, version=None):
-        """Convert the model to an :py:class:`~tomso.gyre.GYREStellarModel`
+        """Convert the model to an :py:class:`~tomso.gyre.PlainGYREStellarModel`
         object.
 
         Note that the ADIPLS binary format only has the data necessary
@@ -536,7 +536,7 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
             ``None`` (the default), the latest version available in
             TOMSO is used.
         """
-        from .gyre import gyre_header_dtypes, gyre_data_dtypes, GYREStellarModel
+        from .gyre import gyre_header_dtypes, gyre_data_dtypes, PlainGYREStellarModel
 
         if version is None:
             version = max([k for k in gyre_header_dtypes.keys()])
@@ -548,7 +548,7 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
         header['version'] = version
 
         data = np.ones(self.nn, gyre_data_dtypes[version])
-        g = GYREStellarModel(header[0], data, G=self.G)
+        g = PlainGYREStellarModel(header[0], data, G=self.G)
 
         g.r = self.r
         g.m = self.m
