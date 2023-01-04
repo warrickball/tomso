@@ -44,3 +44,4 @@ something.
 
 ## Contributors
 * [Warrick Ball](https://warrickball.gitlab.io)
+* [Vincent Vanlaer](https://github.com/VincentVanlaer)
