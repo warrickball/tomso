@@ -1,2 +1,4 @@
-sphinx>=5.0.0
+h5py
+matplotlib
+sphinx==3.2.1
 sphinx-argparse

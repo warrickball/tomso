@@ -1,0 +1,11 @@
+.class, .function {
+    border-top: 2px solid #d0d0d0;
+    padding-bottom: 2em;
+    padding-top: 2em;
+}
+
+.method {
+    border-top: 1px solid #d0d0d0;
+    padding-bottom: 1em;
+    padding-top: 1em;
+}
