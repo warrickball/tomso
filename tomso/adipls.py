@@ -532,7 +532,7 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
         ----------
         version: int, optional
             Specify GYRE format version number times 100. i.e.,
-            ``version=101`` produce a file with data version 1.01.  If
+            ``version=101`` produces a file with data version 1.01.  If
             ``None`` (the default), the latest version available in
             TOMSO is used.
         """
@@ -542,6 +542,7 @@ class ADIPLSStellarModel(AdiabaticStellarModel):
             version = max([k for k in gyre_header_dtypes.keys()])
 
         header = np.zeros(1, gyre_header_dtypes[version])
+        header['n'] = self.nn
         header['M_star'] = self.D[0]
         header['R_star'] = self.D[1]
         header['L_star'] = 42.0
