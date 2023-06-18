@@ -1,11 +1,8 @@
 # `tomso`: Tools for Models of Stars and their Oscillations
 
 [![GitHub repo](https://img.shields.io/badge/GitHub-warrickball%2Ftomso-blue.svg)](https://github.com/warrickball/tomso)
-
 ![Test status](https://github.com/warrickball/tomso/actions/workflows/pytest.yml/badge.svg)
-
 [![License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat)](https://github.com/warrickball/tomso/blob/main/LICENSE)
-
 [![JOSS publication](https://joss.theoj.org/papers/10.21105/joss.04343/status.svg)](https://joss.theoj.org/papers/10.21105/joss.04343)
 
 `tomso` is a set of Python modules for loading and saving input and
