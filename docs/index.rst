@@ -8,9 +8,15 @@
 
 .. image:: https://img.shields.io/badge/GitHub-warrickball%2Ftomso-blue.svg
     :target: https://github.com/warrickball/tomso
+    :alt: TOMSO GitHub repo
 .. image:: https://github.com/warrickball/tomso/actions/workflows/pytest.yml/badge.svg
+    :alt: Test status
 .. image:: https://img.shields.io/badge/license-MIT-orange.svg?style=flat
     :target: https://github.com/warrickball/tomso/blob/main/LICENSE
+    :alt: License
+.. image:: https://joss.theoj.org/papers/10.21105/joss.04343/status.svg
+    :target: https://joss.theoj.org/papers/10.21105/joss.04343
+    :alt: JOSS publication
 
 ``tomso`` is a set of Python modules for loading and saving input and
 output files for and from stellar evolution and oscillation codes.
