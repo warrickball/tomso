@@ -1,0 +1,26 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Ball
+  given-names: Warrick H.
+  orcid: "http://orcid.org/0000-0002-4773-1017"
+doi: 10.5281/zenodo.6563220
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Ball
+    given-names: Warrick H.
+    orcid: "https://orcid.org/0000-0002-4773-1017"
+  date-published: 2022-05-26
+  doi: 10.21105/joss.04343
+  issn: 2475-9066
+  issue: 73
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 4343
+  title: "tomso: TOols for Models of Stars and their Oscillations"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.04343"
+  volume: 7
+title: "tomso: TOols for Models of Stars and their Oscillations"
