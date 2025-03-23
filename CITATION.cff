@@ -2,7 +2,7 @@ cff-version: "1.2.0"
 authors:
 - family-names: Ball
   given-names: Warrick H.
-  orcid: "http://orcid.org/0000-0002-4773-1017"
+  orcid: "https://orcid.org/0000-0002-4773-1017"
 doi: 10.5281/zenodo.6563220
 message: If you use this software, please cite our article in the
   Journal of Open Source Software.
