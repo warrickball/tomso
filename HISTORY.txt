@@ -1,3 +1,4 @@
+v0.2.2,   2023-01-05 -- add support for HDF5 GYRE files (GYRE Stellar Model, GSM)
 v0.2.1,   2022-06-30 -- `adipls` can now calculate (Γ₁,ρ) kernels
 v0.2.0,   2022-05-19 -- add basic support for command-line plots of STARS output
 v0.1.0,   2022-03-31 -- removed old procedural functions
@@ -38,7 +39,7 @@ v0.0.10,  2019-08-01 -- added `prune` keyword to `mesa.load_history` to force a
                         tweaked them to infer column widths from header names
                      -- added option to reverse arrays from fgong.fgong_get
                      -- added specific heat capacity `cp` to fgong.fgong_get
-v0.0.9,   2018-09-24 -- should fix bugs in gzip support in v0.0.8 
+v0.0.9,   2018-09-24 -- should fix bugs in gzip support in v0.0.8
 v0.0.8,   2018-09-21 -- Some functions now automagically read gzipped files
                         ending `.gz.`.
                      -- `fgong_` and `amdl_get` now return single keys in the
